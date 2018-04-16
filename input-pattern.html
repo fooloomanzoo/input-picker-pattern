@@ -303,7 +303,7 @@
           const width = this.$.minsize.getBoundingClientRect().width;
           this._minSizeJob = null;
           if (width === 0) {
-            this._minSizeJob = setTimeout(minsizer.bind(this), 0);
+            this._minSizeJob = setTimeout(minsizer.bind(this), 100);
           } else {
             this.$.input.style.minWidth = `${width}px`;
             this._debouncedComputeWidth();
