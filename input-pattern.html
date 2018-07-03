@@ -124,17 +124,18 @@
           },
 
           /**
-           * if true, the length of the value is not used for computing the size-attribute
+           * if true, only `minlenght` is used for computing the minimal size
            */
           noAutoWidth: {
             type: Boolean
           },
 
           /**
-           * if true, the length of the value is not used for computing the size-attribute
+           * if true, the width will change when typing
            */
           autoResize: {
-            type: Boolean
+            type: Boolean,
+            observer: '_debouncedComputeWidth'
           },
 
           /**
@@ -175,6 +176,7 @@
         this._updateValue = this._updateValue.bind(this);
         this._checkInput = this._checkInput.bind(this);
         this._checkKeycode = this._checkKeycode.bind(this);
+        this._computeWidth = this._computeWidth.bind(this);
         this._addEventListeners();
         setTimeout(this.resize.bind(this), 0);
       }
@@ -216,8 +218,8 @@
 
       _checkKeycode(e) {
         super._checkKeycode && super._checkKeycode(e);
-        // enter & space
-        if (e.keyCode === 13 || e.keyCode === 32) {
+        // enter & tab
+        if (e.keyCode === 13 || e.keyCode === 9) {
           this._checkInput();
           return;
         }
@@ -341,7 +343,7 @@
         if (this._activeResizeJob) {
           clearTimeout(this._activeResizeJob);
         }
-        this._activeResizeJob = setTimeout(this._computeWidth.bind(this), 0);
+        this._activeResizeJob = setTimeout(this._computeWidth, 0);
       }
 
       _computeWidth() {

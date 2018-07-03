@@ -89,6 +89,12 @@
       connectedCallback() {
         super.connectedCallback();
         this._ensureAttribute('tabindex', 0);
+        if (this.value !== undefined) {
+          this.set(this.propertyForValue, this.value);
+        }
+        if (this[this.propertyForValue] !== undefined) {
+          this.set('value', this[this.propertyForValue]);
+        }
       }
 
       _computeInvalid(required, value) {
@@ -137,23 +143,21 @@
         if (prop !== undefined) {
           this._createPropertyObserver(prop, '_reflectPropertyToValue');
           this._createPropertyObserver('value', '_reflectValueToProperty');
-          setTimeout(() => {
-            if (this.value !== undefined) {
-              this.set(this.propertyForValue, this.value);
-            }
-            if (this[this.propertyForValue] !== undefined) {
-              this.set('value', this[this.propertyForValue]);
-            }
-          }, 0)
+          if (this.value !== undefined) {
+            this.set(this.propertyForValue, this.value);
+          }
+          if (this[this.propertyForValue] !== undefined) {
+            this.set('value', this[this.propertyForValue]);
+          }
         }
       }
 
-      _reflectPropertyToValue(v) {
-        this.set('value', v);
+      _reflectPropertyToValue() {
+        this.set('value', this[this.propertyForValue]);
       }
 
-      _reflectValueToProperty(v) {
-        this.set(this.propertyForValue, v);
+      _reflectValueToProperty() {
+        this.set(this.propertyForValue, this.value);
       }
     }
   }

@@ -141,9 +141,9 @@
       /**
        * inner inputs
        */
-      integer-input,
-      number-input,
-      text-input {
+      #input integer-input,
+      #input number-input,
+      #input text-input {
         --input-color: var(--inner-input-color, inherit);
         --input-background: var(--inner-input-background, transparent);
         --input-border-width: var(--inner-input-border-width, thin);
@@ -215,23 +215,22 @@
       /**
        * placeholder
        */
-      ::-webkit-input-placeholder,
-      ::-ms-input-placeholder,
-      ::placeholder {
+      #input::-webkit-input-placeholder,
+      #input::placeholder {
         color: currentColor;
-        opacity: var(--input-placeholder-opacity, 0.75);
+        opacity: var(--input-placeholder-opacity, 0.5);
         text-align: var(--input-placeholder-align, center);
         @apply --input-placeholder;
       }
 
-      ::-ms-input-placeholder {
+      #input::-ms-input-placeholder {
         color: currentColor;
-        opacity: var(--input-placeholder-opacity, 0.75);
+        opacity: var(--input-placeholder-opacity, 0.5);
         text-align: var(--input-placeholder-align, center);
       }
 
-      :host([invalid]) ::-webkit-input-placeholder,
-      :host([invalid]) ::placeholder {
+      :host([invalid]) #input::-webkit-input-placeholder,
+      :host([invalid]) #input::placeholder {
         color: var(--input-invalid-color, inherit);
       }
 
@@ -280,7 +279,6 @@
       }
 
       ::-webkit-input-edit-text,
-      ::-webkit-input-placeholder,
       ::-webkit-inner-spin-button,
       ::-webkit-outer-spin-button,
       ::-webkit-search-cancel-button,
