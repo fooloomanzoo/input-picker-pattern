@@ -143,11 +143,11 @@
         if (prop !== undefined) {
           this._createPropertyObserver(prop, '_reflectPropertyToValue');
           this._createPropertyObserver('value', '_reflectValueToProperty');
-          if (this.value !== undefined) {
-            this.set(this.propertyForValue, this.value);
-          }
           if (this[this.propertyForValue] !== undefined) {
             this.set('value', this[this.propertyForValue]);
+          }
+          if (this.value !== undefined) {
+            this.set(this.propertyForValue, this.value);
           }
         }
       }

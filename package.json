@@ -19,7 +19,8 @@
     "postinstall": "bower install",
     "prepublish": "npm run build && git add . && git commit -m \"publish new version\" && npm version patch && git push",
     "build": "git pull && bower update -f && polymer analyze > analysis.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "polymer test",
+    "test:p": "polymer test -p --config-file=wct.p.conf.json"
   },
   "repository": {
     "type": "git",
