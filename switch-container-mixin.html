@@ -15,6 +15,13 @@
 
     return class extends superClass { // eslint-disable-line no-undef
 
+      constructor() {
+        super();
+        this._increm = this._increm.bind(this);
+        this._stopActiveIncremJob = this._stopActiveIncremJob.bind(this);
+        this._checkKeycodeSwitch = this._checkKeycodeSwitch.bind(this);
+      }
+
       static get properties() {
         return {
           /**
@@ -56,11 +63,6 @@
 
       ready() {
         super.ready();
-        // Eventhandler binding to this to be able to remove the Eventlisteners properly
-        this._increm = this._increm.bind(this);
-        this._stopActiveIncremJob = this._stopActiveIncremJob.bind(this);
-        this._checkKeycodeSwitch = this._checkKeycodeSwitch.bind(this);
-
         this._addSwitchListener();
       }
 

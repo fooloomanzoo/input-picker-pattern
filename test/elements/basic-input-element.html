@@ -1,0 +1,13 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../input-pattern.html">
+
+<dom-module id="basic-input-element">
+  <script>
+    class BasicInputElement extends InputPattern(Polymer.Element) { // eslint-disable-line no-undef
+      static get is() {
+        return 'basic-input-element';
+      }
+    }
+    window.customElements.define(BasicInputElement.is, BasicInputElement);
+  </script>
+</dom-module>
