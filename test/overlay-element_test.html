@@ -4,49 +4,35 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>number-input test</title>
+    <title>overlay-element test</title>
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="../number-input.html">
+    <link rel="import" href="../overlay-element.html">
   </head>
   <body>
 
-    <test-fixture id="BasicTestFixture">
+    <test-fixture id="basic">
       <template>
-        <number-input></number-input>
-      </template>
-    </test-fixture>
-
-    <test-fixture id="ChangedPropertyTestFixture">
-      <template>
-        <number-input step="0.2"></number-input>
+        <overlay-element></overlay-element>
       </template>
     </test-fixture>
 
     <script>
-      suite('number-input', function() {
+      suite('basic', function() {
+        let element;
+
+        setup(function() {
+          element = fixture('basic');
+        });
 
         test('instantiating the element with default properties works', done => {
-          const element = fixture('BasicTestFixture');
-          assert.isUndefined(element.default, 'default is not defined');
-          assert.isUndefined(element.startAt, 'startAt is not defined');
-          assert.isUndefined(element.useNegativeZero, 'useNegativeZero is not defined');
-          assert.isUndefined(element.numberStyle, 'valueAsNumber is not defined');
-          assert.isUndefined(element.valueAsNumber, 'valueAsNumber is not defined');
-          assert.equal(element.input, '', 'input is not defined');
+          assert.isFalse(element.opened, 'element is not opened');
           done();
         });
-
-        test('setting a property on the element works', done => {
-          // Create a test fixture
-          const element = fixture('ChangedPropertyTestFixture');
-          assert.equal(element.step, 2, 'step is set');
-          done();
-        });
-
       });
+      // TODO: extend tests
     </script>
 
   </body>

@@ -11,7 +11,7 @@
    * @param {Object} superClass class to extend
    * @return {Object} extended class
    */
-  const SwitchContainerMixin = (superClass) => { // eslint-disable-line no-unused-vars
+  const SwitchMixin = (superClass) => { // eslint-disable-line no-unused-vars
 
     return class extends superClass { // eslint-disable-line no-undef
 
@@ -63,42 +63,42 @@
 
       ready() {
         super.ready();
+        this.__switchs = new Set();
         this._addSwitchListener();
       }
 
       disconnectedCallback() {
         super.disconnectedCallback();
         this._removeSwitchListener();
+        this.__switchs.clear();
       }
 
       _addSwitchListener() {
-        // this.addEventListener('focus', this._stopActiveIncremJob, {passive: true});
         this.addEventListener('blur', this._stopActiveIncremJob, {passive: true});
         this.addEventListener('contextmenu', this._stopActiveIncremJob, {passive: true});
         const switchs = this.root.querySelectorAll('.switch');
         if (switchs) {
           Array.prototype.forEach.call(switchs, s => {
-            Polymer.Gestures.addListener(s, 'down', this._increm, false);
-            Polymer.Gestures.addListener(s, 'up', this._stopActiveIncremJob, false);
-            s.addEventListener('keydown', this._checkKeycodeSwitch, {passive: true});
-            s.addEventListener('keyup', this._stopActiveIncremJob, {passive: true});
+            if (!this.__switchs.has(s)) {
+              Polymer.Gestures.addListener(s, 'down', this._increm, false);
+              Polymer.Gestures.addListener(s, 'up', this._stopActiveIncremJob, false);
+              s.addEventListener('keydown', this._checkKeycodeSwitch, {passive: true});
+              s.addEventListener('keyup', this._stopActiveIncremJob, {passive: true});
+              this.__switchs.add(s);
+            }
           })
         }
       }
 
       _removeSwitchListener() {
-        // this.removeEventListener('focus', this._stopActiveIncremJob, {passive: true});
         this.removeEventListener('blur', this._stopActiveIncremJob, {passive: true});
         this.removeEventListener('contextmenu', this._stopActiveIncremJob, {passive: true});
-        const switchs = this.root.querySelectorAll(this._switchSelector);
-        if (switchs) {
-          Array.prototype.forEach.call(switchs, s => {
-            Polymer.Gestures.removeListener(s, 'down', this._increm, false);
-            Polymer.Gestures.removeListener(s, 'up', this._stopActiveIncremJob, false);
-            s.removeEventListener('keydown', this._checkKeycodeSwitch, {passive: true});
-            s.removeEventListener('keyup', this._stopActiveIncremJob, {passive: true});
-          })
-        }
+        this.__switchs.forEach( s => {
+          Polymer.Gestures.removeListener(s, 'down', this._increm, false);
+          Polymer.Gestures.removeListener(s, 'up', this._stopActiveIncremJob, false);
+          s.removeEventListener('keydown', this._checkKeycodeSwitch, {passive: true});
+          s.removeEventListener('keyup', this._stopActiveIncremJob, {passive: true});
+        }, this);
       }
 
       _checkKeycodeSwitch(e) {
@@ -168,5 +168,5 @@
       }
     }
   }
-  window.SwitchContainerMixin = SwitchContainerMixin;
+  window.SwitchMixin = SwitchMixin;
 </script>

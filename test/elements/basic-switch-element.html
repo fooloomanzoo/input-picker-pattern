@@ -1,0 +1,16 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../switch-mixin.html">
+
+<dom-module id="basic-switch-element">
+  <script>
+    class BasicSwitchElement extends SwitchElementMixin(Polymer.Element) { // eslint-disable-line no-undef
+      static get is() {
+        return 'basic-switch-element';
+      }
+      static get template() {
+        return `<div class="switch">${this._iconStepUpTemplate}</div>`;
+      }
+    }
+    window.customElements.define(BasicSwitchElement.is, BasicSwitchElement);
+  </script>
+</dom-module>

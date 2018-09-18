@@ -4,18 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>input-picker-pattern test</title>
+    <title>basic-switch-element test</title>
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="elements/basic-input-picker-element.html">
+    <link rel="import" href="elements/basic-switch-element.html">
   </head>
   <body>
 
     <test-fixture id="basic">
       <template>
-        <basic-input-picker-element></basic-input-picker-element>
+        <basic-switch-element></basic-switch-element>
       </template>
     </test-fixture>
 
@@ -28,11 +28,10 @@
         });
 
         test('instantiating the element with default properties works', done => {
-          assert.isFalse(element.opened, 'element is not opened');
+          assert.isDefined(element.__switchs, 'switchs are found');
           done();
         });
       });
-      // TODO: extend tests
     </script>
 
   </body>

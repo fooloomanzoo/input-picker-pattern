@@ -1,0 +1,16 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../overlay-picker-pattern.html">
+
+<dom-module id="basic-overlay-picker-element">
+  <script>
+    class BasicOverlayPickerElement extends OverlayPickerPattern(Polymer.Element) { // eslint-disable-line no-undef
+      static get is() {
+        return 'basic-overlay-picker-element';
+      }
+      static get template() {
+        return `${this.pickerTemplate}`;
+      }
+    }
+    window.customElements.define(BasicOverlayPickerElement.is, BasicOverlayPickerElement);
+  </script>
+</dom-module>

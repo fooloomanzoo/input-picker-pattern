@@ -4,48 +4,59 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>number-input test</title>
+    <title>basic-form-element test</title>
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="../number-input.html">
+    <link rel="import" href="elements/basic-form-element.html">
   </head>
   <body>
 
-    <test-fixture id="BasicTestFixture">
+    <test-fixture id="basic">
       <template>
-        <number-input></number-input>
+        <basic-form-element></basic-form-element>
       </template>
     </test-fixture>
 
     <test-fixture id="ChangedPropertyTestFixture">
       <template>
-        <number-input step="0.2"></number-input>
+        <basic-form-element value="abc"></basic-form-element>
       </template>
     </test-fixture>
 
     <script>
-      suite('number-input', function() {
+      suite('basic', function() {
+        let element;
+
+        setup(function() {
+          element = fixture('basic');
+        });
 
         test('instantiating the element with default properties works', done => {
-          const element = fixture('BasicTestFixture');
+          assert.isUndefined(element.required, 'required is not defined');
+          assert.isUndefined(element.invalid, 'invalid is not defined');
+          assert.isUndefined(element.disabled, 'disabled is not defined');
+          assert.isUndefined(element.name, 'name is not defined');
+          assert.isUndefined(element.value, 'value is not defined');
+          assert.isUndefined(element.propertyForValue, 'propertyForValue is not defined');
           assert.isUndefined(element.default, 'default is not defined');
-          assert.isUndefined(element.startAt, 'startAt is not defined');
-          assert.isUndefined(element.useNegativeZero, 'useNegativeZero is not defined');
-          assert.isUndefined(element.numberStyle, 'valueAsNumber is not defined');
-          assert.isUndefined(element.valueAsNumber, 'valueAsNumber is not defined');
-          assert.equal(element.input, '', 'input is not defined');
+          assert.isFalse(element._valueIsSet, '_valueIsSet is not defined');
           done();
+        });
+      });
+
+      suite('changing properties', function() {
+        let element;
+
+        setup(function() {
+          element = fixture('ChangedPropertyTestFixture');
         });
 
         test('setting a property on the element works', done => {
-          // Create a test fixture
-          const element = fixture('ChangedPropertyTestFixture');
-          assert.equal(element.step, 2, 'step is set');
+          assert.equal(element.step, 'abc', 'property is set');
           done();
         });
-
       });
     </script>
 
