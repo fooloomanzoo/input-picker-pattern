@@ -22,6 +22,7 @@
     "iron-overlay-behavior": "PolymerElements/iron-overlay-behavior#2"
   },
   "devDependencies": {
-    "web-component-tester": "^6.5.0"
+    "web-component-tester": "^6.5.0",
+    "iron-form": "PolymerElements/iron-form#2"
   }
 }

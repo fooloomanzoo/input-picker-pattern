@@ -4,12 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>basic-form-element test</title>
+    <title>form-element-mixin test</title>
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
     <link rel="import" href="elements/basic-form-element.html">
+    <link rel="import" href="../../iron-form/iron-form.html">
+
   </head>
   <body>
 
@@ -22,6 +24,36 @@
     <test-fixture id="ChangedPropertyTestFixture">
       <template>
         <basic-form-element value="abc"></basic-form-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="Submit">
+      <template>
+        <iron-form id="not-required-no-value">
+          <form action="/get" method="get">
+            <basic-form-element name="TestValue"></basic-form-element>
+          </form>
+        </iron-form>
+        <iron-form id="not-required-and-value">
+          <form action="/get" method="get">
+            <basic-form-element name="TestValue" value="abc"></basic-form-element>
+          </form>
+        </iron-form>
+        <iron-form id="required-no-value">
+          <form action="/get" method="get">
+            <basic-form-element required name="TestValue"></basic-form-element>
+          </form>
+        </iron-form>
+        <iron-form id="required-and-value">
+          <form action="/get" method="get">
+            <basic-form-element required name="TestValue" value="cde"></basic-form-element>
+          </form>
+        </iron-form>
+        <iron-form id="custom-property-for-value">
+          <form action="/get" method="get">
+            <basic-form-element name="TestValue" property-for-value="custom" custom="123"></basic-form-element>
+          </form>
+        </iron-form>
       </template>
     </test-fixture>
 
@@ -56,6 +88,103 @@
         test('setting a property on the element works', done => {
           assert.equal(element.step, 'abc', 'property is set');
           done();
+        });
+      });
+
+      suite('submit in iron-form', function() {
+        let f, server;
+
+        setup(function() {
+          f = fixture('Submit');
+          server = sinon.fakeServer.create();
+          server.respondWith(
+              'GET',
+              /\/get.*/,
+              [200, '{"Content-Type":"application/json"}', '{"success":true}']);
+        });
+
+        teardown(function() {
+          server.restore();
+        });
+
+        test('not required element with no value', function(done) {
+          let form = f.querySelector('#not-required-no-value');
+          form.addEventListener('iron-form-response', function(event) {
+            expect(event.detail.url).to.equal('/get?TestValue=');
+            expect(event.detail.response.success).to.be.equal(true);
+            done();
+          });
+
+          // Wait one tick for observeNodes.
+          Polymer.Base.async(function() {
+            form.submit();
+            server.respond();
+          });
+        });
+
+        test('not required element with value', function(done) {
+          let form = f.querySelector('#not-required-and-value');
+          form.addEventListener('iron-form-response', function(event) {
+            expect(event.detail.url).to.equal('/get?TestValue=abc');
+            expect(event.detail.response.success).to.be.equal(true);
+            done();
+          });
+
+          // Wait one tick for observeNodes.
+          Polymer.Base.async(function() {
+            form.submit();
+            server.respond();
+          });
+        });
+
+        test('required element with no value', function(done) {
+          let form = f.querySelector('#required-no-value');
+          var responses = 0;
+          form.addEventListener('iron-form-response', function(event) {
+            responses++;
+          });
+
+          // Wait one tick for observeNodes.
+          Polymer.Base.async(function() {
+            expect(form.validate()).to.be.equal(false);
+            form.submit();
+            server.respond();
+          });
+
+          setTimeout(function() {
+            expect(responses).to.be.equal(0);
+            done();
+          }, 200);
+        });
+
+        test('required element with value', function(done) {
+          let form = f.querySelector('#required-and-value');
+          form.addEventListener('iron-form-response', function(event) {
+            expect(event.detail.url).to.equal('/get?TestValue=cde');
+            expect(event.detail.response.success).to.be.equal(true);
+            done();
+          });
+
+          // Wait one tick for observeNodes.
+          Polymer.Base.async(function() {
+            form.submit();
+            server.respond();
+          });
+        });
+
+        test('custom property-for-value', function(done) {
+          let form = f.querySelector('#custom-property-for-value');
+          form.addEventListener('iron-form-response', function(event) {
+            expect(event.detail.url).to.equal('/get?TestValue=123');
+            expect(event.detail.response.success).to.be.equal(true);
+            done();
+          });
+
+          // Wait one tick for observeNodes.
+          Polymer.Base.async(function() {
+            form.submit();
+            server.respond();
+          });
         });
       });
     </script>

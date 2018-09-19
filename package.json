@@ -20,7 +20,7 @@
     "prepublish": "npm run build && git add . && git commit -m \"publish new version\" && npm version patch && git push",
     "build": "git pull && bower update -f && polymer analyze > analysis.json",
     "test": "polymer test",
-    "test:p": "polymer test -p --config-file=wct.p.conf.json"
+    "test:p": "polymer test -p --config-file=wct.p.conf.js"
   },
   "repository": {
     "type": "git",
