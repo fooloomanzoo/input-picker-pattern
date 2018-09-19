@@ -65,7 +65,8 @@
         });
 
         test('setting a property on the element works', done => {
-          assert.equal(element.step, 'abc', 'property is set');
+          assert.equal(element.value, 'abc', 'property is set');
+          assert.equal(element.input, 'abc', 'property is set');
           done();
         });
       });

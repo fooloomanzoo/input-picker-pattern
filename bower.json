@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "web-component-tester": "^6.5.0",
-    "iron-form": "PolymerElements/iron-form#2"
+    "iron-form": "PolymerElements/iron-form#2",
+    "iron-test-helpers": "PolymerElements/iron-test-helpers#2"
   }
 }
