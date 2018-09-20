@@ -2,10 +2,17 @@
 <link rel="import" href="../../form-element-mixin.html">
 
 <dom-module id="basic-form-element">
+  <template></template>
   <script>
     class BasicFormElement extends FormElementMixin(Polymer.Element) { // eslint-disable-line no-undef
       static get is() {
         return 'basic-form-element';
+      }
+      static get properties() {
+        return {
+          custom1: String,
+          custom2: String
+        };
       }
     }
     window.customElements.define(BasicFormElement.is, BasicFormElement);

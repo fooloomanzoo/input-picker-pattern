@@ -89,12 +89,14 @@
       connectedCallback() {
         super.connectedCallback();
         this._ensureAttribute('tabindex', 0);
-        if (this.value !== undefined) {
-          this.set(this.propertyForValue, this.value);
-        }
-        if (this[this.propertyForValue] !== undefined) {
-          this.set('value', this[this.propertyForValue]);
-        }
+        // console.log(this.propertyForValue, this[this.propertyForValue], this.value);
+        // if (this.propertyForValue !== undefined) {
+        //   if (this.value !== undefined) {
+        //     this.set(this.propertyForValue, this.value);
+        //   } else if (this[this.propertyForValue] !== undefined) {
+        //     this.set('value', this[this.propertyForValue]);
+        //   }
+        // }
       }
 
       _computeInvalid(required, value) {
@@ -143,11 +145,10 @@
         if (prop !== undefined) {
           this._createPropertyObserver(prop, '_reflectPropertyToValue');
           this._createPropertyObserver('value', '_reflectValueToProperty');
-          if (this[this.propertyForValue] !== undefined) {
-            this.set('value', this[this.propertyForValue]);
-          }
-          if (this.value !== undefined) {
-            this.set(this.propertyForValue, this.value);
+          if (this[prop] !== undefined) {
+            this.set('value', this[prop]);
+          } else if (this.value !== undefined) {
+            this.set(prop, this.value);
           }
         }
       }

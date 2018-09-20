@@ -9,8 +9,8 @@
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="elements/basic-form-element.html">
     <link rel="import" href="../../iron-form/iron-form.html">
+    <link rel="import" href="elements/basic-form-element.html">
 
   </head>
   <body>
@@ -27,33 +27,46 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="ChangePropertyForValue">
+      <template>
+        <div>
+          <basic-form-element id="basic" propertyForValue="custom1"></basic-form-element>
+          <basic-form-element id="set-property-reflect-value" propertyForValue="custom1" custom1="abc"></basic-form-element>
+          <basic-form-element id="set-value-reflect-property" propertyForValue="custom1" value="abc"></basic-form-element>
+          <basic-form-element id="setting-value-and-property" propertyForValue="custom1" custom1="2" value="abc"></basic-form-element>
+        </div>
+      </template>
+    </test-fixture>
+
     <test-fixture id="Submit">
       <template>
-        <iron-form id="not-required-no-value">
-          <form action="/get" method="get">
-            <basic-form-element name="TestValue"></basic-form-element>
-          </form>
-        </iron-form>
-        <iron-form id="not-required-and-value">
-          <form action="/get" method="get">
-            <basic-form-element name="TestValue" value="abc"></basic-form-element>
-          </form>
-        </iron-form>
-        <iron-form id="required-no-value">
-          <form action="/get" method="get">
-            <basic-form-element required name="TestValue"></basic-form-element>
-          </form>
-        </iron-form>
-        <iron-form id="required-and-value">
-          <form action="/get" method="get">
-            <basic-form-element required name="TestValue" value="cde"></basic-form-element>
-          </form>
-        </iron-form>
-        <iron-form id="custom-property-for-value">
-          <form action="/get" method="get">
-            <basic-form-element name="TestValue" property-for-value="custom" custom="123"></basic-form-element>
-          </form>
-        </iron-form>
+        <div>
+          <iron-form id="not-required-no-value">
+            <form action="/get" method="get">
+              <basic-form-element name="TestValue" value=""></basic-form-element>
+            </form>
+          </iron-form>
+          <iron-form id="not-required-and-value">
+            <form action="/get" method="get">
+              <basic-form-element name="TestValue" value="abc"></basic-form-element>
+            </form>
+          </iron-form>
+          <iron-form id="required-no-value">
+            <form action="/get" method="get">
+              <basic-form-element required name="TestValue" value=""></basic-form-element>
+            </form>
+          </iron-form>
+          <iron-form id="required-and-value">
+            <form action="/get" method="get">
+              <basic-form-element required name="TestValue" value="cde"></basic-form-element>
+            </form>
+          </iron-form>
+          <iron-form id="custom-property-for-value">
+            <form action="/get" method="get">
+              <basic-form-element name="TestValue" property-for-value="custom1" custom1="123"></basic-form-element>
+            </form>
+          </iron-form>
+        </div>
       </template>
     </test-fixture>
 
@@ -79,14 +92,92 @@
       });
 
       suite('changing properties', function() {
-        let element;
+        test('setting a property on the element works', function(done) {
+          let element = fixture('ChangedPropertyTestFixture');
+          assert.equal(element.value, 'abc', 'property is set');
+          done();
+        });
+      });
+
+      suite('changing property for value', function() {
+        let f;
 
         setup(function() {
-          element = fixture('ChangedPropertyTestFixture');
+          f = fixture('ChangePropertyForValue');
         });
 
-        test('setting a property on the element works', done => {
-          assert.equal(element.value, 'abc', 'property is set');
+        test('basic', function(done) {
+          let element = f.querySelector('#basic');
+          assert.equal(element.propertyForValue, 'custom1', 'propertyForValue is set');
+          done();
+        });
+
+        test('changing value', function(done) {
+          let element = f.querySelector('#basic');
+          element.value = 2;
+          assert.equal(element.custom1, 2, 'property changes');
+          done();
+        });
+
+        test('changing property', function(done) {
+          let element = f.querySelector('#basic');
+          element.custom1 = 2;
+          assert.equal(element.value, 2, 'value changes');
+          done();
+        });
+
+        test('initial property', function(done) {
+          let element = f.querySelector('#set-property-reflect-value');
+          assert.equal(element.custom1, 'abc', 'property does not change');
+          assert.equal(element.value, 'abc', 'value is set');
+          done();
+        });
+
+        test('initial property, propertyForValue changes', function(done) {
+          let element = f.querySelector('#set-property-reflect-value');
+          element.propertyForValue = 'custom2';
+          assert.equal(element.custom1, 'abc', 'custom1 does not change');
+          assert.equal(element.custom2, 'abc', 'custom2 is set');
+          assert.equal(element.value, 'abc', 'value does not change');
+          element.value = 4;
+          assert.equal(element.custom1, 'abc', 'custom1 does not change');
+          assert.equal(element.custom2, 4, 'custom2 is set');
+          assert.equal(element.value, 4, 'value does not change');
+          element.custom2 = 'efg';
+          assert.equal(element.custom1, 'abc', 'custom1 does not change');
+          assert.equal(element.custom2, 'efg', 'custom2 does not change');
+          assert.equal(element.value, 'efg', 'value is set');
+          done();
+        });
+
+        test('initial value', function(done) {
+          let element = f.querySelector('#set-value-reflect-property');
+          assert.equal(element.custom1, 'abc', 'property is set');
+          assert.equal(element.value, 'abc', 'value does not change');
+          done();
+        });
+
+        test('initial value, propertyForValue changes', function(done) {
+          let element = f.querySelector('#set-value-reflect-property');
+          element.propertyForValue = 'custom2';
+          assert.equal(element.custom1, 'abc', 'custom1 does not change');
+          assert.equal(element.custom2, 'abc', 'custom2 is set');
+          assert.equal(element.value, 'abc', 'value does not change');
+          element.value = 4;
+          assert.equal(element.custom1, 'abc', 'custom1 does not change');
+          assert.equal(element.custom2, 4, 'custom2 is set');
+          assert.equal(element.value, 4, 'value does not change');
+          element.custom2 = 'efg';
+          assert.equal(element.custom1, 'abc', 'custom1 does not change');
+          assert.equal(element.custom2, 'efg', 'custom2 does not change');
+          assert.equal(element.value, 'efg', 'value is set');
+          done();
+        });
+
+        test('initial value and property', function(done) {
+          let element = f.querySelector('#custom-property-for-value');
+          assert.equal(element.custom1, 2, 'property is set');
+          assert.equal(element.value, 2, 'value is set');
           done();
         });
       });
@@ -139,7 +230,7 @@
 
         test('required element with no value', function(done) {
           let form = f.querySelector('#required-no-value');
-          var responses = 0;
+          let responses = 0;
           form.addEventListener('iron-form-response', function(event) {
             responses++;
           });
@@ -183,6 +274,7 @@
           // Wait one tick for observeNodes.
           Polymer.Base.async(function() {
             form.submit();
+            console.log(form);
             server.respond();
           });
         });
