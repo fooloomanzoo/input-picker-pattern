@@ -30,10 +30,10 @@
     <test-fixture id="ChangePropertyForValue">
       <template>
         <div>
-          <basic-form-element id="basic" propertyForValue="custom1"></basic-form-element>
-          <basic-form-element id="set-property-reflect-value" propertyForValue="custom1" custom1="abc"></basic-form-element>
-          <basic-form-element id="set-value-reflect-property" propertyForValue="custom1" value="abc"></basic-form-element>
-          <basic-form-element id="setting-value-and-property" propertyForValue="custom1" custom1="2" value="abc"></basic-form-element>
+          <basic-form-element id="basic" property-for-value="custom1"></basic-form-element>
+          <basic-form-element id="set-property-reflect-value" property-for-value="custom1" custom1="abc"></basic-form-element>
+          <basic-form-element id="set-value-reflect-property" property-for-value="custom1" value="abc"></basic-form-element>
+          <basic-form-element id="setting-value-and-property" property-for-value="custom1" custom1="2" value="abc"></basic-form-element>
         </div>
       </template>
     </test-fixture>
@@ -175,7 +175,7 @@
         });
 
         test('initial value and property', function(done) {
-          let element = f.querySelector('#custom-property-for-value');
+          let element = f.querySelector('#setting-value-and-property');
           assert.equal(element.custom1, 2, 'property is set');
           assert.equal(element.value, 2, 'value is set');
           done();
@@ -240,12 +240,11 @@
             expect(form.validate()).to.be.equal(false);
             form.submit();
             server.respond();
+            setTimeout(function() {
+              expect(responses).to.be.equal(0);
+              done();
+            }, 200);
           });
-
-          setTimeout(function() {
-            expect(responses).to.be.equal(0);
-            done();
-          }, 200);
         });
 
         test('required element with value', function(done) {
