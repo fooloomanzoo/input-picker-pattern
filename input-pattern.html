@@ -14,6 +14,17 @@
 
     return class extends FormElementMixin(superClass) {  // eslint-disable-line no-undef
 
+      constructor() {
+        super();
+        this.focus = this.focus.bind(this);
+        this.blur = this.blur.bind(this);
+        this.resize = this.resize.bind(this);
+        this._updateInput = this._updateInput.bind(this);
+        this._confirmInput = this._confirmInput.bind(this);
+        this._checkKeycode = this._checkKeycode.bind(this);
+        this._computeWidth = this._computeWidth.bind(this);
+      }
+
       static get template() {
         return `
           <style include="${this.styleToInclude}">
@@ -68,6 +79,7 @@
       /**
       * @overwrite
       * this input-template is suposed to be overwritten to a custon implementation
+      * NOTE: '@fooloomanzoo/text-input' implements also pattern validation
       */
       static get inputTemplate() {
         return `
@@ -84,7 +96,6 @@
 
       static get properties() {
         return {
-
           /**
            * the type of the native input
            */
@@ -117,13 +128,6 @@
           },
 
           /**
-           * if true, only `minlenght` is used for computing the minimal size
-           */
-          noAutoWidth: {
-            type: Boolean
-          },
-
-          /**
            * if true, the width will change when typing
            */
           autoResize: {
@@ -143,35 +147,23 @@
            */
           hidden: {
             type: Boolean
-          },
-
-          /**
-           * defines the property that should be used for the value
-           */
-          propertyForValue: {
-            type: String,
-            value: 'input'
           }
         }
       }
 
       static get observers() {
         return [
-          '_defaultChanged(default)',
-          '_computeMinWidth(noAutoWidth, minlength, default, placeholder)',
+          '_computeInvalid(input, required)',
+          '_computeValueIsSet(input)',
+          '_computeMinWidth(minlength, default, placeholder)',
           'resize(_minWidthString, hidden)'
         ]
       }
 
       connectedCallback() {
         super.connectedCallback();
-        this.focus = this.focus.bind(this);
-        this._updateValue = this._updateValue.bind(this);
-        this._checkInput = this._checkInput.bind(this);
-        this._checkKeycode = this._checkKeycode.bind(this);
-        this._computeWidth = this._computeWidth.bind(this);
         this._addEventListeners();
-        setTimeout(this.resize.bind(this), 0);
+        setTimeout(this.resize, 0);
       }
 
       disconnectedCallback() {
@@ -181,102 +173,82 @@
 
       _addEventListeners() {
         this.addEventListener('focus', this.focus, false);
-        this.$.input.addEventListener('focus', this._updateValue, false);
-        this.$.input.addEventListener('blur', this._checkInput, false);
+        this.addEventListener('blur', this.blur, false);
+        this.$.input.addEventListener('focus', this._confirmInput, false);
+        this.$.input.addEventListener('blur', this._confirmInput, false);
         this.$.input.addEventListener('keydown', this._checkKeycode, false);
       }
 
       _removeEventListeners() {
         this.removeEventListener('focus', this.focus, false);
-        this.$.input.removeEventListener('focus', this._updateValue, false);
-        this.$.input.removeEventListener('blur', this._checkInput, false);
+        this.removeEventListener('blur', this.blur, false);
+        this.$.input.removeEventListener('focus', this._confirmInput, false);
+        this.$.input.removeEventListener('blur', this._confirmInput, false);
         this.$.input.removeEventListener('keydown', this._checkKeycode, false);
-      }
-
-      /**
-       * focus the input
-       */
-      focus() {
-        this.$.input.focus();
-        this.$.input.scrollIntoViewIfNeeded && this.$.input.scrollIntoViewIfNeeded();
-      }
-
-      /**
-       * focus the input
-       */
-      blur(e) {
-        this._checkInput(e);
-        this.$.input.blur();
       }
 
       _checkKeycode(e) {
         super._checkKeycode && super._checkKeycode(e);
-        // enter & tab
-        if (e.keyCode === 13 || e.keyCode === 9) {
-          this._checkInput();
-          return;
-        }
-
-        // esc
-        if (e.keyCode === 27) {
-          this._updateValue();
-          e.stopPropagation();
-          this.blur();
-          return;
+        switch (e.keyCode) {
+          case 9: // tab
+          case 13: // enter
+            this._confirmInput();
+            break;
+          case 27: // esc
+            this._updateInput();
+            e.stopPropagation();
+            this.blur();
+            break;
         }
       }
 
-      /*
-       * @overwrite
-       */
       _inputChanged(input) {
-        if (input !== undefined) {
-          this._reflectPropertyToValue(input);
+        // test if value is set and if needed set input to default
+        if (this._isSet(input) === false && this.default !== undefined) {
+          this.input = this.default;
+          return;
         }
         if (this.autoResize) {
           this._debouncedComputeWidth();
         }
       }
 
-      _defaultChanged(def) {
-        if (!this.input && def) {
-          this.input = def;
-        }
+      _valueChanged(value) {
+        super._valueChanged(value);
+        // always update the input
+        this._updateInput();
       }
 
-      _checkInput(e) {
-        this._inputChanged(this.input || '');
+      _confirmInput(e) {
+        // update the value, when input validates
+        if (this._validate(this.input)) {
+          this.value = this.input;
+        } else {
+          // else reset the input to value
+          this.input = this.value;
+        }
         this._debouncedComputeWidth();
         e && e.stopPropagation && e.stopPropagation();
       }
 
-      _updateValue(e) {
-        if (this.value !== undefined) {
-          this._reflectValueToProperty(this.value);
-        }
+      _updateInput(e) {
+        this.input = this.value;
         this._debouncedComputeWidth();
         e && e.stopPropagation && e.stopPropagation();
       }
 
       _computeMinWidth() {
-        if (this._minWidthComputionJob) {
-          clearTimeout(this._minWidthComputionJob);
-          this._minWidthComputionJob = null;
+        const def = this.default || '',
+          placeholder = this.placeholder || '',
+          minlength = this.minlength || 1,
+          charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // to compute a random string for minlength to estemate usage of space
+        let minlengthString = '';
+        for (let i = 0; i < minlength; i++) {
+          minlengthString += charset.charAt(Math.floor(Math.random() * charset.length));
         }
-
-        this._minWidthComputionJob = setTimeout(() => {
-          const def = this.default || '',
-            placeholder = this.placeholder || '',
-            minlength = this.minlength || 1,
-            charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // to compute a random string for minlength
-          let minlengthString = '';
-          for (let i = 0; i < minlength; i++) {
-            minlengthString += charset.charAt(Math.floor(Math.random() * charset.length));
-          }
-          this._minWidthString = (this.noAutoWidth ? [minlengthString] : [def, minlengthString]).reduce( (acc, curr) => {
-            return curr.length > acc.length ? curr : acc;
-          }, placeholder);
-        }, 0);
+        this._minWidthString = [placeholder, minlengthString].reduce( (acc, curr) => {
+          return curr.length > acc.length ? curr : acc;
+        }, def);
       }
 
       /**
@@ -337,6 +309,23 @@
 
       _computeWidth() {
         this.$.input.style.width = `${this.$.size.getBoundingClientRect().width}px`;
+      }
+
+      /**
+       * focus the input
+       */
+      focus(e) {
+        super.focus(e);
+        this.$.input.focus();
+        this.$.input.scrollIntoViewIfNeeded && this.$.input.scrollIntoViewIfNeeded();
+      }
+
+      /**
+       * focus the input
+       */
+      blur(e) {
+        super.blur(e);
+        this.$.input.blur();
       }
 
     }

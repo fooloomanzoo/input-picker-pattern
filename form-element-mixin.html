@@ -12,21 +12,10 @@
       static get properties() {
         return {
           /**
-           * required attribute
+           * name of the input
            */
-          required: {
-            type: Boolean,
-            reflectToAttribute: true,
-            notify: true
-          },
-
-          /**
-           * required attribute
-           */
-          invalid: {
-            type: Boolean,
-            reflectToAttribute: true,
-            notify: true
+          name: {
+            type: String
           },
 
           /**
@@ -39,26 +28,12 @@
           },
 
           /**
-           * name of the input
+           * required attribute
            */
-          name: {
-            type: String
-          },
-
-          /**
-           * value of the input
-           */
-          value: {
-            type: Object,
-            notify: true
-          },
-
-          /**
-           * is true when the value is not undefined
-           */
-          _valueIsSet: {
+          required: {
             type: Boolean,
-            value: false
+            reflectToAttribute: true,
+            notify: true
           },
 
           /**
@@ -70,61 +45,49 @@
           },
 
           /**
-           * default value of the input
+           * required attribute
+           */
+          invalid: {
+            type: Boolean,
+            readOnly: true,
+            reflectToAttribute: true,
+            notify: true,
+            value: false
+          },
+
+          /**
+           * is true when the value is not undefined
+           */
+          _valueIsSet: {
+            type: Boolean,
+            readOnly: true,
+            value: false
+          },
+
+          /**
+           * default value of the value, when it does not validate
            */
           default: {
-            type: Object
+            type: Object,
+            observer: '_defaultChanged'
+          },
+
+          /**
+           * value of the input
+           */
+          value: {
+            type: Object,
+            notify: true
           }
         }
       }
 
       static get observers() {
         return [
-          '_computeInvalid(required, value)',
+          '_computeInvalid(value, required)',
           '_computeValueIsSet(value)',
-          '_defaultChanged(default)'
+          '_valueChanged(value)'
         ]
-      }
-
-      connectedCallback() {
-        super.connectedCallback();
-        this._ensureAttribute('tabindex', 0);
-        // console.log(this.propertyForValue, this[this.propertyForValue], this.value);
-        // if (this.propertyForValue !== undefined) {
-        //   if (this.value !== undefined) {
-        //     this.set(this.propertyForValue, this.value);
-        //   } else if (this[this.propertyForValue] !== undefined) {
-        //     this.set('value', this[this.propertyForValue]);
-        //   }
-        // }
-      }
-
-      _computeInvalid(required, value) {
-        this.invalid = Boolean(required && !value);
-      }
-
-      _computeValueIsSet(value) {
-        this._valueIsSet = value !== undefined;
-      }
-
-      _defaultChanged(def) {
-        super._defaultChanged && super._defaultChanged(def);
-        if (def && this.value === undefined) {
-          let toSet = { value: def };
-          if (this.propertyForValue) {
-            toSet[this.propertyForValue] = def;
-          }
-          setTimeout( () => {
-            this.setProperties(toSet);
-          }, 0);
-        }
-      }
-
-      /**
-       * validates the input for iron-form
-       */
-      validate() {
-        return !this.invalid;
       }
 
       /**
@@ -139,6 +102,70 @@
           this.shadowRoot.appendChild(dom);
         }
         return this.shadowRoot;
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this._ensureAttribute('tabindex', 0);
+      }
+
+      /**
+       * validates the input for iron-form
+       */
+      validate() {
+        return !this.invalid;
+      }
+
+      /**
+       * defines whether the value is set
+       * @param  {[Object]} value
+       */
+      _computeInvalid(value) {
+        this._setInvalid(!this._validate(value));
+      }
+
+      /**
+       * @overwrite
+       * validate a value (when required)
+       * @param  {Object} value      value to validate
+       * @param  {Boolean} required  whether the value is required
+       * @return {Boolean}           true, if the value is valid
+       */
+      _validate(value) {
+        return Boolean(!this.required || this._isSet(value));
+      }
+
+      /**
+       * defines whether the value is set
+       * @param  {[Object]} value
+       */
+      _computeValueIsSet(value) {
+        this._set_valueIsSet(this._isSet(value));
+      }
+
+      /**
+       * @overwrite
+       * defines wheather a value is set correctly
+       * @param  {Object} value      value to test
+       * @return {Boolean}           true, if the value is set
+       */
+      _isSet(value) {
+        return !(value === undefined || value === null || value === '');
+      }
+
+      _valueChanged(value) {
+        // test if value is set and if needed set value to default
+        if (this._valueIsSet === false && this.default !== undefined) {
+          this.value = this.default;
+        }
+      }
+
+      _defaultChanged(def, oldDef) {
+        super._defaultChanged && super._defaultChanged(def, oldDef);
+        if (!this._valueIsSet) {
+          // set value to default
+          this.value = def;
+        }
       }
 
       _createReflectPropertyToValueObserver(prop) {
@@ -157,8 +184,8 @@
         this.set('value', this[this.propertyForValue]);
       }
 
-      _reflectValueToProperty() {
-        this.set(this.propertyForValue, this.value);
+      _reflectValueToProperty(value) {
+        this.set(this.propertyForValue, value);
       }
     }
   }

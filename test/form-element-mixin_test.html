@@ -27,6 +27,12 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="DefaultValue">
+      <template>
+        <basic-form-element default="abc"></basic-form-element>
+      </template>
+    </test-fixture>
+
     <test-fixture id="ChangePropertyForValue">
       <template>
         <div>
@@ -80,21 +86,124 @@
 
         test('instantiating the element with default properties works', done => {
           assert.isUndefined(element.required, 'required is not defined');
-          assert.isUndefined(element.invalid, 'invalid is not defined');
+          assert.isFalse(element.invalid, 'invalid is false');
           assert.isUndefined(element.disabled, 'disabled is not defined');
           assert.isUndefined(element.name, 'name is not defined');
           assert.isUndefined(element.value, 'value is not defined');
           assert.isUndefined(element.propertyForValue, 'propertyForValue is not defined');
           assert.isUndefined(element.default, 'default is not defined');
-          assert.isFalse(element._valueIsSet, '_valueIsSet is not defined');
+          assert.isFalse(element._valueIsSet, '_valueIsSet is false');
+          done();
+        });
+
+        test('custom "_isSet"', done => {
+          element._isSet = (value) => {
+            return value !== false;
+          }
+          assert.isFalse(element._valueIsSet, '_valueIsSet is false');
+          assert.isUndefined(element.value, 'value is not defined');
+          element.value = '';
+          assert.isTrue(element._valueIsSet, '_valueIsSet is true');
+          assert.equal(element.value, '', 'value is set');
+          element.value = 0;
+          assert.isTrue(element._valueIsSet, '_valueIsSet is true');
+          assert.equal(element.value, 0, 'value is set');
+          element.value = false;
+          assert.isFalse(element._valueIsSet, '_valueIsSet is true');
+          assert.equal(element.value, false, 'value is set');
+          done();
+        });
+
+        test('custom "_validate"', done => {
+          element._validate = (value) => {
+            return value !== 'abc';
+          }
+          assert.isFalse(element.invalid, 'invalid is false');
+          assert.isFalse(element._valueIsSet, '_valueIsSet is false');
+          assert.isUndefined(element.value, 'value is not defined');
+          element.value = '';
+          assert.isFalse(element.invalid, 'invalid is false');
+          assert.isFalse(element._valueIsSet, '_valueIsSet is false');
+          assert.equal(element.value, '', 'value is set');
+          element.value = 'ab';
+          assert.isFalse(element.invalid, 'invalid is false');
+          assert.isTrue(element._valueIsSet, '_valueIsSet is true');
+          assert.equal(element.value, 'ab', 'value is set');
+          element.value = 'abc';
+          assert.isTrue(element.invalid, 'invalid is true');
+          assert.isTrue(element._valueIsSet, '_valueIsSet is true');
+          assert.equal(element.value, 'abc', 'value is set');
           done();
         });
       });
 
       suite('changing properties', function() {
-        test('setting a property on the element works', function(done) {
-          let element = fixture('ChangedPropertyTestFixture');
+        let element;
+
+        setup(function() {
+          element = fixture('ChangedPropertyTestFixture');
+        });
+
+        test('setting a value on the element works', function(done) {
           assert.equal(element.value, 'abc', 'property is set');
+          done();
+        });
+
+        test('unsetting works', function(done) {
+          element.value = '';
+          assert.equal(element.value, '', 'value is set');
+          done();
+        });
+
+        test('resetting works', function(done) {
+          element.value = undefined;
+          assert.isUndefined(element.value, 'value is set');
+          done();
+        });
+      });
+
+      suite('default value', function() {
+        let element;
+
+        setup(function() {
+          element = fixture('DefaultValue');
+        });
+
+        test('value is set to default', function(done) {
+          assert.equal(element.value, element.default);
+          done();
+        });
+
+        test('set value to 0', function(done) {
+          element.value = 0;
+          assert.equal(element.value, 0);
+          done();
+        });
+
+        test('set value to false', function(done) {
+          element.value = false;
+          assert.equal(element.value, false);
+          done();
+        });
+
+        test('unsetting value', function(done) {
+          element.value = '';
+          assert.equal(element.value, element.default);
+          element.value = undefined;
+          assert.equal(element.value, element.default);
+          element.value = null;
+          assert.equal(element.value, element.default);
+          done();
+        });
+
+        test('resetting default', function(done) {
+          element.required = true;
+          let value = element.value;
+          element.default = undefined;
+          assert.isUndefined(element.default);
+          assert.equal(element.value, value);
+          element.value = undefined;
+          assert.isUndefined(element.value);
           done();
         });
       });
@@ -133,6 +242,14 @@
           done();
         });
 
+        test('unsetting initial property', function(done) {
+          let element = f.querySelector('#set-property-reflect-value');
+          element.custom1 = undefined;
+          assert.isUndefined(element.custom1,  'property does not change');
+          assert.isUndefined(element.value, 'value is set');
+          done();
+        });
+
         test('initial property, propertyForValue changes', function(done) {
           let element = f.querySelector('#set-property-reflect-value');
           element.propertyForValue = 'custom2';
@@ -154,6 +271,14 @@
           let element = f.querySelector('#set-value-reflect-property');
           assert.equal(element.custom1, 'abc', 'property is set');
           assert.equal(element.value, 'abc', 'value does not change');
+          done();
+        });
+
+        test('unsetting initial value', function(done) {
+          let element = f.querySelector('#set-value-reflect-property');
+          element.value = undefined;
+          assert.isUndefined(element.custom1, 'property is set');
+          assert.isUndefined(element.value, 'value does not change');
           done();
         });
 
@@ -273,7 +398,6 @@
           // Wait one tick for observeNodes.
           Polymer.Base.async(function() {
             form.submit();
-            console.log(form);
             server.respond();
           });
         });
