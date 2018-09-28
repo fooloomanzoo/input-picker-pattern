@@ -3,7 +3,41 @@
 
 <script>
   /**
-   * Mixin to extend an element that includes a native input to be wrapped. The pattern is using `input-shared-style` to unify the style between different inputs and should resize according to its properties and input.
+   * resize the width of a node by a relative node
+   * @param  {Node} node      the node to apply the sizing attribute of the relative node to the width
+   * @param  {Node} relative  the node to get the sizing information from
+   * @param  {String} attrToSet the attribute to set on the node
+   */
+  function resizeWidthByRelative(node, relative, attrToSet) {
+    // measure the width of the test element
+    let width = relative.getBoundingClientRect().width;
+    if (width !== 0) {
+      node.style[attrToSet] = `${width}px`;
+    } else {
+      // if that fails, it could be, that the element is hidden
+      // therefore clone the node to document level and add some basic styles, that could define the elements's width
+      const relativeClone = relative.cloneNode(true);
+      const style = document.defaultView.getComputedStyle(relative, '');
+      ['font-family', 'font-size', 'font-weight', 'font-style', 'min-width', 'max-width'].reduce(
+        ( accumulator, currentValue) => {
+          if (currentValue && style[currentValue]) {
+            relativeClone.style[currentValue] = style[currentValue];
+          }
+        }, 'letter-spacing');
+      relativeClone.style.display = 'inline-flex';
+      relativeClone.style.visibility = 'hidden';
+      relativeClone.style.position = 'fixed';
+      relativeClone.style.left = '0';
+      relativeClone.style.top = '0';
+      document.body.appendChild(relativeClone);
+      width = relativeClone.getBoundingClientRect().width;
+      relativeClone.parentElement.removeChild(relativeClone);
+      node.style[attrToSet] = `${width}px`;
+    }
+  }
+
+  /**
+   * Mixin to extend an element that includes a native input to be wrapped to enable content-based resizing and validation. The pattern is using `input-shared-style` to unify the style between different inputs and should resize according to its properties and input.
    *
    * @appliesMixin FormElementMixin
    *
@@ -22,7 +56,7 @@
         this._updateInput = this._updateInput.bind(this);
         this._confirmInput = this._confirmInput.bind(this);
         this._checkKeycode = this._checkKeycode.bind(this);
-        this._computeWidth = this._computeWidth.bind(this);
+        this._resizeWidth = this._resizeWidth.bind(this);
       }
 
       static get template() {
@@ -32,7 +66,7 @@
           </style>
           ${this.inputTemplate}
           <div id="size">[[input]]</div>
-          <div id="minsize">[[_minWidthString]]</div>
+          <div id="minlength">[[_minlengthString]]</div>
         `;
       }
 
@@ -43,12 +77,11 @@
       static get styleTemplate() {
         return `
           ${super.styleTemplate || ''}
-          :host {
-            display: inline-flex;
-            justify-content: center;
+          #input {
             box-sizing: content-box;
+            width: 0;
           }
-          #minsize,
+          #minlength,
           #size {
             position: fixed;
             top: 0; left: 0; right: auto; bottom: auto;
@@ -57,21 +90,14 @@
             font-weight: inherit;
             font-style: inherit;
             outline: none;
-            line-height: normal;
             box-sizing: content-box;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-            padding: 0 !important;
+            padding: 0;
             margin: 0;
             min-width: inherit;
             max-width: inherit;
-            border: var(--input-border-width, thin) solid transparent;
+            border-width: 0;
             @apply --input-style;
-          }
-          #input {
-            box-sizing: content-box;
-            width: 0;
+            visibility: hidden;
           }
         `;
       }
@@ -132,21 +158,14 @@
            */
           autoResize: {
             type: Boolean,
-            observer: '_debouncedComputeWidth'
+            observer: '_debouncedResizeWidth'
           },
 
           /**
            * string that is used to compute the minimal width of the input
            */
-          _minWidthString: {
+          _minlengthString: {
             type: String
-          },
-
-          /**
-           * if `true`, the input is not displayed
-           */
-          hidden: {
-            type: Boolean
           }
         }
       }
@@ -155,15 +174,17 @@
         return [
           '_computeInvalid(input, required)',
           '_computeValueIsSet(input)',
-          '_computeMinWidth(minlength, default, placeholder)',
-          'resize(_minWidthString, hidden)'
+          '_computeMinlengthString(minlength, default, placeholder)',
+          'resize(_minlengthString)'
         ]
       }
 
       connectedCallback() {
         super.connectedCallback();
         this._addEventListeners();
-        setTimeout(this.resize, 0);
+        if (this.input && this.input.length) {
+          this._debouncedResizeWidth();
+        }
       }
 
       disconnectedCallback() {
@@ -209,7 +230,7 @@
           return;
         }
         if (this.autoResize) {
-          this._debouncedComputeWidth();
+          this._debouncedResizeWidth();
         }
       }
 
@@ -219,6 +240,9 @@
         this._updateInput();
       }
 
+      /**
+       * update manually the value with the native input
+       */
       _confirmInput(e) {
         // update the value, when input validates
         if (this._validate(this.input)) {
@@ -227,88 +251,62 @@
           // else reset the input to value
           this.input = this.value;
         }
-        this._debouncedComputeWidth();
+        this._debouncedResizeWidth();
         e && e.stopPropagation && e.stopPropagation();
       }
 
+      /**
+       * update manually the native input with the given value
+       */
       _updateInput(e) {
         this.input = this.value;
-        this._debouncedComputeWidth();
+        this._debouncedResizeWidth();
         e && e.stopPropagation && e.stopPropagation();
       }
 
-      _computeMinWidth() {
+      /**
+       * compute the minimal string the input is sized for
+       */
+      _computeMinlengthString() {
         const def = this.default || '',
           placeholder = this.placeholder || '',
-          minlength = this.minlength || 1,
+          minlength = this.minlength < 1 ? 1 : this.minlength,
           charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // to compute a random string for minlength to estemate usage of space
         let minlengthString = '';
         for (let i = 0; i < minlength; i++) {
           minlengthString += charset.charAt(Math.floor(Math.random() * charset.length));
         }
-        this._minWidthString = [placeholder, minlengthString].reduce( (acc, curr) => {
+        this._minlengthString = [placeholder, minlengthString].reduce( (acc, curr) => {
           return curr.length > acc.length ? curr : acc;
         }, def);
       }
 
       /**
-       * called automatically when static `_minWidthString` changes, but can called manually to resize the minwidth of the input, when the input is for example initially hidden
+       * called automatically when static `_minlengthString` or visibilityState changes, but can be called manually to resize the minwidth of the input, when the input is for example initially hidden
        */
       resize() {
-        if (!this._minWidthString || this.hidden || this._minSizeJob) {
-          return;
+        // compute minimal width of the input
+        if (this._minSizeJob) {
+          clearTimeout(this._minSizeJob);
         }
-        this._minSizeJob = requestAnimationFrame( () => {
-          let width = this.$.minsize.getBoundingClientRect().width;
-          // measure the width of the test element
-          if (width !== 0) {
-            this.$.input.style.minWidth = `${width}px`;
-            this._debouncedComputeWidth();
-            this._minSizeJob = null;
-          } else {
-            // if that fails, clone the test node to document level and add some basic styles, that could define the elements's width
-            const minsizeClone = this.$.minsize.cloneNode(true);
-            const style = document.defaultView.getComputedStyle(this.$.minsize, '');
-            ['font-family', 'font-size', 'font-weight', 'font-style', 'letter-spacing', 'min-width', 'max-width'].reduce(
-              ( accumulator, currentValue) => {
-                if (currentValue && style[currentValue]) {
-                  minsizeClone.style[currentValue] = style[currentValue];
-                }
-              }, 'font-family');
-            minsizeClone.style.display = 'inline-flex';
-            minsizeClone.style.opacity = '0';
-            minsizeClone.style.position = 'fixed';
-            minsizeClone.style.left = '0';
-            minsizeClone.style.top = '0';
-            minsizeClone.style.border = 'thin solid transparent';
-
-            document.body.appendChild(minsizeClone);
-            requestAnimationFrame( () => {
-              width = minsizeClone.getBoundingClientRect().width;
-              minsizeClone.parentElement.removeChild(minsizeClone);
-              this._minSizeJob = null;
-              if (width !== 0) {
-                this.$.input.style.minWidth = `${width}px`;
-                this._debouncedComputeWidth();
-              } else {
-                // if it fails again, retry
-                this.resize();
-              }
-            });
-          }
-        })
-
+        if (this._minlengthString) {
+          this._minSizeJob = setTimeout(resizeWidthByRelative(this.$.input, this.$.minlength, 'minWidth'), 0);
+        }
+        // compute width of the input
+        if (this.input && this.input.length) {
+          this._debouncedResizeWidth();
+        }
       }
 
-      _debouncedComputeWidth() {
+      _debouncedResizeWidth() {
         if (this._activeResizeJob) {
           clearTimeout(this._activeResizeJob);
         }
-        this._activeResizeJob = setTimeout(this._computeWidth, 0);
+        this._activeResizeJob = setTimeout(this._resizeWidth, 0);
       }
 
-      _computeWidth() {
-        this.$.input.style.width = `${this.$.size.getBoundingClientRect().width}px`;
+      _resizeWidth() {
+        resizeWidthByRelative(this.$.input, this.$.size, 'width');
       }
 
       /**

@@ -3,7 +3,6 @@ module.exports = {
   persistent: true,
   plugins: {
     local: {
-      skipSeleniumInstall: true,
       browsers: ["chrome", "firefox"]
     },
     sauce: false

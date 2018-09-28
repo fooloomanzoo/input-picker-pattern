@@ -20,6 +20,16 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="cancel">
+      <template>
+        <div>
+          <basic-input-picker-element id="basic"></basic-input-picker-element>
+          <basic-input-picker-element id="esc" no-cancel-on-esc-key></basic-input-picker-element>
+          <basic-input-picker-element id="outsideclick" no-cancel-on-outside-click></basic-input-picker-element>
+        </div>
+      </template>
+    </test-fixture>
+
     <script>
       suite('basic', function() {
         let element;
@@ -29,7 +39,29 @@
         });
 
         test('instantiating the element with default properties works', done => {
-          assert.isNotOk(element.opened, 'element is not opened');
+          // form-element properties
+          assert.isUndefined(element.required, 'required is not defined');
+          assert.isFalse(element.invalid, 'invalid is false');
+          assert.isUndefined(element.disabled, 'disabled is not defined');
+          assert.isUndefined(element.name, 'name is not defined');
+          assert.isUndefined(element.value, 'value is not defined');
+          assert.isUndefined(element.default, 'default is not defined');
+          assert.isFalse(element._valueIsSet, '_valueIsSet is not defined');
+          assert.isUndefined(element.propertyForValue, 'propertyForValue is defined');
+          // picker properties
+          assert.isFalse(element.native);
+          assert.isFalse(element.autoConfirm);
+          assert.isFalse(element.noCancelOnEscKey);
+          assert.isFalse(element.noCancelOnOutsideClick);
+          assert.isFalse(element.keepMultiplePickersOpen);
+          assert.isUndefined(element.noTip);
+          assert.isUndefined(element.nativeOnMobile);
+          assert.isUndefined(element.confirmedValue);
+          assert.isDefined(element.mobileUserAgentTestString);
+          assert.isDefined(element.horizontalAlign);
+          assert.isDefined(element.verticalAlign);
+          assert.isNotOk(element.opened);
+          assert.isTrue(element._hasNative);
           done();
         });
       });

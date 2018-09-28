@@ -11,6 +11,7 @@
     <script src="../../iron-test-helpers/mock-interactions.js"></script>
 
     <link rel="import" href="elements/basic-input-element.html">
+    <link rel="import" href="../overlay-element.html">
   </head>
   <body>
 
@@ -52,6 +53,22 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="Sizing">
+      <template>
+        <div>
+          <basic-input-element id="with-minlength" placeholder="abc"></basic-input-element>
+          <basic-input-element id="hidden-minlength" placeholder="abc" style="display:none"></basic-input-element>
+          <basic-input-element id="with-value" value="abc"></basic-input-element>
+          <basic-input-element id="hidden-value" value="abc" style="display:none"></basic-input-element>
+          <basic-input-element id="autoresize" auto-resize></basic-input-element>
+          <overlay-element id="overlay">
+            <basic-input-element id="inner-with-placeholder" placeholder="abc"></basic-input-element>
+            <basic-input-element id="inner-with-value" value="abc"></basic-input-element>
+          </overlay-element>
+        </div>
+      </template>
+    </test-fixture>
+
     <script>
       suite('basic', function() {
         let element;
@@ -77,7 +94,7 @@
           assert.isUndefined(element.minlength, 'minlength is not defined');
           assert.isUndefined(element.noAutoWidth, 'noAutoWidth is not defined');
           assert.isUndefined(element.autoResize, 'autoResize is not defined');
-          assert.isUndefined(element._minWidthString, '_minWidthString is not defined');
+          assert.isUndefined(element._minlengthString, '_minlengthString is not defined');
           assert.isUndefined(element.hidden, 'hidden is not defined');
           done();
         });
@@ -325,33 +342,194 @@
 
         test('minimal length', done => {
           let element = f.querySelector('#min-length');
-          assert.equal(element._minWidthString.length, 3);
+          assert.equal(element._minlengthString.length, 3);
           done();
         });
 
         test('placeholder', done => {
           let element = f.querySelector('#placeholder');
-          assert.equal(element._minWidthString.length, 3);
+          assert.equal(element._minlengthString.length, 3);
           done();
         });
 
         test('default', done => {
           let element = f.querySelector('#default');
-          assert.equal(element._minWidthString.length, 3);
+          assert.equal(element._minlengthString.length, 3);
           done();
         });
 
         test('minlength and placeholder', done => {
           let element = f.querySelector('#min-length-and-placeholder');
-          assert.equal(element._minWidthString, element.placeholder, 'should prefer placeholder');
+          assert.equal(element._minlengthString, element.placeholder, 'should prefer placeholder');
           done();
         });
 
         test('minlength, placeholder and default', done => {
           let element = f.querySelector('#min-length-and-placeholder-and-default');
-          assert.equal(element._minWidthString, element.default, 'should prefer default');
+          assert.equal(element._minlengthString, element.default, 'should prefer default');
           done();
         });
+      });
+
+      suite('sizing', function() {
+        let f;
+
+        setup(function() {
+          f = fixture('Sizing');
+        });
+
+        test('default sizing with minlength', done => {
+          let element = f.querySelector('#with-minlength');
+          // Wait one tick for observeNodes.
+          setTimeout(function() {
+            assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
+            assert.notEqual(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
+            assert.equal(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+            assert.notEqual(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+            let beforeWidth = element.$.input.getBoundingClientRect().width;
+            element.value = element._minlengthString;
+            setTimeout(function() {
+              assert.equal(element.$.input.getBoundingClientRect().width, beforeWidth, 'element\'s stay the same' + beforeWidth);
+              done();
+            }, 0);
+          }, 0);
+        });
+
+        test('default sizing with value', done => {
+          let element = f.querySelector('#with-value');
+          // Wait one tick for observeNodes.
+          setTimeout(function() {
+            assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
+            assert.notEqual(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
+            assert.notEqual(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+            assert.equal(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+            done();
+          }, 0);
+        });
+
+        test('sizing of hidden elements with minlength', done => {
+          let element = f.querySelector('#hidden-minlength');
+          // Wait one tick for observeNodes.
+          setTimeout(function() {
+            let elementMinWidth = document.defaultView.getComputedStyle(element.$.input).minWidth;
+            assert.equal(element.getBoundingClientRect().width, 0, 'element\'s width');
+            assert.equal(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
+            assert.equal(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+            assert.equal(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+            assert.notEqual(elementMinWidth, '0px', 'element\'s \'input\' minWidth');
+            assert.notEqual(elementMinWidth, 'auto', 'element\'s \'input\' minWidth');
+            assert.notEqual(elementMinWidth, '', 'element\'s \'input\' minWidth');
+            done();
+          }, 0);
+        });
+
+        test('sizing of hidden elements with value', done => {
+          let element = f.querySelector('#hidden-value');
+          // Wait one tick for observeNodes.
+          setTimeout(function() {
+            let elementWidth = document.defaultView.getComputedStyle(element.$.input).width;
+            assert.equal(element.getBoundingClientRect().width, 0, 'element\'s width');
+            assert.equal(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
+            assert.equal(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+            assert.equal(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+            assert.notEqual(elementWidth, '0px', 'element\'s \'input\' minWidth');
+            assert.notEqual(elementWidth, 'auto', 'element\'s \'input\' minWidth');
+            assert.notEqual(elementWidth, '', 'element\'s \'input\' minWidth');
+            done();
+          }, 0);
+        });
+
+        test('sizing of hidden elements that are asynchronically shown with minlength', done => {
+          let elementShown = f.querySelector('#with-minlength');
+          let element = f.querySelector('#hidden-minlength');
+          assert.equal(element.style.display, 'none');
+          element.style.display = '';
+          // Wait one tick for observeNodes.
+          setTimeout(function() {
+            assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
+            assert.notEqual(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
+            assert.equal(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+            assert.notEqual(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+            assert.equal(element.getBoundingClientRect().width, elementShown.getBoundingClientRect().width, 'element\'s width');
+            assert.equal(document.defaultView.getComputedStyle(element.$.input).minWidth, document.defaultView.getComputedStyle(elementShown.$.input).minWidth, 'element\'s \'input\' minWidth');
+            done();
+          }, 0);
+        });
+
+        test('sizing of hidden elements that are asynchronically shown with value', done => {
+          let elementShown = f.querySelector('#with-value');
+          let element = f.querySelector('#hidden-value');
+          assert.equal(element.style.display, 'none');
+          element.style.display = '';
+          // Wait one tick for observeNodes.
+          setTimeout(function() {
+            assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
+            assert.notEqual(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
+            assert.notEqual(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+            assert.equal(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+            assert.equal(element.getBoundingClientRect().width, elementShown.getBoundingClientRect().width, 'element\'s width');
+            assert.equal(document.defaultView.getComputedStyle(element.$.input).width, document.defaultView.getComputedStyle(elementShown.$.input).width, 'element\'s \'input\' width');
+            done();
+          }, 0);
+        });
+
+        test('resizing on changing value', done => {
+          let element = f.querySelector('#with-minlength');
+          // Wait one tick for observeNodes.
+          setTimeout(function() {
+            let beforeWidth = element.getBoundingClientRect().width;
+            element.value = element._minlengthString + 'abc';
+            // Wait one tick for observeNodes.
+            setTimeout(function() {
+              assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
+              done();
+            }, 0);
+          }, 0);
+        });
+
+        test('resizing on confirming input', done => {
+          let element = f.querySelector('#with-minlength');
+          // Wait one tick for observeNodes.
+          setTimeout(function() {
+            let beforeWidth = element.getBoundingClientRect().width;
+            assert.equal(beforeWidth, element.getBoundingClientRect().width);
+            element.input = element._minlengthString + 'abc';
+            element._confirmInput();
+            setTimeout(function() {
+              assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
+              done();
+            }, 0);
+          }, 0);
+        });
+
+        test('autoresize', done => {
+          let element = f.querySelector('#autoresize');
+          let beforeWidth = element.getBoundingClientRect().width;
+          element.input = element._minlengthString + 'abc';
+          // Wait one tick for observeNodes.
+          setTimeout(function() {
+            assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
+            done();
+          }, 0);
+        });
+
+        test('size in an overlay-element', done => {
+          let element = f.querySelector('#with-minlength');
+          let element_1 = f.querySelector('#inner-with-placeholder');
+          let element_2 = f.querySelector('#inner-with-value');
+          let overlay = f.querySelector('#overlay');
+          // Wait one tick for observeNodes.
+          setTimeout(function() {
+            overlay.opened = true;
+            setTimeout(function() {
+              let outsideWidth = element.getBoundingClientRect().width;
+              assert.equal(outsideWidth, element_1.getBoundingClientRect().width);
+              assert.equal(outsideWidth, element_2.getBoundingClientRect().width);
+              done();
+            }, 100);
+          }, 0);
+        });
+
       });
     </script>
 

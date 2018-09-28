@@ -28,9 +28,9 @@
        * @type {string}
        */
       static get hasNative() {
-        const inputDate = document.createElement('input');
-        inputDate.setAttribute('type', `${this.expectedNativeInputType}`);
-        this._hasNative = inputDate.type === `${this.expectedNativeInputType}`;
+        const testInput = document.createElement('input');
+        testInput.setAttribute('type', `${this.expectedNativeInputType}`);
+        this._hasNative = testInput.type === `${this.expectedNativeInputType}`;
         return this._hasNative;
       }
 

@@ -7,6 +7,9 @@
       static get is() {
         return 'basic-input-picker-element';
       }
+      static get expectedNativeInputType() {
+        return 'number';
+      }
     }
     window.customElements.define(BasicInputPickerElement.is, BasicInputPickerElement);
   </script>
