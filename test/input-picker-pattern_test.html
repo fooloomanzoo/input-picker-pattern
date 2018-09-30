@@ -20,6 +20,16 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="confirm">
+      <template>
+        <div>
+          <basic-input-picker-element id="value" value="333"></basic-input-picker-element>
+          <basic-input-picker-element id="confirmed-value" confirmed-value></basic-input-picker-element>
+          <basic-input-picker-element id="auto-confirm" auto-confirm value="123"></basic-input-picker-element>
+        </div>
+      </template>
+    </test-fixture>
+
     <test-fixture id="cancel">
       <template>
         <div>
@@ -31,23 +41,31 @@
     </test-fixture>
 
     <script>
+      const specifier = new URLSearchParams(window.location.search).get('specifier');
+      const url = new URLSearchParams(window.location.search).get('url');
+
+      // applying suites to another element (e.g. when another element depends on the the same mixin)
+      if (specifier) {
+        suite(`Suite for ${specifier.toUpperCase()}`, function() {
+          test('loading dependencies', done => {
+            Polymer.importHref(url, e => done(), e => {
+              console.warn(`failed to load: ${url}`)
+            })
+          })
+        })
+      }
+
       suite('basic', function() {
         let element;
 
         setup(function() {
+          if (specifier) {
+            replace('basic-input-picker-element').with(specifier)
+          }
           element = fixture('basic');
         });
 
         test('instantiating the element with default properties works', done => {
-          // form-element properties
-          assert.isUndefined(element.required, 'required is not defined');
-          assert.isFalse(element.invalid, 'invalid is false');
-          assert.isUndefined(element.disabled, 'disabled is not defined');
-          assert.isUndefined(element.name, 'name is not defined');
-          assert.isUndefined(element.value, 'value is not defined');
-          assert.isUndefined(element.default, 'default is not defined');
-          assert.isFalse(element._valueIsSet, '_valueIsSet is not defined');
-          assert.isUndefined(element.propertyForValue, 'propertyForValue is defined');
           // picker properties
           assert.isFalse(element.native);
           assert.isFalse(element.autoConfirm);
@@ -61,11 +79,47 @@
           assert.isDefined(element.horizontalAlign);
           assert.isDefined(element.verticalAlign);
           assert.isNotOk(element.opened);
-          assert.isTrue(element._hasNative);
+          assert.isTrue(BasicInputPickerElement._hasNative);
           done();
         });
       });
-      // TODO: extend tests
+
+      suite('confirm', function() {
+        let f, element_value, element_confirmed_value, element_auto;
+
+        setup(function() {
+          if (specifier) {
+            replace('basic-input-picker-element').with(specifier)
+          }
+          f = fixture('confirm');
+          element_value = f.querySelector('#value');
+          element_confirmed_value = f.querySelector('#confirmed-value');
+          element_auto = f.querySelector('#auto-confirm');
+        });
+
+        test('setting value not does not confirm the picker', done => {
+          element_value.value = 123;
+          done();
+        });
+
+        test('confirming by calling function', done => {
+        element_value = f.querySelector('#value');
+          console.log(element_value.value);
+          done();
+        });
+
+        test('confirming by clicking button', done => {
+          done();
+        });
+
+        test('resetting by calling function', done => {
+          done();
+        });
+
+        test('resetting by clicking button', done => {
+          done();
+        });
+      });
     </script>
 
   </body>

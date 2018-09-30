@@ -10,6 +10,12 @@
       static get expectedNativeInputType() {
         return 'number';
       }
+      static get properties() {
+        return {
+          custom1: String,
+          custom2: String
+        };
+      }
     }
     window.customElements.define(BasicInputPickerElement.is, BasicInputPickerElement);
   </script>

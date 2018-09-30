@@ -10,6 +10,12 @@
       static get template() {
         return `${this.pickerTemplate}`;
       }
+      static get properties() {
+        return {
+          custom1: String,
+          custom2: String
+        };
+      }
     }
     window.customElements.define(BasicOverlayPickerElement.is, BasicOverlayPickerElement);
   </script>

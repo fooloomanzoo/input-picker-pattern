@@ -15,6 +15,18 @@
   const InputPickerPattern = (superClass) => { // eslint-disable-line no-unused-vars
 
     return class extends Polymer.GestureEventListeners(FormElementMixin(superClass)) { // eslint-disable-line no-undef
+
+      constructor() {
+        super();
+        this._onPickerTransitionEnd = this._onPickerTransitionEnd.bind(this);
+        this._checkKeycode = this._checkKeycode.bind(this);
+        this._stopPropagation = this._stopPropagation.bind(this);
+        this.confirm = this.confirm.bind(this);
+        this.cancel = this.cancel.bind(this);
+        this.open = this.open.bind(this);
+        this.close = this.close.bind(this);
+        this.toggle = this.toggle.bind(this);
+      }
       /**
        * the expected input type, that should be polyfilled, if not available
        * @type {string}
@@ -88,6 +100,16 @@
       }
 
       /**
+       * template for native input element
+       * @type {string}
+       */
+      static get nativeInputTemplate() {
+        return `
+          <input class="native" type="${this.expectedNativeInputType}" hidden$="[[!native]]" disabled$="[[disabled]]" readonly="[[disabled]]" required="[[required]]" value="{{${this.nativeInputBinding || this.expectedNativeInputType}::input}}">
+        `;
+      }
+
+      /**
        * template for polyfilled input and picker
        * @type {string}
        */
@@ -98,6 +120,28 @@
           </div>
           ${this.pickerTemplate}
         `;
+      }
+
+      /**
+       * template for the replacement of the native input elements
+       * @type {string}
+       */
+      static get inputTemplate() {
+        return `${super.inputTemplate || ''}`;
+      }
+
+      /**
+       * template for the picker
+       * @type {string}
+       */
+      static get pickerTemplate() {
+        return `
+          <div id="picker" class="dropdown">
+            ${super.pickerTemplate || ''}
+            <div id="buttons">
+              ${this.buttonTemplate}
+            <div>
+          </div>`;
       }
 
       /**
@@ -118,37 +162,6 @@
 
       static get _iconConfirmTemplate() {
         return '<svg viewBox="0 0 24 24"><g><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></g></svg>';
-      }
-
-      /**
-       * template for native input element
-       * @type {string}
-       */
-      static get nativeInputTemplate() {
-        return `
-          <input class="native" type="${this.expectedNativeInputType}" hidden$="[[!native]]" disabled$="[[disabled]]" readonly="[[disabled]]" required="[[required]]" value="{{${this.nativeInputBinding || this.expectedNativeInputType}::input}}">
-        `;
-      }
-
-      /**
-       * template for the replacement of the native input elements
-       * @type {string}
-       */
-      static get inputTemplate() {
-        return `${super.inputTemplate || ''}`;
-      }
-
-      /**
-       * template for the picker
-       * @type {string}
-       */
-      static get pickerTemplate() {
-        return `
-          <div id="picker" class="dropdown">
-            <div id="buttons">
-              ${this.buttonTemplate}
-            <div>
-          </div>`;
       }
 
       static get properties() {
@@ -272,16 +285,12 @@
         return [
           '_valueChanged(value, autoConfirm)',
           '_confirmedValueChanged(confirmedValue)',
-          '_computeInvalid(required, confirmedValue)'
+          '_computeInvalid(confirmedValue, required)'
         ];
       }
 
       connectedCallback() {
         super.connectedCallback();
-        this._onPickerTransitionEnd = this._onPickerTransitionEnd.bind(this);
-        this._checkKeycode = this._checkKeycode.bind(this);
-        this._stopPropagation = this._stopPropagation.bind(this);
-        this.cancel = this.cancel.bind(this);
         this._addPickerTransitionEndListener();
         this._addKeyListener();
       }
@@ -392,6 +401,11 @@
         }
       }
 
+      validate() {
+        this.value = this.confirmedValue;
+        return super.validate();
+      }
+      
       /**
        * open the picker
        */
@@ -486,14 +500,13 @@
       }
 
       _valueChanged(value) {
-        if (value === undefined) {
+        super._valueChanged(value);
+        if (this._valueIsSet === false) {
           this._resetConfirmedValues();
-          return; // return, if resseting, so that the picker is not itself resetted
+          return; // return, if reseting, so that the picker is not itself resetted
         }
         if (this.autoConfirm || (this._hasNative && this.native)) {
-          setTimeout(() => {
-            this._setConfirmedValues();
-          }, 0);
+          this._setConfirmedValues();
         }
       }
 
@@ -503,11 +516,6 @@
           return;
         }
         this.value = confirmedValue;
-      }
-
-      validate() {
-        this.value = this.confirmedValue;
-        return super.validate();
       }
 
       _setConfirmedValues() {
@@ -531,12 +539,8 @@
 
       _defaultChanged(def) {
         super._defaultChanged(def);
-        if (def) {
-          setTimeout( () => {
-            if (this.value !== undefined) {
-              this._setConfirmedValues();
-            }
-          }, 0);
+        if (this._valueIsSet) {
+          this._setConfirmedValues();
         }
       }
     }

@@ -12,7 +12,7 @@
     // measure the width of the test element
     let width = relative.getBoundingClientRect().width;
     if (width !== 0) {
-      node.style[attrToSet] = `${width}px`;
+      node.style[attrToSet] = `${width.toFixed(1)}px`;
     } else {
       // if that fails, it could be, that the element is hidden
       // therefore clone the node to document level and add some basic styles, that could define the elements's width
@@ -24,7 +24,6 @@
             relativeClone.style[currentValue] = style[currentValue];
           }
         }, 'letter-spacing');
-      relativeClone.style.display = 'inline-flex';
       relativeClone.style.visibility = 'hidden';
       relativeClone.style.position = 'fixed';
       relativeClone.style.left = '0';
@@ -32,7 +31,7 @@
       document.body.appendChild(relativeClone);
       width = relativeClone.getBoundingClientRect().width;
       relativeClone.parentElement.removeChild(relativeClone);
-      node.style[attrToSet] = `${width}px`;
+      node.style[attrToSet] = `${width.toFixed(1)}px`;
     }
   }
 
@@ -65,8 +64,8 @@
             ${this.styleTemplate}
           </style>
           ${this.inputTemplate}
-          <div id="size">[[input]]</div>
-          <div id="minlength">[[_minlengthString]]</div>
+          <span id="size">[[input]]</span>
+          <span id="minlength">[[_minlengthString]]</span>
         `;
       }
 
@@ -89,13 +88,10 @@
             font-size: inherit;
             font-weight: inherit;
             font-style: inherit;
+            letter-spacing: inherit;
             outline: none;
-            box-sizing: content-box;
-            padding: 0;
-            margin: 0;
             min-width: inherit;
             max-width: inherit;
-            border-width: 0;
             @apply --input-style;
             visibility: hidden;
           }

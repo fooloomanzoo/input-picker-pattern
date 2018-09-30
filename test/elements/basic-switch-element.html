@@ -10,6 +10,11 @@
       static get template() {
         return `<div class="switch">${this._iconStepUpTemplate}</div>`;
       }
+      static get properties() {
+        return {
+          value: Number
+        };
+      }
     }
     window.customElements.define(BasicSwitchElement.is, BasicSwitchElement);
   </script>

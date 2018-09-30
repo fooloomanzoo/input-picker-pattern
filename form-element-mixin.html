@@ -156,6 +156,7 @@
       _valueChanged(value) {
         // test if value is set and if needed set value to default
         if (this._valueIsSet === false && this.default !== undefined) {
+          console.log('set default', this.default);
           this.value = this.default;
         }
       }

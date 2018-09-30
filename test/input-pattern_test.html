@@ -1,48 +1,53 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>input-element test</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
-    <script src="../../iron-test-helpers/mock-interactions.js"></script>
+  <title>input-element test</title>
 
-    <link rel="import" href="elements/basic-input-element.html">
-    <link rel="import" href="../overlay-element.html">
-  </head>
-  <body>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
 
-    <test-fixture id="basic">
-      <template>
-        <basic-input-element></basic-input-element>
-      </template>
-    </test-fixture>
+  <link rel="import" href="elements/basic-input-element.html">
+  <link rel="import" href="../overlay-element.html">
+</head>
 
-    <test-fixture id="ChangedPropertyTestFixture">
-      <template>
-        <div>
-          <basic-input-element id="value" value="abc"></basic-input-element>
-          <basic-input-element id="default" default="abc"></basic-input-element>
-        </div>
-      </template>
-    </test-fixture>
+<body>
 
-    <test-fixture id="Validation">
-      <template>
-        <div>
-          <basic-input-element id="not-required-without-value" value=""></basic-input-element>
-          <basic-input-element id="not-required-with-value" value="abc"></basic-input-element>
-          <basic-input-element id="required-without-value" required value=""></basic-input-element>
-          <basic-input-element id="required-with-value" required value="abc"></basic-input-element>
-        </div>
-      </template>
-    </test-fixture>
+  <test-fixture id="basic">
+    <template>
+      <basic-input-element></basic-input-element>
+    </template>
+  </test-fixture>
 
-    <test-fixture id="MinLength">
-      <template>
+  <test-fixture id="ChangedPropertyTestFixture">
+    <template>
+      <basic-input-element value="abc"></basic-input-element>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="DefaultValue">
+    <template>
+      <basic-input-element default="abc"></basic-input-element>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="Validation">
+    <template>
+      <div>
+        <basic-input-element id="not-required-without-value" value=""></basic-input-element>
+        <basic-input-element id="not-required-with-value" value="abc"></basic-input-element>
+        <basic-input-element id="required-without-value" required value=""></basic-input-element>
+        <basic-input-element id="required-with-value" required value="abc"></basic-input-element>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="MinLength">
+    <template>
         <div>
           <basic-input-element id="min-length" minlength="3"></basic-input-element>
           <basic-input-element id="placeholder" placeholder="abc"></basic-input-element>
@@ -51,15 +56,15 @@
           <basic-input-element id="min-length-and-placeholder-and-default" minlength="3" placeholder="abc" default="def"></basic-input-element>
         </div>
       </template>
-    </test-fixture>
+  </test-fixture>
 
-    <test-fixture id="Sizing">
-      <template>
+  <test-fixture id="Sizing">
+    <template>
         <div>
-          <basic-input-element id="with-minlength" placeholder="abc"></basic-input-element>
-          <basic-input-element id="hidden-minlength" placeholder="abc" style="display:none"></basic-input-element>
+          <basic-input-element id="with-placeholder" placeholder="abc"></basic-input-element>
+          <basic-input-element id="hidden-with-placeholder" placeholder="abc" style="display:none"></basic-input-element>
           <basic-input-element id="with-value" value="abc"></basic-input-element>
-          <basic-input-element id="hidden-value" value="abc" style="display:none"></basic-input-element>
+          <basic-input-element id="hidden-with-value" value="abc" style="display:none"></basic-input-element>
           <basic-input-element id="autoresize" auto-resize></basic-input-element>
           <overlay-element id="overlay">
             <basic-input-element id="inner-with-placeholder" placeholder="abc"></basic-input-element>
@@ -67,471 +72,511 @@
           </overlay-element>
         </div>
       </template>
-    </test-fixture>
+  </test-fixture>
 
-    <script>
-      suite('basic', function() {
-        let element;
+  <script>
+    const specifier = new URLSearchParams(window.location.search).get('specifier');
+    const url = new URLSearchParams(window.location.search).get('url');
 
-        setup(function() {
-          element = fixture('basic');
-        });
+    // applying suites to another element (e.g. when another element depends on the the same mixin)
+    if (specifier) {
+      suite(`Suite for ${specifier.toUpperCase()}`, function() {
+        test('loading dependencies', done => {
+          Polymer.importHref(url, e => done(), e => {
+            console.warn(`failed to load: ${url}`)
+          })
+        })
+      })
+    }
 
-        test('instantiating the element with default properties works', done => {
-          // form-element properties
-          assert.isUndefined(element.required, 'required is not defined');
-          assert.isFalse(element.invalid, 'invalid is false');
-          assert.isUndefined(element.disabled, 'disabled is not defined');
-          assert.isUndefined(element.name, 'name is not defined');
-          assert.isUndefined(element.value, 'value is not defined');
-          assert.isUndefined(element.default, 'default is not defined');
-          assert.isFalse(element._valueIsSet, '_valueIsSet is not defined');
-          assert.isUndefined(element.propertyForValue, 'propertyForValue is defined');
-          // input-properties
-          assert.equal(element.type, 'text', 'type is defined');
-          assert.isFalse(Boolean(element.input), 'input is falsy');
-          assert.isUndefined(element.placeholder, 'placeholder is not defined');
-          assert.isUndefined(element.minlength, 'minlength is not defined');
-          assert.isUndefined(element.noAutoWidth, 'noAutoWidth is not defined');
-          assert.isUndefined(element.autoResize, 'autoResize is not defined');
-          assert.isUndefined(element._minlengthString, '_minlengthString is not defined');
-          assert.isUndefined(element.hidden, 'hidden is not defined');
-          done();
-        });
+    suite('basic', function() {
+      let element;
 
-        test('setting input value does not change the value when not confirmed', done => {
-          element.input = 'abc';
-          assert.equal(element.input, 'abc', 'input stays the same');
-          assert.isUndefined(element.value, 'value does not change');
-          done();
-        });
-
-        test('setting value when confirming', done => {
-          element.input = 'abc';
-          element._confirmInput();
-          assert.equal(element.value, 'abc', 'value is set');
-          done();
-        });
+      setup(function() {
+        if (specifier) {
+          replace('basic-input-element').with(specifier)
+        }
+        element = fixture('basic');
       });
 
-      suite('changing properties', function() {
-        let f;
-
-        setup(function() {
-          f = fixture('ChangedPropertyTestFixture');
-        });
-
-        test('setting a value', done => {
-          let element = f.querySelector('#value');
-          assert.equal(element.value, 'abc');
-          assert.equal(element.input, 'abc', 'input is set');
-          done();
-        });
-
-        test('setting a input', done => {
-          let element = f.querySelector('#value');
-          element.input = 'def';
-          assert.equal(element.value, 'abc');
-          assert.equal(element.input, 'def');
-          done();
-        });
-
-        test('setting a input and calling update fns', done => {
-          let element = f.querySelector('#value');
-          element.input = 'def';
-          assert.equal(element.value, 'abc');
-          assert.equal(element.input, 'def');
-
-          element._updateInput();
-          assert.equal(element.value, 'abc');
-          assert.equal(element.input, 'abc');
-
-          element.input = 'def';
-          element._confirmInput();
-          assert.equal(element.value, 'def');
-          assert.equal(element.input, 'def');
-          done();
-        });
-
-        test('setting a default value', done => {
-          let element = f.querySelector('#default');
-          assert.equal(element.default, 'abc');
-          assert.equal(element.value, 'abc');
-          assert.equal(element.input, 'abc');
-          done();
-        });
-
-        test('resetting to default value', done => {
-          let element = f.querySelector('#default');
-          element.value = 0;
-          assert.equal(element.value, 0, 'setting value 0');
-          assert.equal(element.input, 0, 'setting value 0');
-          element.value = false;
-          assert.equal(element.value, false, 'setting value false');
-          assert.equal(element.input, false, 'setting value false');
-          element.value = undefined;
-          assert.equal(element.value, element.default, 'setting value undefined');
-          assert.equal(element.input, element.default, 'setting value undefined');
-          element.value = null;
-          assert.equal(element.value, element.default, 'setting value null');
-          assert.equal(element.input, element.default, 'setting value null');
-          element.value = '';
-          assert.equal(element.value, element.default, 'setting value empty');
-          assert.equal(element.input, element.default, 'setting value empty');
-          element.value = 'def';
-          element.input = '';
-          assert.equal(element.value, 'def', 'setting input empty');
-          assert.equal(element.input, element.default, 'setting input empty');
-          element.input = null;
-          assert.equal(element.value, 'def', 'setting input null');
-          assert.equal(element.input, element.default, 'setting input null');
-          element.input = undefined;
-          assert.equal(element.value, 'def', 'setting input undefined');
-          assert.equal(element.input, element.default, 'setting input undefined');
-          done();
-        });
+      test('instantiating the element with default properties works', done => {
+        // input-properties
+        assert.equal(element.type, 'text', 'type is defined');
+        assert.isFalse(Boolean(element.input), 'input is falsy');
+        assert.isUndefined(element.placeholder, 'placeholder is not defined');
+        assert.isUndefined(element.minlength, 'minlength is not defined');
+        assert.isUndefined(element.noAutoWidth, 'noAutoWidth is not defined');
+        assert.isUndefined(element.autoResize, 'autoResize is not defined');
+        assert.isUndefined(element._minlengthString, '_minlengthString is not defined');
+        done();
       });
 
-      suite('validation', function() {
-        let f;
-
-        setup(function() {
-          f = fixture('Validation');
-        });
-
-        test('not required without value', done => {
-          let element = f.querySelector('#not-required-without-value');
-          assert.equal(element.value, '');
-          assert.equal(element.input, '');
-          assert.isTrue(!element.invalid);
-          done();
-        });
-
-        test('not required with value', done => {
-          let element = f.querySelector('#not-required-with-value');
-          assert.equal(element.value, 'abc');
-          assert.equal(element.input, 'abc');
-          assert.isTrue(!element.invalid);
-          done();
-        });
-
-        test('required without value', done => {
-          let element = f.querySelector('#required-without-value');
-          assert.equal(element.value, '', 'value is set');
-          assert.equal(element.input, '');
-          assert.isTrue(element.invalid);
-          done();
-        });
-
-        test('required with value', done => {
-          let element = f.querySelector('#required-with-value');
-          assert.equal(element.value, 'abc');
-          assert.equal(element.input, 'abc');
-          assert.isTrue(!element.invalid);
-          done();
-        });
-
-        test('not required set empty value', done => {
-          let element = f.querySelector('#not-required-with-value');
-          element.value = '';
-          assert.equal(element.value, '');
-          assert.equal(element.input, '');
-          assert.isTrue(!element.invalid);
-          done();
-        });
-
-        test('not required set empty input', done => {
-          let element = f.querySelector('#not-required-with-value');
-          element.input = '';
-          assert.equal(element.value, 'abc');
-          assert.equal(element.input, '');
-          assert.isTrue(!element.invalid);
-          done();
-        });
-
-        test('required set empty value', done => {
-          let element = f.querySelector('#required-with-value');
-          element.value = '';
-          assert.equal(element.value, '', 'value is set');
-          assert.equal(element.input, '');
-          assert.isTrue(element.invalid);
-          done();
-        });
-
-        test('required set empty input', done => {
-          let element = f.querySelector('#required-with-value');
-          element.input = '';
-          assert.equal(element.value, 'abc');
-          assert.equal(element.input, '');
-          assert.isTrue(element.invalid);
-          done();
-        });
+      test('setting input value does not change the value when not confirmed', done => {
+        element.input = 'abc';
+        assert.equal(element.input, 'abc', 'input stays the same');
+        assert.isUndefined(element.value, 'value does not change');
+        done();
       });
 
-      suite('interactions', function() {
-        let element, input;
+      test('setting value when confirming', done => {
+        element.input = 'abc';
+        element._confirmInput();
+        assert.equal(element.value, 'abc', 'value is set');
+        done();
+      });
+    });
 
-        setup(function() {
-          element = fixture('basic');
-          input = element.$.input;
-        });
+    suite('changing properties', function() {
+      let element;
 
-        test('focus and blur', done => {
-          MockInteractions.focus(element);
-          assert.equal(element.ownerDocument.activeElement, element);
-          MockInteractions.blur(element);
-          assert.notEqual(element.ownerDocument.activeElement, element);
-          done();
-        });
-
-        test('setting input and focus updates the value', done => {
-          element.input = 'abc';
-          MockInteractions.focus(element);
-          assert.equal(element.value, 'abc', 'value is set when focussed');
-          done();
-        });
-
-        test('setting input and focus updates the value when value is set', done => {
-          element.input = 'def';
-          element.input = 'abc';
-          MockInteractions.focus(element);
-          assert.equal(element.value, 'abc', 'value is set when focussed');
-          done();
-        });
-
-        test('confirming with enter', done => {
-          element.input = 'abc';
-          MockInteractions.pressEnter(element.$.input);
-          assert.equal(element.input, 'abc', 'input does not change');
-          assert.equal(element.value, 'abc', 'value changes');
-          done();
-        });
-
-        test('confirming with tab', done => {
-          element.input = 'abc';
-          MockInteractions.pressAndReleaseKeyOn(element.$.input, 9);
-          assert.equal(element.input, 'abc', 'input does not change');
-          assert.equal(element.value, 'abc', 'value changes');
-          done();
-        });
-
-        test('aborting and bluring with esc', done => {
-          MockInteractions.focus(element);
-          let value = element.value;
-          element.input = 'abc';
-          MockInteractions.pressAndReleaseKeyOn(element.$.input, 27);
-          assert.equal(element.input, value, 'input changes');
-          assert.equal(element.value, value, 'value does not change');
-          MockInteractions.focus(element);
-          value = element.value = 'def';
-          element.input = 'abc';
-          MockInteractions.pressAndReleaseKeyOn(element.$.input, 27);
-          assert.equal(element.input, value, 'input changes when value is preset');
-          assert.equal(element.value, value, 'value does not change when value is preset');
-          assert.notEqual(element.ownerDocument.activeElement, element, 'element is blured');
-          done();
-        });
+      setup(function() {
+        if (specifier) {
+          replace('basic-input-element').with(specifier)
+        }
+        element = fixture('ChangedPropertyTestFixture');
       });
 
-      suite('minimal length', function() {
-        let f;
-
-        setup(function() {
-          f = fixture('MinLength');
-        });
-
-        test('minimal length', done => {
-          let element = f.querySelector('#min-length');
-          assert.equal(element._minlengthString.length, 3);
-          done();
-        });
-
-        test('placeholder', done => {
-          let element = f.querySelector('#placeholder');
-          assert.equal(element._minlengthString.length, 3);
-          done();
-        });
-
-        test('default', done => {
-          let element = f.querySelector('#default');
-          assert.equal(element._minlengthString.length, 3);
-          done();
-        });
-
-        test('minlength and placeholder', done => {
-          let element = f.querySelector('#min-length-and-placeholder');
-          assert.equal(element._minlengthString, element.placeholder, 'should prefer placeholder');
-          done();
-        });
-
-        test('minlength, placeholder and default', done => {
-          let element = f.querySelector('#min-length-and-placeholder-and-default');
-          assert.equal(element._minlengthString, element.default, 'should prefer default');
-          done();
-        });
+      test('setting a value', done => {
+        assert.equal(element.value, 'abc');
+        assert.equal(element.input, 'abc', 'input is set');
+        done();
       });
 
-      suite('sizing', function() {
-        let f;
+      test('setting a input', done => {
+        element.input = 'def';
+        assert.equal(element.value, 'abc');
+        assert.equal(element.input, 'def');
+        done();
+      });
 
-        setup(function() {
-          f = fixture('Sizing');
-        });
+      test('setting a input and calling update fns', done => {
+        element.input = 'def';
+        assert.equal(element.value, 'abc');
+        assert.equal(element.input, 'def');
 
-        test('default sizing with minlength', done => {
-          let element = f.querySelector('#with-minlength');
-          // Wait one tick for observeNodes.
+        element._updateInput();
+        assert.equal(element.value, 'abc');
+        assert.equal(element.input, 'abc');
+
+        element.input = 'def';
+        element._confirmInput();
+        assert.equal(element.value, 'def');
+        assert.equal(element.input, 'def');
+        done();
+      });
+    });
+
+    suite('default value', function() {
+      let element;
+
+      setup(function() {
+        if (specifier) {
+          replace('basic-input-element').with(specifier)
+        }
+        element = fixture('DefaultValue');
+      });
+
+      test('setting a default value', done => {
+        assert.equal(element.default, 'abc');
+        assert.equal(element.value, 'abc');
+        assert.equal(element.input, 'abc');
+        done();
+      });
+
+      test('resetting to default value', done => {
+        element.value = 0;
+        assert.equal(element.value, 0, 'setting value 0');
+        assert.equal(element.input, 0, 'setting value 0');
+        element.value = false;
+        assert.equal(element.value, false, 'setting value false');
+        assert.equal(element.input, false, 'setting value false');
+        element.value = undefined;
+        assert.equal(element.value, element.default, 'setting value undefined');
+        assert.equal(element.input, element.default, 'setting value undefined');
+        element.value = null;
+        assert.equal(element.value, element.default, 'setting value null');
+        assert.equal(element.input, element.default, 'setting value null');
+        element.value = '';
+        assert.equal(element.value, element.default, 'setting value empty');
+        assert.equal(element.input, element.default, 'setting value empty');
+        element.value = 'def';
+        element.input = '';
+        assert.equal(element.value, 'def', 'setting input empty');
+        assert.equal(element.input, element.default, 'setting input empty');
+        element.input = null;
+        assert.equal(element.value, 'def', 'setting input null');
+        assert.equal(element.input, element.default, 'setting input null');
+        element.input = undefined;
+        assert.equal(element.value, 'def', 'setting input undefined');
+        assert.equal(element.input, element.default, 'setting input undefined');
+        done();
+      });
+    });
+
+    suite('validation', function() {
+      let f;
+
+      setup(function() {
+        if (specifier) {
+          replace('basic-input-element').with(specifier)
+        }
+        f = fixture('Validation');
+      });
+
+      test('not required without value', done => {
+        let element = f.querySelector('#not-required-without-value');
+        assert.equal(element.value, '');
+        assert.equal(element.input, '');
+        assert.isTrue(!element.invalid);
+        done();
+      });
+
+      test('not required with value', done => {
+        let element = f.querySelector('#not-required-with-value');
+        assert.equal(element.value, 'abc');
+        assert.equal(element.input, 'abc');
+        assert.isTrue(!element.invalid);
+        done();
+      });
+
+      test('required without value', done => {
+        let element = f.querySelector('#required-without-value');
+        assert.equal(element.value, '', 'value is set');
+        assert.equal(element.input, '');
+        assert.isTrue(element.invalid);
+        done();
+      });
+
+      test('required with value', done => {
+        let element = f.querySelector('#required-with-value');
+        assert.equal(element.value, 'abc');
+        assert.equal(element.input, 'abc');
+        assert.isTrue(!element.invalid);
+        done();
+      });
+
+      test('not required set empty value', done => {
+        let element = f.querySelector('#not-required-with-value');
+        element.value = '';
+        assert.equal(element.value, '');
+        assert.equal(element.input, '');
+        assert.isTrue(!element.invalid);
+        done();
+      });
+
+      test('not required set empty input', done => {
+        let element = f.querySelector('#not-required-with-value');
+        element.input = '';
+        assert.equal(element.value, 'abc');
+        assert.equal(element.input, '');
+        assert.isTrue(!element.invalid);
+        done();
+      });
+
+      test('required set empty value', done => {
+        let element = f.querySelector('#required-with-value');
+        element.value = '';
+        assert.equal(element.value, '', 'value is set');
+        assert.equal(element.input, '');
+        assert.isTrue(element.invalid);
+        done();
+      });
+
+      test('required set empty input', done => {
+        let element = f.querySelector('#required-with-value');
+        element.input = '';
+        assert.equal(element.value, 'abc');
+        assert.equal(element.input, '');
+        assert.isTrue(element.invalid);
+        done();
+      });
+    });
+
+    suite('interactions', function() {
+      let element, input;
+
+      setup(function() {
+        if (specifier) {
+          replace('basic-input-element').with(specifier)
+        }
+        element = fixture('basic');
+        input = element.$.input;
+      });
+
+      test('focus and blur', done => {
+        MockInteractions.focus(element);
+        assert.equal(element.ownerDocument.activeElement, element);
+        MockInteractions.blur(element);
+        assert.notEqual(element.ownerDocument.activeElement, element);
+        done();
+      });
+
+      test('setting input and focus updates the value', done => {
+        element.input = 'abc';
+        MockInteractions.focus(element);
+        assert.equal(element.value, 'abc', 'value is set when focussed');
+        done();
+      });
+
+      test('setting input and focus updates the value when value is set', done => {
+        element.input = 'def';
+        element.input = 'abc';
+        MockInteractions.focus(element);
+        assert.equal(element.value, 'abc', 'value is set when focussed');
+        done();
+      });
+
+      test('confirming with enter', done => {
+        element.input = 'abc';
+        MockInteractions.pressEnter(element.$.input);
+        assert.equal(element.input, 'abc', 'input does not change');
+        assert.equal(element.value, 'abc', 'value changes');
+        done();
+      });
+
+      test('confirming with tab', done => {
+        element.input = 'abc';
+        MockInteractions.pressAndReleaseKeyOn(element.$.input, 9);
+        assert.equal(element.input, 'abc', 'input does not change');
+        assert.equal(element.value, 'abc', 'value changes');
+        done();
+      });
+
+      test('aborting and bluring with esc', done => {
+        MockInteractions.focus(element);
+        let value = element.value;
+        element.input = 'abc';
+        MockInteractions.pressAndReleaseKeyOn(element.$.input, 27);
+        assert.equal(element.input, value, 'input changes');
+        assert.equal(element.value, value, 'value does not change');
+        MockInteractions.focus(element);
+        value = element.value = 'def';
+        element.input = 'abc';
+        MockInteractions.pressAndReleaseKeyOn(element.$.input, 27);
+        assert.equal(element.input, value, 'input changes when value is preset');
+        assert.equal(element.value, value, 'value does not change when value is preset');
+        assert.notEqual(element.ownerDocument.activeElement, element, 'element is blured');
+        done();
+      });
+    });
+
+    suite('minimal length', function() {
+      let f;
+
+      setup(function() {
+        if (specifier) {
+          replace('basic-input-element').with(specifier)
+        }
+        f = fixture('MinLength');
+      });
+
+      test('minimal length', done => {
+        let element = f.querySelector('#min-length');
+        assert.equal(element._minlengthString.length, 3);
+        done();
+      });
+
+      test('placeholder', done => {
+        let element = f.querySelector('#placeholder');
+        assert.equal(element._minlengthString.length, 3);
+        done();
+      });
+
+      test('default', done => {
+        let element = f.querySelector('#default');
+        assert.equal(element._minlengthString.length, 3);
+        done();
+      });
+
+      test('minlength and placeholder', done => {
+        let element = f.querySelector('#min-length-and-placeholder');
+        assert.equal(element._minlengthString, element.placeholder, 'should prefer placeholder');
+        done();
+      });
+
+      test('minlength, placeholder and default', done => {
+        let element = f.querySelector('#min-length-and-placeholder-and-default');
+        assert.equal(element._minlengthString, element.default, 'should prefer default');
+        done();
+      });
+    });
+
+    suite('sizing', function() {
+      let f;
+
+      setup(function() {
+        if (specifier) {
+          replace('basic-input-element').with(specifier)
+        }
+        f = fixture('Sizing');
+      });
+
+      test('default sizing with minlength', done => {
+        let element = f.querySelector('#with-placeholder');
+        // Wait one tick for observeNodes.
+        setTimeout(function() {
+          assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
+          assert.notEqual(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
+          assert.equal(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+          assert.notEqual(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+          let beforeWidth = element.$.input.getBoundingClientRect().width;
+          element.value = element._minlengthString;
           setTimeout(function() {
-            assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
-            assert.notEqual(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
-            assert.equal(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
-            assert.notEqual(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
-            let beforeWidth = element.$.input.getBoundingClientRect().width;
-            element.value = element._minlengthString;
-            setTimeout(function() {
-              assert.equal(element.$.input.getBoundingClientRect().width, beforeWidth, 'element\'s stay the same' + beforeWidth);
-              done();
-            }, 0);
-          }, 0);
-        });
-
-        test('default sizing with value', done => {
-          let element = f.querySelector('#with-value');
-          // Wait one tick for observeNodes.
-          setTimeout(function() {
-            assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
-            assert.notEqual(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
-            assert.notEqual(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
-            assert.equal(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+            assert.equal(element.$.input.getBoundingClientRect().width, beforeWidth, 'element\'s stay the same' + beforeWidth);
             done();
           }, 0);
-        });
+        }, 0);
+      });
 
-        test('sizing of hidden elements with minlength', done => {
-          let element = f.querySelector('#hidden-minlength');
-          // Wait one tick for observeNodes.
-          setTimeout(function() {
-            let elementMinWidth = document.defaultView.getComputedStyle(element.$.input).minWidth;
-            assert.equal(element.getBoundingClientRect().width, 0, 'element\'s width');
-            assert.equal(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
-            assert.equal(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
-            assert.equal(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
-            assert.notEqual(elementMinWidth, '0px', 'element\'s \'input\' minWidth');
-            assert.notEqual(elementMinWidth, 'auto', 'element\'s \'input\' minWidth');
-            assert.notEqual(elementMinWidth, '', 'element\'s \'input\' minWidth');
-            done();
-          }, 0);
-        });
+      test('default sizing with value', done => {
+        let element = f.querySelector('#with-value');
+        // Wait one tick for observeNodes.
+        setTimeout(function() {
+          assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
+          assert.notEqual(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
+          assert.notEqual(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+          assert.equal(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+          done();
+        }, 0);
+      });
 
-        test('sizing of hidden elements with value', done => {
-          let element = f.querySelector('#hidden-value');
-          // Wait one tick for observeNodes.
-          setTimeout(function() {
-            let elementWidth = document.defaultView.getComputedStyle(element.$.input).width;
-            assert.equal(element.getBoundingClientRect().width, 0, 'element\'s width');
-            assert.equal(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
-            assert.equal(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
-            assert.equal(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
-            assert.notEqual(elementWidth, '0px', 'element\'s \'input\' minWidth');
-            assert.notEqual(elementWidth, 'auto', 'element\'s \'input\' minWidth');
-            assert.notEqual(elementWidth, '', 'element\'s \'input\' minWidth');
-            done();
-          }, 0);
-        });
+      test('sizing of hidden elements with minlength', done => {
+        let element = f.querySelector('#hidden-with-placeholder');
+        // Wait one tick for observeNodes.
+        setTimeout(function() {
+          let elementMinWidth = document.defaultView.getComputedStyle(element.$.input).minWidth;
+          assert.equal(element.getBoundingClientRect().width, 0, 'element\'s width');
+          assert.equal(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
+          assert.equal(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+          assert.equal(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+          assert.notEqual(elementMinWidth, '0px', 'element\'s \'input\' minWidth');
+          assert.notEqual(elementMinWidth, 'auto', 'element\'s \'input\' minWidth');
+          assert.notEqual(elementMinWidth, '', 'element\'s \'input\' minWidth');
+          done();
+        }, 0);
+      });
 
-        test('sizing of hidden elements that are asynchronically shown with minlength', done => {
-          let elementShown = f.querySelector('#with-minlength');
-          let element = f.querySelector('#hidden-minlength');
-          assert.equal(element.style.display, 'none');
+      test('sizing of hidden elements with value', done => {
+        let element = f.querySelector('#hidden-with-value');
+        // Wait one tick for observeNodes.
+        setTimeout(function() {
+          let elementWidth = document.defaultView.getComputedStyle(element.$.input).width;
+          assert.equal(element.getBoundingClientRect().width, 0, 'element\'s width');
+          assert.equal(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
+          assert.equal(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+          assert.equal(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+          assert.notEqual(elementWidth, '0px', 'element\'s \'input\' minWidth');
+          assert.notEqual(elementWidth, 'auto', 'element\'s \'input\' minWidth');
+          assert.notEqual(elementWidth, '', 'element\'s \'input\' minWidth');
+          done();
+        }, 0);
+      });
+
+      test('sizing of hidden elements that are asynchronically shown with minlength', done => {
+        let elementShown = f.querySelector('#with-placeholder');
+        let element = f.querySelector('#hidden-with-placeholder');
+        assert.equal(element.style.display, 'none');
+        // Wait one tick for observeNodes.
+        setTimeout(function() {
           element.style.display = '';
-          // Wait one tick for observeNodes.
           setTimeout(function() {
             assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
             assert.notEqual(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
             assert.equal(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
             assert.notEqual(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
-            assert.equal(element.getBoundingClientRect().width, elementShown.getBoundingClientRect().width, 'element\'s width');
+            assert.equal(element.getBoundingClientRect().width.toFixed(1), elementShown.getBoundingClientRect().width.toFixed(1), 'element\'s width');
             assert.equal(document.defaultView.getComputedStyle(element.$.input).minWidth, document.defaultView.getComputedStyle(elementShown.$.input).minWidth, 'element\'s \'input\' minWidth');
             done();
           }, 0);
-        });
+        }, 0);
+      });
 
-        test('sizing of hidden elements that are asynchronically shown with value', done => {
-          let elementShown = f.querySelector('#with-value');
-          let element = f.querySelector('#hidden-value');
-          assert.equal(element.style.display, 'none');
+      test('sizing of hidden elements that are asynchronically shown with value', done => {
+        let elementShown = f.querySelector('#with-value');
+        let element = f.querySelector('#hidden-with-value');
+        assert.equal(element.style.display, 'none');
+        // Wait one tick for observeNodes.
+        setTimeout(function() {
           element.style.display = '';
-          // Wait one tick for observeNodes.
           setTimeout(function() {
             assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
             assert.notEqual(element.$.input.getBoundingClientRect().width, 0, 'element\'s \'input\' width');
             assert.notEqual(element.$.size.getBoundingClientRect().width, 0, 'element\'s \'size\' width');
             assert.equal(element.$.minlength.getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
-            assert.equal(element.getBoundingClientRect().width, elementShown.getBoundingClientRect().width, 'element\'s width');
+            assert.equal(element.getBoundingClientRect().width.toFixed(1), elementShown.getBoundingClientRect().width.toFixed(1), 'element\'s width');
             assert.equal(document.defaultView.getComputedStyle(element.$.input).width, document.defaultView.getComputedStyle(elementShown.$.input).width, 'element\'s \'input\' width');
             done();
           }, 0);
-        });
+        }, 0);
+      });
 
-        test('resizing on changing value', done => {
-          let element = f.querySelector('#with-minlength');
-          // Wait one tick for observeNodes.
-          setTimeout(function() {
-            let beforeWidth = element.getBoundingClientRect().width;
-            element.value = element._minlengthString + 'abc';
-            // Wait one tick for observeNodes.
-            setTimeout(function() {
-              assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
-              done();
-            }, 0);
-          }, 0);
-        });
-
-        test('resizing on confirming input', done => {
-          let element = f.querySelector('#with-minlength');
-          // Wait one tick for observeNodes.
-          setTimeout(function() {
-            let beforeWidth = element.getBoundingClientRect().width;
-            assert.equal(beforeWidth, element.getBoundingClientRect().width);
-            element.input = element._minlengthString + 'abc';
-            element._confirmInput();
-            setTimeout(function() {
-              assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
-              done();
-            }, 0);
-          }, 0);
-        });
-
-        test('autoresize', done => {
-          let element = f.querySelector('#autoresize');
+      test('resizing on changing value', done => {
+        let element = f.querySelector('#with-placeholder');
+        // Wait one tick for observeNodes.
+        setTimeout(function() {
           let beforeWidth = element.getBoundingClientRect().width;
-          element.input = element._minlengthString + 'abc';
+          element.value = element._minlengthString + 'abc';
           // Wait one tick for observeNodes.
           setTimeout(function() {
             assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
             done();
           }, 0);
-        });
-
-        test('size in an overlay-element', done => {
-          let element = f.querySelector('#with-minlength');
-          let element_1 = f.querySelector('#inner-with-placeholder');
-          let element_2 = f.querySelector('#inner-with-value');
-          let overlay = f.querySelector('#overlay');
-          // Wait one tick for observeNodes.
-          setTimeout(function() {
-            overlay.opened = true;
-            setTimeout(function() {
-              let outsideWidth = element.getBoundingClientRect().width;
-              assert.equal(outsideWidth, element_1.getBoundingClientRect().width);
-              assert.equal(outsideWidth, element_2.getBoundingClientRect().width);
-              done();
-            }, 100);
-          }, 0);
-        });
-
+        }, 0);
       });
-    </script>
 
-  </body>
+      test('resizing on confirming input', done => {
+        let element = f.querySelector('#with-placeholder');
+        // Wait one tick for observeNodes.
+        setTimeout(function() {
+          let beforeWidth = element.getBoundingClientRect().width;
+          assert.equal(beforeWidth, element.getBoundingClientRect().width);
+          element.input = element._minlengthString + 'abc';
+          element._confirmInput();
+          setTimeout(function() {
+            assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
+            done();
+          }, 0);
+        }, 0);
+      });
+
+      test('autoresize', done => {
+        let element = f.querySelector('#autoresize');
+        let beforeWidth = element.getBoundingClientRect().width;
+        element.input = element._minlengthString + 'abc';
+        // Wait one tick for observeNodes.
+        setTimeout(function() {
+          assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
+          done();
+        }, 0);
+      });
+
+      test('size in an overlay-element', done => {
+        let element_o1 = f.querySelector('#with-placeholder');
+        let element_o2 = f.querySelector('#with-value');
+        let element_i1 = f.querySelector('#inner-with-placeholder');
+        let element_i2 = f.querySelector('#inner-with-value');
+        let overlay = f.querySelector('#overlay');
+        // Wait one tick for observeNodes.
+        setTimeout(function() {
+          overlay.opened = true;
+          requestAnimationFrame(function() {
+            let outsideWidth1 = element_o1.getBoundingClientRect().width.toFixed(1);
+            let outsideWidth2 = element_o2.getBoundingClientRect().width.toFixed(1);
+            let insideWidth1 = element_i1.getBoundingClientRect().width.toFixed(1);
+            let insideWidth2 = element_i2.getBoundingClientRect().width.toFixed(1);
+            assert.equal(insideWidth1, insideWidth2);
+            assert.equal(outsideWidth1, insideWidth1);
+            assert.equal(outsideWidth1, insideWidth2);
+            assert.equal(outsideWidth2, insideWidth1);
+            assert.equal(outsideWidth2, insideWidth2);
+            done();
+          });
+        }, 0);
+      });
+
+    });
+  </script>
+
+</body>
+
 </html>
