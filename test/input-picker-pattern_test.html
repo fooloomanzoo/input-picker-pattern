@@ -85,26 +85,22 @@
       });
 
       suite('confirm', function() {
-        let f, element_value, element_confirmed_value, element_auto;
+        let f;
 
         setup(function() {
           if (specifier) {
             replace('basic-input-picker-element').with(specifier)
           }
           f = fixture('confirm');
-          element_value = f.querySelector('#value');
-          element_confirmed_value = f.querySelector('#confirmed-value');
-          element_auto = f.querySelector('#auto-confirm');
         });
 
         test('setting value not does not confirm the picker', done => {
-          element_value.value = 123;
           done();
         });
 
         test('confirming by calling function', done => {
-        element_value = f.querySelector('#value');
-          console.log(element_value.value);
+          let element = f.querySelector('#value');
+          console.log(element.value);
           done();
         });
 

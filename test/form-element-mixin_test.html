@@ -64,12 +64,12 @@
           </iron-form>
           <iron-form id="required-and-value">
             <form action="/get" method="get">
-              <basic-form-element required name="TestValue" value="cde"></basic-form-element>
+              <basic-form-element id="requiredandvalue" required name="TestValue" value="cde"></basic-form-element>
             </form>
           </iron-form>
           <iron-form id="custom-property-for-value">
             <form action="/get" method="get">
-              <basic-form-element name="TestValue" property-for-value="custom1" custom1="123"></basic-form-element>
+              <basic-form-element id="custom" name="TestValue" property-for-value="custom1" custom1="123"></basic-form-element>
             </form>
           </iron-form>
         </div>
@@ -120,18 +120,17 @@
             return value !== false;
           }
           element._computeValueIsSet(element.value);
-          assert.isTrue(element._valueIsSet, 'when value is undefined');
           assert.isUndefined(element.value, 'value is not defined');
+          assert.isTrue(element._valueIsSet, 'when value is undefined');
           element.value = '';
+          assert.equal(element.value, '', 'value is set to emmpty string');
           assert.isTrue(element._valueIsSet, 'when value is \'\'');
-          assert.equal(element.value, '', 'value is set');
           element.value = 0;
+          assert.equal(element.value, 0, 'value is set to 0');
           assert.isTrue(element._valueIsSet, 'when value is 0');
-          assert.equal(element.value, 0, 'value is set');
           element.value = false;
-          console.log(element.value, element.confirmedValue, element._valueIsSet, element.invalid, element._isSet(element.value));
+          assert.equal(element.value, false, 'value is set to false');
           assert.isFalse(element._valueIsSet, 'when value is false');
-          assert.equal(element.value, false, 'value is set');
           done();
         });
 
