@@ -36,10 +36,10 @@
     <test-fixture id="ChangePropertyForValue">
       <template>
         <div>
-          <basic-form-element id="basic" property-for-value="custom1"></basic-form-element>
-          <basic-form-element id="set-property-reflect-value" property-for-value="custom1" custom1="abc"></basic-form-element>
-          <basic-form-element id="set-value-reflect-property" property-for-value="custom1" value="abc"></basic-form-element>
-          <basic-form-element id="setting-value-and-property" property-for-value="custom1" custom1="2" value="abc"></basic-form-element>
+          <basic-form-element id="basic" property-for-value="name"></basic-form-element>
+          <basic-form-element id="set-property-reflect-value" property-for-value="name" name="abc"></basic-form-element>
+          <basic-form-element id="set-value-reflect-property" property-for-value="name" value="abc"></basic-form-element>
+          <basic-form-element id="setting-value-and-property" property-for-value="name" name="2" value="abc"></basic-form-element>
         </div>
       </template>
     </test-fixture>
@@ -69,7 +69,7 @@
           </iron-form>
           <iron-form id="custom-property-for-value">
             <form action="/get" method="get">
-              <basic-form-element id="custom" name="TestValue" property-for-value="custom1" custom1="123"></basic-form-element>
+              <basic-form-element id="custom" name="TestValue" property-for-value="title" title="abc"></basic-form-element>
             </form>
           </iron-form>
         </div>
@@ -106,6 +106,7 @@
           assert.isFalse(element.invalid, 'invalid is false');
           assert.isUndefined(element.disabled, 'disabled is not defined');
           assert.isUndefined(element.name, 'name is not defined');
+          assert.isUndefined(element.title, 'title is not defined');
           assert.isUndefined(element.value, 'value is not defined');
           assert.isUndefined(element.propertyForValue, 'propertyForValue is not defined');
           assert.isUndefined(element.default, 'default is not defined');
@@ -247,59 +248,59 @@
 
         test('basic', function(done) {
           let element = f.querySelector('#basic');
-          assert.equal(element.propertyForValue, 'custom1', 'propertyForValue is set');
+          assert.equal(element.propertyForValue, 'name', 'propertyForValue is set');
           done();
         });
 
         test('changing value', function(done) {
           let element = f.querySelector('#basic');
           element.value = 2;
-          assert.equal(element.custom1, 2, 'property changes');
+          assert.equal(element.name, 2, 'property changes');
           done();
         });
 
         test('changing property', function(done) {
           let element = f.querySelector('#basic');
-          element.custom1 = 2;
+          element.name = 2;
           assert.equal(element.value, 2, 'value changes');
           done();
         });
 
         test('initial property', function(done) {
           let element = f.querySelector('#set-property-reflect-value');
-          assert.equal(element.custom1, 'abc', 'property does not change');
+          assert.equal(element.name, 'abc', 'property does not change');
           assert.equal(element.value, 'abc', 'value is set');
           done();
         });
 
         test('unsetting initial property', function(done) {
           let element = f.querySelector('#set-property-reflect-value');
-          element.custom1 = undefined;
-          assert.isUndefined(element.custom1, 'property does not change');
+          element.name = undefined;
+          assert.isUndefined(element.name, 'property does not change');
           assert.isUndefined(element.value, 'value is set');
           done();
         });
 
         test('initial property, propertyForValue changes', function(done) {
           let element = f.querySelector('#set-property-reflect-value');
-          element.propertyForValue = 'custom2';
-          assert.equal(element.custom1, 'abc', 'custom1 does not change');
-          assert.equal(element.custom2, 'abc', 'custom2 is set');
+          element.propertyForValue = 'title';
+          assert.equal(element.name, 'abc', 'name does not change');
+          assert.equal(element.title, 'abc', 'title is set');
           assert.equal(element.value, 'abc', 'value does not change');
           element.value = 4;
-          assert.equal(element.custom1, 'abc', 'custom1 does not change');
-          assert.equal(element.custom2, 4, 'custom2 is set');
+          assert.equal(element.name, 'abc', 'name does not change');
+          assert.equal(element.title, 4, 'title is set');
           assert.equal(element.value, 4, 'value does not change');
-          element.custom2 = 'efg';
-          assert.equal(element.custom1, 'abc', 'custom1 does not change');
-          assert.equal(element.custom2, 'efg', 'custom2 does not change');
+          element.title = 'efg';
+          assert.equal(element.name, 'abc', 'name does not change');
+          assert.equal(element.title, 'efg', 'title does not change');
           assert.equal(element.value, 'efg', 'value is set');
           done();
         });
 
         test('initial value', function(done) {
           let element = f.querySelector('#set-value-reflect-property');
-          assert.equal(element.custom1, 'abc', 'property is set');
+          assert.equal(element.name, 'abc', 'property is set');
           assert.equal(element.value, 'abc', 'value does not change');
           done();
         });
@@ -307,31 +308,31 @@
         test('unsetting initial value', function(done) {
           let element = f.querySelector('#set-value-reflect-property');
           element.value = undefined;
-          assert.isUndefined(element.custom1, 'property is set');
+          assert.isUndefined(element.name, 'property is set');
           assert.isUndefined(element.value, 'value does not change');
           done();
         });
 
         test('initial value, propertyForValue changes', function(done) {
           let element = f.querySelector('#set-value-reflect-property');
-          element.propertyForValue = 'custom2';
-          assert.equal(element.custom1, 'abc', 'custom1 does not change');
-          assert.equal(element.custom2, 'abc', 'custom2 is set');
+          element.propertyForValue = 'title';
+          assert.equal(element.name, 'abc', 'name does not change');
+          assert.equal(element.title, 'abc', 'title is set');
           assert.equal(element.value, 'abc', 'value does not change');
           element.value = 4;
-          assert.equal(element.custom1, 'abc', 'custom1 does not change');
-          assert.equal(element.custom2, 4, 'custom2 is set');
+          assert.equal(element.name, 'abc', 'name does not change');
+          assert.equal(element.title, 4, 'title is set');
           assert.equal(element.value, 4, 'value does not change');
-          element.custom2 = 'efg';
-          assert.equal(element.custom1, 'abc', 'custom1 does not change');
-          assert.equal(element.custom2, 'efg', 'custom2 does not change');
+          element.title = 'efg';
+          assert.equal(element.name, 'abc', 'name does not change');
+          assert.equal(element.title, 'efg', 'title does not change');
           assert.equal(element.value, 'efg', 'value is set');
           done();
         });
 
         test('initial value and property', function(done) {
           let element = f.querySelector('#setting-value-and-property');
-          assert.equal(element.custom1, 2, 'property is set');
+          assert.equal(element.name, 2, 'property is set');
           assert.equal(element.value, 2, 'value is set');
           done();
         });
@@ -423,7 +424,7 @@
         test('custom property-for-value', function(done) {
           let form = f.querySelector('#custom-property-for-value');
           form.addEventListener('iron-form-response', function(event) {
-            expect(event.detail.url).to.equal('/get?TestValue=123');
+            expect(event.detail.url).to.equal('/get?TestValue=abc');
             expect(event.detail.response.success).to.be.equal(true);
             done();
           });

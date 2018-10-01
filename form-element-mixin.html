@@ -19,6 +19,14 @@
           },
 
           /**
+           * description for the element and can be used as a hint for invalid values
+           */
+          title: {
+            type: String,
+            reflectToAttribute: true,
+          },
+
+          /**
            * disables the input
            */
           disabled: {
@@ -172,9 +180,9 @@
         if (prop !== undefined) {
           this._createPropertyObserver(prop, '_reflectPropertyToValue');
           this._createPropertyObserver('value', '_reflectValueToProperty');
-          if (this[prop] !== undefined) {
+          if (this._isSet(this[prop])) {
             this.set('value', this[prop]);
-          } else if (this.value !== undefined) {
+          } else if (this._isSet(this.value)) {
             this.set(prop, this.value);
           }
         }

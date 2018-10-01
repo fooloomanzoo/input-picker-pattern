@@ -137,10 +137,11 @@
           },
 
           /**
-           * description for the input and used for various browser as a hint for invalid inputs
+           * message to set on the input to show if the input does not validate
            */
-          title: {
-            type: String
+          errorMessage: {
+            type: String,
+            observer: 'setCustomValidity'
           },
 
           /**
@@ -328,6 +329,15 @@
       blur(e) {
         super.blur(e);
         this.$.input.blur();
+      }
+
+      /**
+       * sets on the native input a vadility message
+       * @param {String} msg   the message to set
+       */
+      setCustomValidity(msg) {
+        if (!msg) return; 
+        this.$.input.setCustomValidity(msg);
       }
 
     }
