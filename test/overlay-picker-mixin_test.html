@@ -14,26 +14,50 @@
   </head>
   <body>
 
-    <test-fixture id="basic">
+    <test-fixture id="Basic">
       <template>
         <basic-overlay-picker-element></basic-overlay-picker-element>
       </template>
     </test-fixture>
 
     <script>
+
+      const specifier = new URLSearchParams(window.location.search).get('specifier');
+      const url = new URLSearchParams(window.location.search).get('url');
+
+      // applying suites to another element (e.g. when another element depends on the the same mixin)
+      if (specifier) {
+        suite(`Suite for ${specifier.toUpperCase()}`, function() {
+          test('loading dependencies', done => {
+            Polymer.importHref(url, e => done(), e => {
+              console.warn(`failed to load: ${url}`)
+            })
+          })
+        })
+      }
+
       suite('basic', function() {
         let element;
 
         setup(function() {
-          element = fixture('basic');
+          if (specifier) {
+            replace('basic-overlay-picker-element').with(specifier)
+          }
+          element = fixture('Basic');
         });
 
         test('instantiating the element with default properties works', done => {
-          assert.isNotOk(element.opened, 'element is not opened');
+          // properties to propagate to IronOverlayBehavior|OverlayElement
+          assert.isFalse(element.noOverlap);
+          assert.isFalse(element.withBackdrop);
+          assert.isFalse(element.noCancelOnOutsideClick);
+          assert.isFalse(element.autoFitOnAttach);
+          assert.isUndefined(element.alwaysOnTop);
+          assert.isUndefined(element.dynamicAlign);
+          assert.isUndefined(element.fitInto);
           done();
         });
       });
-      // TODO: extend tests
     </script>
 
   </body>

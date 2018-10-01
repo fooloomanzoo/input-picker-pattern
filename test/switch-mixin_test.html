@@ -14,24 +14,112 @@
   </head>
   <body>
 
-    <test-fixture id="basic">
+    <test-fixture id="Basic">
       <template>
         <basic-switch-element></basic-switch-element>
       </template>
     </test-fixture>
 
     <script>
+      const specifier = new URLSearchParams(window.location.search).get('specifier');
+      const url = new URLSearchParams(window.location.search).get('url');
+
+      // applying suites to another element (e.g. when another element depends on the the same mixin)
+      if (specifier) {
+        suite(`Suite for ${specifier.toUpperCase()}`, function() {
+          test('loading dependencies', done => {
+            Polymer.importHref(url, e => done(), e => {
+              console.warn(`failed to load: ${url}`)
+            })
+          })
+        })
+      }
+
       suite('basic', function() {
         let element;
 
         setup(function() {
-          element = fixture('basic');
+          if (specifier) {
+            replace('basic-switch-element').with(specifier)
+          }
+          element = fixture('Basic');
         });
 
         test('instantiating the element with default properties works', done => {
-          assert.isDefined(element.__switchs, 'switchs are found');
+          assert.isDefined(element.dwellTime);
+          assert.isDefined(element._switchSelector);
+          assert.isTrue(Array.prototype.every.call(element.shadowRoot.querySelectorAll(element._switchSelector), el => el.hasAttribute('prop')), 'every switch has a defined prop for incrementing');
           done();
         });
+      });
+
+      suite('interactions', function() {
+        let element;
+
+        setup(function() {
+          if (specifier) {
+            replace('basic-switch-element').with(specifier)
+          }
+          element = fixture('Basic');
+        });
+
+        test('incrementing an itialized value', done => {
+          let s = element.shadowRoot.querySelector(element._switchSelector);
+          let step = s.getAttribute('step') || 1;
+          let prop = s.getAttribute('prop');
+          element[prop] = 2;
+          MockInteractions.tap(s);
+          assert.equal(element.value, 2 + step, 'incrementing initialized value');
+          done();
+        });
+
+        test('incrementing an unitialized value', done => {
+          let s = element.shadowRoot.querySelector(element._switchSelector);
+          let step = s.getAttribute('step') || 1;
+          let prop = s.getAttribute('prop');
+          let def = element._getDefaultForProp(prop);
+          element[prop] = undefined;
+          MockInteractions.tap(s);
+          assert.equal(element.value, def + step, 'incrementing uninitialized value');
+          done();
+        });
+
+        test('incrementing by enter', done => {
+          let s = element.shadowRoot.querySelector(element._switchSelector);
+          let step = s.getAttribute('step') || 1;
+          let prop = s.getAttribute('prop');
+          element[prop] = 2;
+          MockInteractions.pressAndReleaseKeyOn(s, 32);
+          assert.equal(element.value, 2 + step, 'incrementing by enter');
+          done();
+        });
+
+        test('incrementing by space', done => {
+          let s = element.shadowRoot.querySelector(element._switchSelector);
+          let step = s.getAttribute('step') || 1;
+          let prop = s.getAttribute('prop');
+          element[prop] = 2;
+          MockInteractions.pressAndReleaseKeyOn(s, 13);
+          assert.equal(element.value, 2 + step, 'incrementing by space');
+          done();
+        });
+
+        test('incrementing by holding', done => {
+          let s = element.shadowRoot.querySelector(element._switchSelector);
+          let step = s.getAttribute('step') || 1;
+          let prop = s.getAttribute('prop');
+          element[prop] = 2;
+          MockInteractions.down(s);
+          setTimeout(() => {
+            assert.equal(element.value, 2 + step*2, 'incrementing by holding down');
+            assert.equal(element._activeSwitch, s);
+            assert.isTrue(element._activeSwitch.hasAttribute('active'));
+            MockInteractions.up(s);
+            assert.isNull(element._activeSwitch);
+            done();
+          }, 1.5*element.dwellTime);
+        });
+
       });
     </script>
 

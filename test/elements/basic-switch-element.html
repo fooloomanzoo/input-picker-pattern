@@ -8,7 +8,9 @@
         return 'basic-switch-element';
       }
       static get template() {
-        return `<div class="switch">${this._iconStepUpTemplate}</div>`;
+        return `
+          <div id="up" prop="value" class="switch">${this._iconStepUpTemplate}</div>
+        `;
       }
       static get properties() {
         return {

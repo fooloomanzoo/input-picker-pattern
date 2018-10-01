@@ -1,19 +1,20 @@
 <link rel="import" href="../../../polymer/polymer.html">
 <link rel="import" href="../../overlay-picker-mixin.html">
+<link rel="import" href="../../input-picker-pattern.html">
 
 <dom-module id="basic-overlay-picker-element">
   <script>
-    class BasicOverlayPickerElement extends OverlayPickerMixin(Polymer.Element) { // eslint-disable-line no-undef
+    class BasicOverlayPickerElement extends OverlayPickerMixin(InputPickerPattern(Polymer.Element)) { // eslint-disable-line no-undef
       static get is() {
         return 'basic-overlay-picker-element';
       }
-      static get template() {
-        return `${this.pickerTemplate}`;
+      static get expectedNativeInputType() {
+        return 'number';
       }
       static get properties() {
         return {
-          custom1: String,
-          custom2: String
+          custom1: Number,
+          custom2: Number
         };
       }
     }

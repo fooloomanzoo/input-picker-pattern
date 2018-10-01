@@ -14,23 +14,32 @@
   </head>
   <body>
 
-    <test-fixture id="basic">
+    <test-fixture id="Basic">
       <template>
         <basic-input-picker-element></basic-input-picker-element>
       </template>
     </test-fixture>
 
-    <test-fixture id="confirm">
+    <test-fixture id="ChangedPropertyTestFixture">
       <template>
         <div>
-          <basic-input-picker-element id="value" value="333"></basic-input-picker-element>
-          <basic-input-picker-element id="confirmed-value" confirmed-value></basic-input-picker-element>
+          <basic-input-picker-element id="value" value="123"></basic-input-picker-element>
+          <basic-input-picker-element id="confirmed-value" confirmed-value="123"></basic-input-picker-element>
+        </div>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="Confirming">
+      <template>
+        <div>
+          <basic-input-picker-element id="value" value="123"></basic-input-picker-element>
+          <basic-input-picker-element id="confirmed-value" confirmed-value="123"></basic-input-picker-element>
           <basic-input-picker-element id="auto-confirm" auto-confirm value="123"></basic-input-picker-element>
         </div>
       </template>
     </test-fixture>
 
-    <test-fixture id="cancel">
+    <test-fixture id="Interactions">
       <template>
         <div>
           <basic-input-picker-element id="basic"></basic-input-picker-element>
@@ -62,16 +71,15 @@
           if (specifier) {
             replace('basic-input-picker-element').with(specifier)
           }
-          element = fixture('basic');
+          element = fixture('Basic');
         });
 
         test('instantiating the element with default properties works', done => {
           // picker properties
           assert.isFalse(element.native);
-          assert.isFalse(element.autoConfirm);
           assert.isFalse(element.noCancelOnEscKey);
           assert.isFalse(element.noCancelOnOutsideClick);
-          assert.isFalse(element.keepMultiplePickersOpen);
+          assert.isUndefined(element.autoConfirm);
           assert.isUndefined(element.noTip);
           assert.isUndefined(element.nativeOnMobile);
           assert.isUndefined(element.confirmedValue);
@@ -79,7 +87,32 @@
           assert.isDefined(element.horizontalAlign);
           assert.isDefined(element.verticalAlign);
           assert.isNotOk(element.opened);
-          assert.isTrue(BasicInputPickerElement._hasNative);
+          assert.isTrue(element.constructor._hasNative);
+          done();
+        });
+      });
+
+      suite('changed property', function() {
+        let f;
+
+        setup(function() {
+          if (specifier) {
+            replace('basic-input-picker-element').with(specifier)
+          }
+          f = fixture('ChangedPropertyTestFixture');
+        });
+
+        test('setting value not does not confirm the picker', done => {
+          let element = f.querySelector('#value');
+          assert.equal(element.value, 123, 'value is set');
+          assert.isUndefined(element.confirmedValue, 'confirmedValue is not set');
+          done();
+        });
+
+        test('setting confirmed value sets the value', done => {
+          let element = f.querySelector('#confirmed-value');
+          assert.equal(element.value, 123, 'value is set');
+          assert.equal(element.confirmedValue, 123, 'confirmedValue is set');
           done();
         });
       });
@@ -91,28 +124,245 @@
           if (specifier) {
             replace('basic-input-picker-element').with(specifier)
           }
-          f = fixture('confirm');
-        });
-
-        test('setting value not does not confirm the picker', done => {
-          done();
+          f = fixture('Confirming');
         });
 
         test('confirming by calling function', done => {
           let element = f.querySelector('#value');
-          console.log(element.value);
+          assert.equal(element.value, 123, 'value is set');
+          assert.isUndefined(element.confirmedValue, 'confirmedValue is not set');
+          element.confirm();
+          assert.equal(element.confirmedValue, 123, 'confirmedValue is set');
           done();
         });
 
         test('confirming by clicking button', done => {
+          let element = f.querySelector('#value');
+          let button = element.shadowRoot.querySelector('#confirm');
+          assert.isOk(button, 'confirm-button exists');
+          assert.equal(element.value, 123, 'value is set');
+          assert.isUndefined(element.confirmedValue, 'confirmedValue is not set');
+          MockInteractions.tap(button);
+          assert.equal(element.confirmedValue, 123, 'confirmedValue is set');
           done();
         });
 
-        test('resetting by calling function', done => {
+        test('confirming by enter an opened element', done => {
+          let element = f.querySelector('#value');
+          element.open();
+          assert.equal(element.value, 123, 'value is set');
+          assert.isUndefined(element.confirmedValue, 'confirmedValue is not set');
+          MockInteractions.pressAndReleaseKeyOn(element, 32);
+          assert.equal(element.confirmedValue, 123, 'confirmedValue is set');
           done();
         });
 
-        test('resetting by clicking button', done => {
+        test('confirming by space an opened element', done => {
+          let element = f.querySelector('#value');
+          element.open();
+          assert.equal(element.value, 123, 'value is set');
+          assert.isUndefined(element.confirmedValue, 'confirmedValue is not set');
+          MockInteractions.pressAndReleaseKeyOn(element, 13);
+          assert.equal(element.confirmedValue, 123, 'confirmedValue is set');
+          done();
+        });
+
+        test('canceling by calling function', done => {
+          let element = f.querySelector('#value');
+          assert.equal(element.value, 123, 'value is set');
+          assert.isUndefined(element.confirmedValue, 'confirmedValue is not set');
+          element.cancel();
+          assert.isUndefined(element.value, 'value is unset');
+          assert.isUndefined(element.confirmedValue, 'confirmedValue is not set');
+          done();
+        });
+
+        test('canceling by clicking button', done => {
+          let element = f.querySelector('#value');
+          let button = element.shadowRoot.querySelector('#cancel');
+          assert.isOk(button, 'cancel-button exists');
+          assert.equal(element.value, 123, 'value is set');
+          assert.isUndefined(element.confirmedValue, 'confirmedValue is not set');
+          MockInteractions.tap(button);
+          assert.isUndefined(element.value, 'value is unset');
+          assert.isUndefined(element.confirmedValue, 'confirmedValue is not set');
+          done();
+        });
+
+        test('canceling by esc', done => {
+          let element = f.querySelector('#value');
+          assert.equal(element.value, 123, 'value is set');
+          assert.isUndefined(element.confirmedValue, 'confirmedValue is not set');
+          MockInteractions.pressAndReleaseKeyOn(element, 27);
+          assert.isUndefined(element.value, 'value is unset');
+          assert.isUndefined(element.confirmedValue, 'confirmedValue is not set');
+          done();
+        });
+
+        test('auto confirm', done => {
+          let element = f.querySelector('#auto-confirm');
+          assert.equal(element.value, 123, 'value is set');
+          assert.equal(element.confirmedValue, 123, 'confirmedValue is set');
+          done();
+        });
+      });
+
+      suite('interactions', function() {
+        let f;
+
+        setup(function() {
+          if (specifier) {
+            replace('basic-input-picker-element').with(specifier)
+          }
+          f = fixture('Interactions');
+        });
+
+        test('open by clicking input', done => {
+          let element = f.querySelector('#basic');
+          let input = element.shadowRoot.querySelector('#input');
+          MockInteractions.tap(input);
+          assert.isTrue(element.opened, 'picker is opened');
+          done();
+        });
+
+        test('open and closing by function', done => {
+          let element = f.querySelector('#basic');
+          element.open();
+          assert.isTrue(element.opened, 'picker is opened');
+          element.close();
+          assert.isFalse(element.opened, 'picker is closed');
+          done();
+        });
+
+        test('toggle by enter', done => {
+          let element = f.querySelector('#basic');
+          MockInteractions.pressAndReleaseKeyOn(element, 32);
+          assert.isTrue(element.opened, 'picker is opened');
+          MockInteractions.pressAndReleaseKeyOn(element, 32);
+          assert.isFalse(element.opened, 'picker is closed');
+          done();
+        });
+
+        test('toggle by space', done => {
+          let element = f.querySelector('#basic');
+          MockInteractions.pressAndReleaseKeyOn(element, 13);
+          assert.isTrue(element.opened, 'picker is opened');
+          MockInteractions.pressAndReleaseKeyOn(element, 13);
+          assert.isFalse(element.opened, 'picker is closed');
+          done();
+        });
+
+        test('closing by confirming fn', done => {
+          let element = f.querySelector('#basic');
+          element.open();
+          element.confirm();
+          assert.isFalse(element.opened, 'picker is closed');
+          done();
+        });
+
+        test('closing by cancel fn', done => {
+          let element = f.querySelector('#basic');
+          element.open();
+          element.cancel();
+          assert.isFalse(element.opened, 'picker is closed');
+          done();
+        });
+
+        test('closing by confirming by click', done => {
+          let element = f.querySelector('#basic');
+          let button = element.shadowRoot.querySelector('#confirm');
+          element.open();
+          MockInteractions.tap(button);
+          assert.isFalse(element.opened, 'picker is closed');
+          done();
+        });
+
+        test('closing by canceling by click', done => {
+          let element = f.querySelector('#basic');
+          let button = element.shadowRoot.querySelector('#cancel');
+          element.open();
+          MockInteractions.tap(button);
+          assert.isFalse(element.opened, 'picker is closed');
+          done();
+        });
+
+        test('closing by esc', done => {
+          let element = f.querySelector('#basic');
+          element.open();
+          MockInteractions.pressAndReleaseKeyOn(element, 27);
+          assert.isFalse(element.opened, 'picker is closed');
+          done();
+        });
+
+        test('input-picker-opened-event', done => {
+          let element = f.querySelector('#basic');
+          element.addEventListener('input-picker-opened', () => {
+            done();
+          })
+          element.open();
+        });
+
+        test('input-picker-closed-event', done => {
+          let element = f.querySelector('#basic');
+          element.addEventListener('input-picker-closed', () => {
+            done();
+          })
+          element.close();
+        });
+
+        test('closing by esc', done => {
+          let element = f.querySelector('#basic');
+          element.open();
+          MockInteractions.pressAndReleaseKeyOn(element, 27);
+          assert.isFalse(element.opened, 'picker is closed');
+          done();
+        });
+
+        test('closing by clicking other picker', done => {
+          let element = f.querySelector('#basic');
+          element.open();
+          MockInteractions.tap(element.parentElement);
+          assert.isFalse(element.opened, 'picker is closed');
+          done();
+        });
+
+        test('closing by outside click', done => {
+          let element = f.querySelector('#basic');
+          let element2 = f.querySelector('#esc');
+          element.open();
+          MockInteractions.tap(element2);
+          assert.isFalse(element.opened, 'picker is closed');
+          done();
+        });
+      });
+
+      suite('interaction options', function() {
+        let f;
+
+        setup(function() {
+          if (specifier) {
+            replace('basic-input-picker-element').with(specifier)
+          }
+          f = fixture('Interactions');
+        });
+
+        test('no cancel by esc', done => {
+          let element = f.querySelector('#esc');
+          element.open();
+          element.value = 123;
+          MockInteractions.pressAndReleaseKeyOn(element, 27);
+          assert.isTrue(element.opened, 'picker is opened');
+          assert.equal(element.value, 123, 'value is not reset');
+          done();
+        });
+
+        test('no cancel by outside click', done => {
+          let element = f.querySelector('#outsideclick');
+          element.open();
+          element.value = 123;
+          MockInteractions.tap(element.parentElement);
+          assert.isTrue(element.opened, 'picker is opened');
+          assert.equal(element.value, 123, 'value is not reset');
           done();
         });
       });

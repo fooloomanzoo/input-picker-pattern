@@ -17,7 +17,8 @@
 
       constructor() {
         super();
-        this._increm = this._increm.bind(this);
+        this.__increm = this.__increm.bind(this);
+        this.__incremProp = this.__incremProp.bind(this);
         this._stopActiveIncremJob = this._stopActiveIncremJob.bind(this);
         this._checkKeycodeSwitch = this._checkKeycodeSwitch.bind(this);
       }
@@ -80,7 +81,7 @@
         if (switchs) {
           Array.prototype.forEach.call(switchs, s => {
             if (!this.__switchs.has(s)) {
-              Polymer.Gestures.addListener(s, 'down', this._increm, false);
+              Polymer.Gestures.addListener(s, 'down', this.__increm, false);
               Polymer.Gestures.addListener(s, 'up', this._stopActiveIncremJob, false);
               s.addEventListener('keydown', this._checkKeycodeSwitch, {passive: true});
               s.addEventListener('keyup', this._stopActiveIncremJob, {passive: true});
@@ -94,7 +95,7 @@
         this.removeEventListener('blur', this._stopActiveIncremJob, {passive: true});
         this.removeEventListener('contextmenu', this._stopActiveIncremJob, {passive: true});
         this.__switchs.forEach( s => {
-          Polymer.Gestures.removeListener(s, 'down', this._increm, false);
+          Polymer.Gestures.removeListener(s, 'down', this.__increm, false);
           Polymer.Gestures.removeListener(s, 'up', this._stopActiveIncremJob, false);
           s.removeEventListener('keydown', this._checkKeycodeSwitch, {passive: true});
           s.removeEventListener('keyup', this._stopActiveIncremJob, {passive: true});
@@ -103,14 +104,14 @@
 
       _checkKeycodeSwitch(e) {
         if (e && (e.keyCode === 13 || e.keyCode === 32)) { // space or enter
-          this._increm(e);
+          this.__increm(e);
           e.stopPropagation();
         } else {
           this._stopActiveIncremJob();
         }
       }
 
-      _increm(e) {
+      __increm(e) {
         this._stopActiveIncremJob();
         if (e === undefined) {
           return;
@@ -137,12 +138,12 @@
         if (isNaN(this[prop])) {
           this[prop] = this._getDefaultForProp(prop);
         }
-        this._incremProp(prop, +step*sign);
-        this._activeIncremJob = setInterval(this._incremProp.bind(this, prop, +step*sign), this.dwellTime);
+        this.__incremProp(prop, +step*sign);
+        this._activeIncremJob = setInterval(this.__incremProp.bind(this, prop, +step*sign), this.dwellTime);
         this._activeSwitch = s;
       }
 
-      _incremProp(prop, step) {
+      __incremProp(prop, step) {
         this[prop] += step;
       }
 

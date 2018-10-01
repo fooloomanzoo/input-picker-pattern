@@ -115,7 +115,7 @@
        */
       static get polyfillTemplate() {
         return `
-          <div id="input" on-click="open">
+          <div id="input" on-tap="open">
             ${this.inputTemplate}
           </div>
           ${this.pickerTemplate}
@@ -151,8 +151,8 @@
       static get buttonTemplate() {
         return `
           ${super.buttonTemplate || ''}
-          <button class="icon confirm" hidden$="[[disabled]]" on-click="confirm" on-keydown="_stopPropagation">${this._iconConfirmTemplate}</button>
-          <button class="icon cancel" on-click="cancel" on-keydown="_stopPropagation" hidden$="[[autoConfirm]]">${this._iconCloseTemplate}</button>
+          <button id="confirm" class="icon" hidden$="[[disabled]]" on-tap="confirm" on-keydown="_stopPropagation">${this._iconConfirmTemplate}</button>
+          <button id="cancel" class="icon" on-tap="cancel" on-keydown="_stopPropagation" hidden$="[[autoConfirm]]">${this._iconCloseTemplate}</button>
         `;
       }
 
@@ -226,7 +226,6 @@
            */
           autoConfirm: {
             type: Boolean,
-            value: false,
             observer: '_autoConfirmChanged'
           },
 
@@ -242,14 +241,6 @@
            * Set to `true` to disable canceling the dropdown by clicking outside the picker.
            */
           noCancelOnOutsideClick: {
-            type: Boolean,
-            value: false
-          },
-
-          /**
-           * Set to `true` to keep multiple pickers open. (will only work as expected when e.g. `noCancelOnOutsideClick` is set to true)
-           */
-          keepMultiplePickersOpen: {
             type: Boolean,
             value: false
           },
@@ -316,7 +307,7 @@
       _onPickerTransitionEnd() {
         if (!this.opened) {
           this.$.picker.style.visibility = 'hidden';
-          this.$.picker.style.display = 'hidden';
+          this.$.picker.style.display = 'none';
         }
       }
 
@@ -332,16 +323,6 @@
       _removeCancelOnClickListener() {
         Polymer.Gestures.removeListener(document, 'tap', this.cancel, false);
         this.removeEventListener('tap', this._stopPropagation, false);
-      }
-
-      _addKeepPickersOpenListener() {
-        if (!this.keepMultiplePickersOpen) {
-          document.addEventListener('input-picker-opened', this.cancel, false);
-        }
-      }
-
-      _removeKeepPickersOpenListener() {
-        document.removeEventListener('input-picker-opened', this.cancel, false);
       }
 
       _stopPropagation(e) {
@@ -363,7 +344,6 @@
         if (this.nativeOnMobile === undefined) {
           return;
         }
-
         const ua = window.navigator.userAgent,
           isMobile = new RegExp(this.mobileUserAgentTestString, 'i').test(ua);
         if (isMobile === true) {
@@ -399,11 +379,15 @@
           super._checkKeycode(e);
         }
       }
-      // 
-      // validate() {
-      //   this.value = this.confirmedValue;
-      //   return super.validate();
-      // }
+
+      validate() {
+        if (this._valueIsSet) {
+          this._setConfirmedValue();
+        } else if (this._isSet(this.confirmedValue)) {
+          this._resetValue();
+        }
+        return super.validate();
+      }
 
       /**
        * open the picker
@@ -414,15 +398,11 @@
         }
         this.$.picker.style.display = '';
         this.$.picker.style.visibility = '';
-        if (super.open) {
-          super.open();
-        }
+        super.open && super.open();
+
         if (!this.opened) {
           this.dispatchEvent(new (CustomEvent || Event)('input-picker-opened', { bubbles: true, detail: this }));
-          setTimeout(() => {
-            this._addCancelOnClickListener();
-            this._addKeepPickersOpenListener();
-          })
+          this._addCancelOnClickListener();
         }
         this.opened = true;
       }
@@ -436,14 +416,9 @@
           e.stopPropagation();
         }
         this._removeCancelOnClickListener();
-        this._removeKeepPickersOpenListener();
-        if (super.close) {
-          super.close();
-        }
-        setTimeout( () => {
-          this.opened = false;
-          this.dispatchEvent(new (CustomEvent || Event)('input-picker-closed', { bubbles: true, detail: this }));
-        })
+        super.close && super.close();
+        this.opened = false;
+        this.dispatchEvent(new (CustomEvent || Event)('input-picker-closed', { bubbles: true, detail: this }));
       }
 
       /**
@@ -468,14 +443,10 @@
         if (e && e.stopPropagation) {
           e.stopPropagation();
         }
-        if (this.disabled) {
-          this.cancel();
-          return;
+        super.confirm && super.confirm();
+        if (!this.disabled) {
+          this._setConfirmedValue();
         }
-        if (super.confirm) {
-          super.confirm();
-        }
-        this._setConfirmedValues();
         this.close();
       }
 
@@ -487,50 +458,47 @@
         if (e && e.stopPropagation) {
           e.stopPropagation();
         }
-        if (super.cancel) {
-          super.cancel();
-        }
-        if (this.autoConfirm) {
-          this.confirm();
-        }
+        super.cancel && super.cancel();
 
-        this._resetValue();
+        if (!this.disabled) {
+          if (this.autoConfirm) {
+            this.confirm();
+          } else {
+            this._resetValue();
+          }
+        }
         this.close();
       }
 
       _valueChanged(value) {
         super._valueChanged(value);
-        if (this._valueIsSet === false) {
-          this._resetConfirmedValues(this.value);
+        if (this._isSet(this.value) === false) {
+          this._reset(this.value);
           return; // return, if reseting, so that the picker is not itself resetted
         }
-        if (this.autoConfirm || (this._hasNative && this.native)) {
-          this._setConfirmedValues();
+        if (this.autoConfirm) {
+          this._setConfirmedValue();
         }
       }
 
       _confirmedValueChanged(confirmedValue) {
         if (this._isSet(confirmedValue) === false) {
-          this._resetConfirmedValues(confirmedValue);
+          this._reset(confirmedValue);
           return;
         }
         this.value = confirmedValue;
       }
 
-      _autoConfirmChanged() {
-        this._valueChanged(this.value);
-      }
-
-      _setConfirmedValues() {
-        this.setProperties({
-          confirmedValue: this.value
-        })
-      }
-
-      _resetConfirmedValues(value) {
+      _reset(value) {
         this.setProperties({
           value: this.default || value,
           confirmedValue: this.default || value
+        })
+      }
+
+      _setConfirmedValue() {
+        this.setProperties({
+          confirmedValue: this.value
         })
       }
 
@@ -540,10 +508,14 @@
         })
       }
 
+      _autoConfirmChanged(autoConfirm) {
+        this._valueChanged(this.value);
+      }
+
       _defaultChanged(def) {
         super._defaultChanged(def);
-        if (this._valueIsSet) {
-          this._setConfirmedValues();
+        if (this._isSet(this.value)) {
+          this._setConfirmedValue();
         }
       }
     }

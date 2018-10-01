@@ -155,14 +155,14 @@
 
       _valueChanged(value) {
         // test if value is set and if needed set value to default
-        if (this._valueIsSet === false && this.default !== undefined) {
+        if (this._isSet(value) === false && this.default !== undefined) {
           this.value = this.default;
         }
       }
 
       _defaultChanged(def, oldDef) {
         super._defaultChanged && super._defaultChanged(def, oldDef);
-        if (this._valueIsSet === false) {
+        if (this._isSet(this.value) === false) {
           // set value to default
           this.value = def;
         }
