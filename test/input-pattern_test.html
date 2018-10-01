@@ -101,7 +101,7 @@
 
       test('instantiating the element with default properties works', done => {
         // input-properties
-        assert.equal(element.type, 'text', 'type is defined');
+        assert.isDefined(element.type, 'type is defined');
         assert.isFalse(Boolean(element.input), 'input is falsy');
         assert.isUndefined(element.placeholder, 'placeholder is not defined');
         assert.isUndefined(element.minlength, 'minlength is not defined');

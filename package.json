@@ -32,7 +32,8 @@
     "@polymer/iron-overlay-behavior": "*"
   },
   "devDependencies": {
+    "@polymer/iron-demo-helpers": "*",
     "@webcomponents/webcomponentsjs": "*",
-    "@polymer/iron-form": "*"
+    "wct-browser-legacy": "*"
   }
 }
