@@ -111,6 +111,7 @@
             placeholder="[[placeholder]]"
             required$="[[required]]"
             disabled$="[[disabled]]"
+            title$="[[title]]"
             spellcheck="false"
             autocomplete="off">
         `;
@@ -133,6 +134,13 @@
             type: String,
             notify: true,
             observer: '_inputChanged'
+          },
+
+          /**
+           * description for the input and used for various browser as a hint for invalid inputs
+           */
+          title: {
+            type: String
           },
 
           /**

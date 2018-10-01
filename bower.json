@@ -22,7 +22,11 @@
     "iron-overlay-behavior": "PolymerElements/iron-overlay-behavior#2"
   },
   "devDependencies": {
+    "webcomponentsjs": "webcomponents/webcomponentsjs#1",
+    "iron-component-page": "PolymerElements/iron-component-page#3",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#2",
     "iron-form": "PolymerElements/iron-form#2",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2",
     "iron-test-helpers": "PolymerElements/iron-test-helpers#2",
     "web-component-tester": "^6.5.0"
   }
