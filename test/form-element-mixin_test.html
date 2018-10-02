@@ -69,7 +69,7 @@
           </iron-form>
           <iron-form id="custom-property-for-value">
             <form action="/get" method="get">
-              <basic-form-element id="custom" name="TestValue" property-for-value="title" title="abc"></basic-form-element>
+              <basic-form-element id="custom" name="TestValue" property-for-value="name"></basic-form-element>
             </form>
           </iron-form>
         </div>
@@ -424,7 +424,7 @@
         test('custom property-for-value', function(done) {
           let form = f.querySelector('#custom-property-for-value');
           form.addEventListener('iron-form-response', function(event) {
-            expect(event.detail.url).to.equal('/get?TestValue=abc');
+            expect(event.detail.url).to.equal('/get?TestValue=TestValue');
             expect(event.detail.response.success).to.be.equal(true);
             done();
           });
