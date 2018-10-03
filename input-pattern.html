@@ -139,7 +139,7 @@
           /**
            * message to set on the input to show if the input does not validate
            */
-          errorMessage: {
+          validationMessage: {
             type: String,
             observer: 'setCustomValidity'
           },
@@ -315,7 +315,7 @@
       }
 
       /**
-       * focus the input
+       * focus the input element
        */
       focus(e) {
         super.focus(e);
@@ -324,7 +324,7 @@
       }
 
       /**
-       * focus the input
+       * removes focus from input
        */
       blur(e) {
         super.blur(e);
@@ -332,12 +332,33 @@
       }
 
       /**
-       * sets on the native input a vadility message
+       * selects the input text in the element, and focuses it so the user can subsequently replace the whole entry
+       */
+      select() {
+        this.$.input.select();
+      }
+
+      /**
+       * simulates a click on the element
+       */
+      click() {
+        this.$.input.click();
+      }
+
+      /**
+       * sets on the native input a validity message
        * @param {String} msg   the message to set
        */
       setCustomValidity(msg) {
-        if (!msg) return; 
-        this.$.input.setCustomValidity(msg);
+        this.$.input.setCustomValidity(msg || '');
+      }
+
+      /**
+       * reports the validity state of the native input
+       * @return {Boolean}  validity state
+       */
+      reportValidity() {
+        return this.$.input.reportValidity();
       }
 
     }

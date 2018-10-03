@@ -38,9 +38,9 @@
   <test-fixture id="Validation">
     <template>
       <div>
-        <basic-input-element id="not-required-without-value" value=""></basic-input-element>
+        <basic-input-element id="not-required-without-value"></basic-input-element>
         <basic-input-element id="not-required-with-value" value="abc"></basic-input-element>
-        <basic-input-element id="required-without-value" required value=""></basic-input-element>
+        <basic-input-element id="required-without-value" required></basic-input-element>
         <basic-input-element id="required-with-value" required value="abc"></basic-input-element>
       </div>
     </template>
@@ -225,9 +225,9 @@
 
       test('not required without value', done => {
         let element = f.querySelector('#not-required-without-value');
-        assert.equal(element.value, '');
-        assert.equal(element.input, '');
-        assert.isTrue(!element.invalid);
+        assert.isUndefined(element.value);
+        assert.isUndefined(element.input);
+        assert.isFalse(element.invalid);
         done();
       });
 
@@ -235,14 +235,14 @@
         let element = f.querySelector('#not-required-with-value');
         assert.equal(element.value, 'abc');
         assert.equal(element.input, 'abc');
-        assert.isTrue(!element.invalid);
+        assert.isFalse(element.invalid);
         done();
       });
 
       test('required without value', done => {
         let element = f.querySelector('#required-without-value');
-        assert.equal(element.value, '', 'value is set');
-        assert.equal(element.input, '');
+        assert.isUndefined(element.value);
+        assert.isUndefined(element.input);
         assert.isTrue(element.invalid);
         done();
       });
@@ -251,7 +251,7 @@
         let element = f.querySelector('#required-with-value');
         assert.equal(element.value, 'abc');
         assert.equal(element.input, 'abc');
-        assert.isTrue(!element.invalid);
+        assert.isFalse(element.invalid);
         done();
       });
 
@@ -260,7 +260,7 @@
         element.value = '';
         assert.equal(element.value, '');
         assert.equal(element.input, '');
-        assert.isTrue(!element.invalid);
+        assert.isFalse(element.invalid);
         done();
       });
 
@@ -269,14 +269,14 @@
         element.input = '';
         assert.equal(element.value, 'abc');
         assert.equal(element.input, '');
-        assert.isTrue(!element.invalid);
+        assert.isFalse(element.invalid);
         done();
       });
 
       test('required set empty value', done => {
         let element = f.querySelector('#required-with-value');
         element.value = '';
-        assert.equal(element.value, '', 'value is set');
+        assert.equal(element.value, '');
         assert.equal(element.input, '');
         assert.isTrue(element.invalid);
         done();
@@ -288,6 +288,13 @@
         assert.equal(element.value, 'abc');
         assert.equal(element.input, '');
         assert.isTrue(element.invalid);
+        done();
+      });
+
+      test('error message', done => {
+        let element = f.querySelector('#required-without-value');
+        element.validationMessage = '123';
+        assert.equal(element.shadowRoot.querySelector('#input').validationMessage, '123');
         done();
       });
     });
