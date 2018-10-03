@@ -23,13 +23,13 @@
 
     <test-fixture id="ChangedPropertyTestFixture">
       <template>
-        <basic-form-element value="abc"></basic-form-element>
+        <basic-form-element value="123"></basic-form-element>
       </template>
     </test-fixture>
 
     <test-fixture id="DefaultValue">
       <template>
-        <basic-form-element default="abc"></basic-form-element>
+        <basic-form-element default="123"></basic-form-element>
       </template>
     </test-fixture>
 
@@ -37,9 +37,9 @@
       <template>
         <div>
           <basic-form-element id="basic" property-for-value="name"></basic-form-element>
-          <basic-form-element id="set-property-reflect-value" property-for-value="name" name="abc"></basic-form-element>
-          <basic-form-element id="set-value-reflect-property" property-for-value="name" value="abc"></basic-form-element>
-          <basic-form-element id="setting-value-and-property" property-for-value="name" name="2" value="abc"></basic-form-element>
+          <basic-form-element id="set-property-reflect-value" property-for-value="name" name="123"></basic-form-element>
+          <basic-form-element id="set-value-reflect-property" property-for-value="name" value="123"></basic-form-element>
+          <basic-form-element id="setting-value-and-property" property-for-value="name" name="2" value="123"></basic-form-element>
         </div>
       </template>
     </test-fixture>
@@ -49,22 +49,22 @@
         <div>
           <iron-form id="not-required-no-value">
             <form action="/get" method="get">
-              <basic-form-element name="TestValue" value=""></basic-form-element>
+              <basic-form-element name="TestValue"></basic-form-element>
             </form>
           </iron-form>
           <iron-form id="not-required-and-value">
             <form action="/get" method="get">
-              <basic-form-element name="TestValue" value="abc"></basic-form-element>
+              <basic-form-element name="TestValue" value="123"></basic-form-element>
             </form>
           </iron-form>
           <iron-form id="required-no-value">
             <form action="/get" method="get">
-              <basic-form-element required name="TestValue" value=""></basic-form-element>
+              <basic-form-element required name="TestValue"></basic-form-element>
             </form>
           </iron-form>
           <iron-form id="required-and-value">
             <form action="/get" method="get">
-              <basic-form-element id="requiredandvalue" required name="TestValue" value="cde"></basic-form-element>
+              <basic-form-element id="requiredandvalue" required name="TestValue" value="345"></basic-form-element>
             </form>
           </iron-form>
           <iron-form id="custom-property-for-value">
@@ -108,7 +108,6 @@
           assert.isUndefined(element.name, 'name is not defined');
           assert.isUndefined(element.title, 'title is not defined');
           assert.isUndefined(element.value, 'value is not defined');
-          assert.isUndefined(element.propertyForValue, 'propertyForValue is not defined');
           assert.isUndefined(element.default, 'default is not defined');
           assert.isFalse(element._valueIsSet, '_valueIsSet is false');
           done();
@@ -137,23 +136,19 @@
 
         test('custom "_validate"', done => {
           element._validate = (value) => {
-            return value !== 'abc';
+            return value !== '123';
           }
           assert.isFalse(element.invalid, 'invalid is false');
-          assert.isFalse(element._valueIsSet, '_valueIsSet is false');
           assert.isUndefined(element.value, 'value is not defined');
           element.value = '';
           assert.isFalse(element.invalid, 'invalid is false');
-          assert.isFalse(element._valueIsSet, '_valueIsSet is false');
           assert.equal(element.value, '', 'value is set');
           element.value = 'ab';
           assert.isFalse(element.invalid, 'invalid is false');
-          assert.isTrue(element._valueIsSet, '_valueIsSet is true');
           assert.equal(element.value, 'ab', 'value is set');
-          element.value = 'abc';
+          element.value = '123';
           assert.isTrue(element.invalid, 'invalid is true');
-          assert.isTrue(element._valueIsSet, '_valueIsSet is true');
-          assert.equal(element.value, 'abc', 'value is set');
+          assert.equal(element.value, '123', 'value is set');
           done();
         });
       });
@@ -169,19 +164,19 @@
         });
 
         test('setting a value on the element works', function(done) {
-          assert.equal(element.value, 'abc', 'property is set');
+          assert.equal(element.value, '123', 'property is set');
           done();
         });
 
         test('unsetting works', function(done) {
           element.value = '';
-          assert.equal(element.value, '', 'value is set');
+          assert.equal(element.value, '', 'value is unset');
           done();
         });
 
         test('resetting works', function(done) {
           element.value = undefined;
-          assert.isUndefined(element.value, 'value is set');
+          assert.isUndefined(element.value, 'value is unset');
           done();
         });
       });
@@ -215,11 +210,35 @@
 
         test('unsetting value', function(done) {
           element.value = '';
-          assert.equal(element.value, element.default);
+          if (element._isSet('')) {
+            assert.equal(element.value, element.default);
+          } else {
+            assert.equal(element.value, '');
+          }
+          element.value = false;
+          if (element._isSet(false)) {
+            assert.equal(element.value, element.default);
+          } else {
+            assert.equal(element.value, false);
+          }
+          element.value = 0;
+          if (element._isSet(0)) {
+            assert.equal(element.value, element.default);
+          } else {
+            assert.equal(element.value, 0);
+          }
           element.value = undefined;
-          assert.equal(element.value, element.default);
+          if (element._isSet(undefined)) {
+            assert.equal(element.value, element.default);
+          } else {
+            assert.isUndefined(element.value);
+          }
           element.value = null;
-          assert.equal(element.value, element.default);
+          if (element._isSet(null)) {
+            assert.equal(element.value, element.default);
+          } else {
+            assert.isNull(element.value);
+          }
           done();
         });
 
@@ -230,7 +249,11 @@
           assert.isUndefined(element.default);
           assert.equal(element.value, value);
           element.value = undefined;
-          assert.isUndefined(element.value);
+          if (element._isSet(undefined)) {
+            assert.equal(element.value, element.default);
+          } else {
+            assert.isUndefined(element.value);
+          }
           done();
         });
       });
@@ -268,8 +291,8 @@
 
         test('initial property', function(done) {
           let element = f.querySelector('#set-property-reflect-value');
-          assert.equal(element.name, 'abc', 'property does not change');
-          assert.equal(element.value, 'abc', 'value is set');
+          assert.equal(element.name, '123', 'property does not change');
+          assert.equal(element.value, '123', 'value is set');
           done();
         });
 
@@ -284,24 +307,24 @@
         test('initial property, propertyForValue changes', function(done) {
           let element = f.querySelector('#set-property-reflect-value');
           element.propertyForValue = 'title';
-          assert.equal(element.name, 'abc', 'name does not change');
-          assert.equal(element.title, 'abc', 'title is set');
-          assert.equal(element.value, 'abc', 'value does not change');
+          assert.equal(element.name, '123', 'name does not change');
+          assert.equal(element.title, '123', 'title is set');
+          assert.equal(element.value, '123', 'value does not change');
           element.value = 4;
-          assert.equal(element.name, 'abc', 'name does not change');
+          assert.equal(element.name, '123', 'name does not change');
           assert.equal(element.title, 4, 'title is set');
           assert.equal(element.value, 4, 'value does not change');
-          element.title = 'efg';
-          assert.equal(element.name, 'abc', 'name does not change');
-          assert.equal(element.title, 'efg', 'title does not change');
-          assert.equal(element.value, 'efg', 'value is set');
+          element.title = '456';
+          assert.equal(element.name, '123', 'name does not change');
+          assert.equal(element.title, '456', 'title does not change');
+          assert.equal(element.value, '456', 'value is set');
           done();
         });
 
         test('initial value', function(done) {
           let element = f.querySelector('#set-value-reflect-property');
-          assert.equal(element.name, 'abc', 'property is set');
-          assert.equal(element.value, 'abc', 'value does not change');
+          assert.equal(element.name, '123', 'property is set');
+          assert.equal(element.value, '123', 'value does not change');
           done();
         });
 
@@ -316,17 +339,17 @@
         test('initial value, propertyForValue changes', function(done) {
           let element = f.querySelector('#set-value-reflect-property');
           element.propertyForValue = 'title';
-          assert.equal(element.name, 'abc', 'name does not change');
-          assert.equal(element.title, 'abc', 'title is set');
-          assert.equal(element.value, 'abc', 'value does not change');
+          assert.equal(element.name, '123', 'name does not change');
+          assert.equal(element.title, '123', 'title is set');
+          assert.equal(element.value, '123', 'value does not change');
           element.value = 4;
-          assert.equal(element.name, 'abc', 'name does not change');
+          assert.equal(element.name, '123', 'name does not change');
           assert.equal(element.title, 4, 'title is set');
           assert.equal(element.value, 4, 'value does not change');
-          element.title = 'efg';
-          assert.equal(element.name, 'abc', 'name does not change');
-          assert.equal(element.title, 'efg', 'title does not change');
-          assert.equal(element.value, 'efg', 'value is set');
+          element.title = '456';
+          assert.equal(element.name, '123', 'name does not change');
+          assert.equal(element.title, '456', 'title does not change');
+          assert.equal(element.value, '456', 'value is set');
           done();
         });
 
@@ -360,7 +383,7 @@
         test('not required element with no value', function(done) {
           let form = f.querySelector('#not-required-no-value');
           form.addEventListener('iron-form-response', function(event) {
-            expect(event.detail.url).to.equal('/get?TestValue=');
+            expect(event.detail.url).to.equal('/get?TestValue=undefined');
             expect(event.detail.response.success).to.be.equal(true);
             done();
           });
@@ -375,7 +398,7 @@
         test('not required element with value', function(done) {
           let form = f.querySelector('#not-required-and-value');
           form.addEventListener('iron-form-response', function(event) {
-            expect(event.detail.url).to.equal('/get?TestValue=abc');
+            expect(event.detail.url).to.equal('/get?TestValue=123');
             expect(event.detail.response.success).to.be.equal(true);
             done();
           });
@@ -409,7 +432,7 @@
         test('required element with value', function(done) {
           let form = f.querySelector('#required-and-value');
           form.addEventListener('iron-form-response', function(event) {
-            expect(event.detail.url).to.equal('/get?TestValue=cde');
+            expect(event.detail.url).to.equal('/get?TestValue=345');
             expect(event.detail.response.success).to.be.equal(true);
             done();
           });

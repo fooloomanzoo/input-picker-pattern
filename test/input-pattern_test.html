@@ -25,13 +25,13 @@
 
   <test-fixture id="ChangedPropertyTestFixture">
     <template>
-      <basic-input-element value="abc"></basic-input-element>
+      <basic-input-element value="123"></basic-input-element>
     </template>
   </test-fixture>
 
   <test-fixture id="DefaultValue">
     <template>
-      <basic-input-element default="abc"></basic-input-element>
+      <basic-input-element default="123"></basic-input-element>
     </template>
   </test-fixture>
 
@@ -39,9 +39,9 @@
     <template>
       <div>
         <basic-input-element id="not-required-without-value"></basic-input-element>
-        <basic-input-element id="not-required-with-value" value="abc"></basic-input-element>
+        <basic-input-element id="not-required-with-value" value="123"></basic-input-element>
         <basic-input-element id="required-without-value" required></basic-input-element>
-        <basic-input-element id="required-with-value" required value="abc"></basic-input-element>
+        <basic-input-element id="required-with-value" required value="123"></basic-input-element>
       </div>
     </template>
   </test-fixture>
@@ -50,10 +50,10 @@
     <template>
       <div>
         <basic-input-element id="min-length" minlength="3"></basic-input-element>
-        <basic-input-element id="placeholder" placeholder="abc"></basic-input-element>
+        <basic-input-element id="placeholder" placeholder="123"></basic-input-element>
         <basic-input-element id="default" default="def"></basic-input-element>
-        <basic-input-element id="min-length-and-placeholder" minlength="3" placeholder="abc"></basic-input-element>
-        <basic-input-element id="min-length-and-placeholder-and-default" minlength="3" placeholder="abc" default="def"></basic-input-element>
+        <basic-input-element id="min-length-and-placeholder" minlength="3" placeholder="123"></basic-input-element>
+        <basic-input-element id="min-length-and-placeholder-and-default" minlength="3" placeholder="123" default="def"></basic-input-element>
       </div>
     </template>
   </test-fixture>
@@ -61,14 +61,14 @@
   <test-fixture id="Sizing">
     <template>
       <div>
-        <basic-input-element id="with-placeholder" placeholder="abc"></basic-input-element>
-        <basic-input-element id="hidden-with-placeholder" placeholder="abc" style="display:none"></basic-input-element>
-        <basic-input-element id="with-value" value="abc"></basic-input-element>
-        <basic-input-element id="hidden-with-value" value="abc" style="display:none"></basic-input-element>
-        <basic-input-element id="autoresize" auto-resize value="abc"></basic-input-element>
+        <basic-input-element id="with-placeholder" placeholder="123"></basic-input-element>
+        <basic-input-element id="hidden-with-placeholder" placeholder="123" style="display:none"></basic-input-element>
+        <basic-input-element id="with-value" value="123"></basic-input-element>
+        <basic-input-element id="hidden-with-value" value="123" style="display:none"></basic-input-element>
+        <basic-input-element id="autoresize" auto-resize value="123"></basic-input-element>
         <overlay-element id="overlay">
-          <basic-input-element id="inner-with-placeholder" placeholder="abc"></basic-input-element>
-          <basic-input-element id="inner-with-value" value="abc"></basic-input-element>
+          <basic-input-element id="inner-with-placeholder" placeholder="123"></basic-input-element>
+          <basic-input-element id="inner-with-value" value="123"></basic-input-element>
         </overlay-element>
       </div>
     </template>
@@ -108,20 +108,23 @@
         assert.isUndefined(element.noAutoWidth, 'noAutoWidth is not defined');
         assert.isUndefined(element.autoResize, 'autoResize is not defined');
         assert.isUndefined(element._minlengthString, '_minlengthString is not defined');
+        if (element.propertyForValue) {
+          assert.equal(typeof element[element.propertyForValue], typeof element.value, 'type of reflecting property is the same like of value');
+        }
         done();
       });
 
       test('setting input value does not change the value when not confirmed', done => {
-        element.input = 'abc';
-        assert.equal(element.input, 'abc', 'input stays the same');
+        element.input = '123';
+        assert.equal(element.input, '123', 'input stays the same');
         assert.isUndefined(element.value, 'value does not change');
         done();
       });
 
       test('setting value when confirming', done => {
-        element.input = 'abc';
+        element.input = '123';
         element._confirmInput();
-        assert.equal(element.value, 'abc', 'value is set');
+        assert.equal(element.value, '123', 'value is set');
         done();
       });
     });
@@ -137,31 +140,31 @@
       });
 
       test('setting a value', done => {
-        assert.equal(element.value, 'abc');
-        assert.equal(element.input, 'abc', 'input is set');
+        assert.equal(element.value, '123');
+        assert.equal(element.input, '123', 'input is set');
         done();
       });
 
       test('setting a input', done => {
-        element.input = 'def';
-        assert.equal(element.value, 'abc');
-        assert.equal(element.input, 'def');
+        element.input = '456';
+        assert.equal(element.value, '123');
+        assert.equal(element.input, '456');
         done();
       });
 
       test('setting a input and calling update fns', done => {
-        element.input = 'def';
-        assert.equal(element.value, 'abc');
-        assert.equal(element.input, 'def');
+        element.input = '456';
+        assert.equal(element.value, '123');
+        assert.equal(element.input, '456');
 
         element._updateInput();
-        assert.equal(element.value, 'abc');
-        assert.equal(element.input, 'abc');
+        assert.equal(element.value, '123');
+        assert.equal(element.input, '123');
 
-        element.input = 'def';
+        element.input = '456';
         element._confirmInput();
-        assert.equal(element.value, 'def');
-        assert.equal(element.input, 'def');
+        assert.equal(element.value, '456');
+        assert.equal(element.input, '456');
         done();
       });
     });
@@ -177,38 +180,49 @@
       });
 
       test('setting a default value', done => {
-        assert.equal(element.default, 'abc');
-        assert.equal(element.value, 'abc');
-        assert.equal(element.input, 'abc');
+        assert.equal(element.default, '123');
+        assert.equal(element.value, '123');
+        assert.equal(element.input, '123');
         done();
       });
 
       test('resetting to default value', done => {
-        element.value = 0;
-        assert.equal(element.value, 0, 'setting value 0');
-        assert.equal(element.input, 0, 'setting value 0');
-        element.value = false;
-        assert.equal(element.value, false, 'setting value false');
-        assert.equal(element.input, false, 'setting value false');
-        element.value = undefined;
-        assert.equal(element.value, element.default, 'setting value undefined');
-        assert.equal(element.input, element.default, 'setting value undefined');
-        element.value = null;
-        assert.equal(element.value, element.default, 'setting value null');
-        assert.equal(element.input, element.default, 'setting value null');
-        element.value = '';
-        assert.equal(element.value, element.default, 'setting value empty');
-        assert.equal(element.input, element.default, 'setting value empty');
-        element.value = 'def';
+        element.value = '456';
         element.input = '';
-        assert.equal(element.value, 'def', 'setting input empty');
-        assert.equal(element.input, element.default, 'setting input empty');
-        element.input = null;
-        assert.equal(element.value, 'def', 'setting input null');
-        assert.equal(element.input, element.default, 'setting input null');
+        assert.equal(element.value, '456', 'setting input empty');
+        if (element._isSet('')) {
+          assert.equal(element.input, element.default);
+        } else {
+          assert.equal(element.input, '');
+        }
+        element.input = 0;
+        assert.equal(element.value, '456', 'setting input empty');
+        if (element._isSet(0)) {
+          assert.equal(element.input, element.default);
+        } else {
+          assert.equal(element.input, 0);
+        }
+        element.input = false;
+        assert.equal(element.value, '456', 'setting input empty');
+        if (element._isSet(false)) {
+          assert.equal(element.input, element.default);
+        } else {
+          assert.equal(element.input, false);
+        }
         element.input = undefined;
-        assert.equal(element.value, 'def', 'setting input undefined');
-        assert.equal(element.input, element.default, 'setting input undefined');
+        assert.equal(element.value, '456', 'setting input empty');
+        if (element._isSet(undefined)) {
+          assert.equal(element.input, element.default);
+        } else {
+          assert.isUndefined(element.input);
+        }
+        element.input = null;
+        assert.equal(element.value, '456', 'setting input empty');
+        if (element._isSet(null)) {
+          assert.equal(element.input, element.default);
+        } else {
+          assert.isNull(element.input);
+        }
         done();
       });
     });
@@ -233,8 +247,8 @@
 
       test('not required with value', done => {
         let element = f.querySelector('#not-required-with-value');
-        assert.equal(element.value, 'abc');
-        assert.equal(element.input, 'abc');
+        assert.equal(element.value, '123');
+        assert.equal(element.input, '123');
         assert.isFalse(element.invalid);
         done();
       });
@@ -249,8 +263,8 @@
 
       test('required with value', done => {
         let element = f.querySelector('#required-with-value');
-        assert.equal(element.value, 'abc');
-        assert.equal(element.input, 'abc');
+        assert.equal(element.value, '123');
+        assert.equal(element.input, '123');
         assert.isFalse(element.invalid);
         done();
       });
@@ -267,7 +281,7 @@
       test('not required set empty input', done => {
         let element = f.querySelector('#not-required-with-value');
         element.input = '';
-        assert.equal(element.value, 'abc');
+        assert.equal(element.value, '123');
         assert.equal(element.input, '');
         assert.isFalse(element.invalid);
         done();
@@ -285,7 +299,7 @@
       test('required set empty input', done => {
         let element = f.querySelector('#required-with-value');
         element.input = '';
-        assert.equal(element.value, 'abc');
+        assert.equal(element.value, '123');
         assert.equal(element.input, '');
         assert.isTrue(element.invalid);
         done();
@@ -319,46 +333,46 @@
       });
 
       test('setting input and focus updates the value', done => {
-        element.input = 'abc';
+        element.input = '123';
         MockInteractions.focus(element);
-        assert.equal(element.value, 'abc', 'value is set when focussed');
+        assert.equal(element.value, '123', 'value is set when focussed');
         done();
       });
 
       test('setting input and focus updates the value when value is set', done => {
-        element.input = 'def';
-        element.input = 'abc';
+        element.input = '456';
+        element.input = '123';
         MockInteractions.focus(element);
-        assert.equal(element.value, 'abc', 'value is set when focussed');
+        assert.equal(element.value, '123', 'value is set when focussed');
         done();
       });
 
       test('confirming with enter', done => {
-        element.input = 'abc';
+        element.input = '123';
         MockInteractions.pressEnter(input);
-        assert.equal(element.input, 'abc', 'input does not change');
-        assert.equal(element.value, 'abc', 'value changes');
+        assert.equal(element.input, '123', 'input does not change');
+        assert.equal(element.value, '123', 'value changes');
         done();
       });
 
       test('confirming with tab', done => {
-        element.input = 'abc';
+        element.input = '123';
         MockInteractions.pressAndReleaseKeyOn(input, 9);
-        assert.equal(element.input, 'abc', 'input does not change');
-        assert.equal(element.value, 'abc', 'value changes');
+        assert.equal(element.input, '123', 'input does not change');
+        assert.equal(element.value, '123', 'value changes');
         done();
       });
 
       test('aborting and bluring with esc', done => {
         MockInteractions.focus(element);
         let value = element.value;
-        element.input = 'abc';
+        element.input = '123';
         MockInteractions.pressAndReleaseKeyOn(input, 27);
         assert.equal(element.input, value, 'input changes');
         assert.equal(element.value, value, 'value does not change');
         MockInteractions.focus(element);
-        value = element.value = 'def';
-        element.input = 'abc';
+        value = element.value = '456';
+        element.input = '123';
         MockInteractions.pressAndReleaseKeyOn(input, 27);
         assert.equal(element.input, value, 'input changes when value is preset');
         assert.equal(element.value, value, 'value does not change when value is preset');
@@ -522,7 +536,7 @@
         // Wait one tick for observeNodes.
         setTimeout(function() {
           let beforeWidth = element.getBoundingClientRect().width;
-          element.value = element._minlengthString + 'abc';
+          element.value = element._minlengthString + '123';
           // Wait one tick for observeNodes.
           setTimeout(function() {
             assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
@@ -537,7 +551,7 @@
         setTimeout(function() {
           let beforeWidth = element.getBoundingClientRect().width;
           assert.equal(beforeWidth, element.getBoundingClientRect().width);
-          element.input = element._minlengthString + 'abc';
+          element.input = element._minlengthString + '123';
           element._confirmInput();
           setTimeout(function() {
             assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
@@ -549,7 +563,7 @@
       test('autoresize', done => {
         let element = f.querySelector('#autoresize');
         let beforeWidth = element.getBoundingClientRect().width;
-        element.input = element.input + 'abc';
+        element.input = element.input + '123';
         // Wait one tick for observeNodes.
         setTimeout(function() {
           assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
