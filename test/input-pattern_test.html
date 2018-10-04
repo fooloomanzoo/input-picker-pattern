@@ -107,7 +107,6 @@
         assert.isUndefined(element.minlength, 'minlength is not defined');
         assert.isUndefined(element.noAutoWidth, 'noAutoWidth is not defined');
         assert.isUndefined(element.autoResize, 'autoResize is not defined');
-        assert.isUndefined(element._minlengthString, '_minlengthString is not defined');
         if (element.propertyForValue) {
           assert.equal(typeof element[element.propertyForValue], typeof element.value, 'type of reflecting property is the same like of value');
         }
@@ -260,9 +259,13 @@
 
       test('not required without value', done => {
         let element = f.querySelector('#not-required-without-value');
-        assert.isUndefined(element.value);
-        assert.isUndefined(element.input);
         assert.isFalse(element.invalid);
+        done();
+      });
+
+      test('required without value', done => {
+        let element = f.querySelector('#required-without-value');
+        assert.isTrue(element.invalid);
         done();
       });
 
@@ -274,14 +277,6 @@
         done();
       });
 
-      test('required without value', done => {
-        let element = f.querySelector('#required-without-value');
-        assert.isUndefined(element.value);
-        assert.isUndefined(element.input);
-        assert.isTrue(element.invalid);
-        done();
-      });
-
       test('required with value', done => {
         let element = f.querySelector('#required-with-value');
         assert.equal(element.value, '123');
@@ -290,12 +285,12 @@
         done();
       });
 
-      test('not required set empty value', done => {
-        let element = f.querySelector('#not-required-with-value');
-        element.value = '';
-        assert.equal(element.value, '');
+      test('required set empty input', done => {
+        let element = f.querySelector('#required-with-value');
+        element.input = '';
+        assert.equal(element.value, '123');
         assert.equal(element.input, '');
-        assert.isFalse(element.invalid);
+        assert.isTrue(element.invalid);
         done();
       });
 
@@ -311,18 +306,22 @@
       test('required set empty value', done => {
         let element = f.querySelector('#required-with-value');
         element.value = '';
-        assert.equal(element.value, '');
-        assert.equal(element.input, '');
-        assert.isTrue(element.invalid);
+        if (element._validate('')) {
+          assert.isFalse(element.invalid);
+        } else {
+          assert.isTrue(element.invalid, element.value + ' ' + element.valueAsNumebr);
+        }
         done();
       });
 
-      test('required set empty input', done => {
-        let element = f.querySelector('#required-with-value');
-        element.input = '';
-        assert.equal(element.value, '123');
-        assert.equal(element.input, '');
-        assert.isTrue(element.invalid);
+      test('not required set empty value', done => {
+        let element = f.querySelector('#not-required-with-value');
+        element.value = '';
+        if (element._validate('')) {
+          assert.isFalse(element.invalid, element.value);
+        } else {
+          assert.isTrue(element.invalid);
+        }
         done();
       });
 

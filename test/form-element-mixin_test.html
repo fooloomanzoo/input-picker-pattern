@@ -196,43 +196,57 @@
           done();
         });
 
-        test('set value to 0', function(done) {
-          element.value = 0;
-          assert.equal(element.value, 0);
-          done();
-        });
-
-        test('set value to false', function(done) {
-          element.value = false;
-          assert.equal(element.value, false);
-          done();
-        });
-
-        test('unsetting value', function(done) {
+        test('set value empty', function(done) {
           element.value = '';
           if (!element._isSet('')) {
             assert.equal(element.value, element.default);
           } else {
             assert.equal(element.value, '');
           }
+          done();
+        });
+
+        test('set value false', function(done) {
           element.value = false;
           if (!element._isSet(false)) {
             assert.equal(element.value, element.default);
           } else {
             assert.equal(element.value, false);
           }
+          done();
+        });
+
+        test('set value true', function(done) {
+          element.value = true;
+          if (!element._isSet(true)) {
+            assert.equal(element.value, element.default);
+          } else {
+            assert.equal(element.value, true);
+          }
+          done();
+        });
+
+        test('set value 0', function(done) {
           element.value = 0;
           if (!element._isSet(0)) {
             assert.equal(element.value, element.default);
           } else {
             assert.equal(element.value, 0);
           }
+          done();
+        });
+
+        test('set value undefined', function(done) {
           element.value = undefined;
           if (!element._isSet(undefined)) {
             assert.equal(element.value, element.default);
           } else {
             assert.isUndefined(element.value);
           }
+          done();
+        });
+
+        test('set value null', function(done) {
           element.value = null;
           if (!element._isSet(null)) {
             assert.equal(element.value, element.default);
