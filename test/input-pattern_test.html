@@ -186,7 +186,7 @@
         done();
       });
 
-      test('resetting to default value', done => {
+      test('setting to empty string', done => {
         element.value = '456';
         element.input = '';
         assert.equal(element.value, '456', 'setting input empty');
@@ -195,13 +195,24 @@
         } else {
           assert.equal(element.input, '');
         }
+        done();
+      });
+
+      test('setting to 0', done => {
+        element.value = '456';
         element.input = 0;
         assert.equal(element.value, '456', 'setting input 0');
         if (!element._isSet(0)) {
           assert.equal(element.input, element.default);
         } else {
+          console.log(element.input, element.value, element.default);
           assert.equal(element.input, 0);
         }
+        done();
+      });
+
+      test('setting to false', done => {
+        element.value = '456';
         element.input = false;
         assert.equal(element.value, '456', 'setting input false');
         if (!element._isSet(false)) {
@@ -209,6 +220,11 @@
         } else {
           assert.equal(element.input, false);
         }
+        done();
+      });
+
+      test('setting to undefined', done => {
+        element.value = '456';
         element.input = undefined;
         assert.equal(element.value, '456', 'setting input undefined');
         if (!element._isSet(undefined)) {
@@ -216,6 +232,11 @@
         } else {
           assert.isUndefined(element.input);
         }
+        done();
+      });
+
+      test('setting to null', done => {
+        element.value = '456';
         element.input = null;
         assert.equal(element.value, '456', 'setting input null');
         if (!element._isSet(null)) {
