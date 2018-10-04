@@ -210,31 +210,31 @@
 
         test('unsetting value', function(done) {
           element.value = '';
-          if (element._isSet('')) {
+          if (!element._isSet('')) {
             assert.equal(element.value, element.default);
           } else {
             assert.equal(element.value, '');
           }
           element.value = false;
-          if (element._isSet(false)) {
+          if (!element._isSet(false)) {
             assert.equal(element.value, element.default);
           } else {
             assert.equal(element.value, false);
           }
           element.value = 0;
-          if (element._isSet(0)) {
+          if (!element._isSet(0)) {
             assert.equal(element.value, element.default);
           } else {
             assert.equal(element.value, 0);
           }
           element.value = undefined;
-          if (element._isSet(undefined)) {
+          if (!element._isSet(undefined)) {
             assert.equal(element.value, element.default);
           } else {
             assert.isUndefined(element.value);
           }
           element.value = null;
-          if (element._isSet(null)) {
+          if (!element._isSet(null)) {
             assert.equal(element.value, element.default);
           } else {
             assert.isNull(element.value);

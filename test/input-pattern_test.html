@@ -190,35 +190,35 @@
         element.value = '456';
         element.input = '';
         assert.equal(element.value, '456', 'setting input empty');
-        if (element._isSet('')) {
+        if (!element._isSet('')) {
           assert.equal(element.input, element.default);
         } else {
           assert.equal(element.input, '');
         }
         element.input = 0;
-        assert.equal(element.value, '456', 'setting input empty');
-        if (element._isSet(0)) {
+        assert.equal(element.value, '456', 'setting input 0');
+        if (!element._isSet(0)) {
           assert.equal(element.input, element.default);
         } else {
           assert.equal(element.input, 0);
         }
         element.input = false;
-        assert.equal(element.value, '456', 'setting input empty');
-        if (element._isSet(false)) {
+        assert.equal(element.value, '456', 'setting input false');
+        if (!element._isSet(false)) {
           assert.equal(element.input, element.default);
         } else {
           assert.equal(element.input, false);
         }
         element.input = undefined;
-        assert.equal(element.value, '456', 'setting input empty');
-        if (element._isSet(undefined)) {
+        assert.equal(element.value, '456', 'setting input undefined');
+        if (!element._isSet(undefined)) {
           assert.equal(element.input, element.default);
         } else {
           assert.isUndefined(element.input);
         }
         element.input = null;
-        assert.equal(element.value, '456', 'setting input empty');
-        if (element._isSet(null)) {
+        assert.equal(element.value, '456', 'setting input null');
+        if (!element._isSet(null)) {
           assert.equal(element.input, element.default);
         } else {
           assert.isNull(element.input);
