@@ -164,7 +164,7 @@
 
         test('unsetting works', function(done) {
           element.value = '';
-          assert.equal(element.value, '', 'value is unset');
+          assert.isFalse(element._valueIsSet, 'value is unset'+ element.value + '' + element.valueAsNumber);
           done();
         });
 

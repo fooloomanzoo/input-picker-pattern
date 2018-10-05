@@ -308,7 +308,7 @@
         if (element._validate('')) {
           assert.isFalse(element.invalid);
         } else {
-          assert.isTrue(element.invalid, element.value + ' ' + element.valueAsNumebr);
+          assert.isTrue(element.invalid);
         }
         done();
       });
@@ -317,7 +317,7 @@
         let element = f.querySelector('#not-required-with-value');
         element.value = '';
         if (element._validate('')) {
-          assert.isFalse(element.invalid, element.value);
+          assert.isFalse(element.invalid);
         } else {
           assert.isTrue(element.invalid);
         }
