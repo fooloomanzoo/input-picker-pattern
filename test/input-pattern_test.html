@@ -51,9 +51,9 @@
       <div>
         <basic-input-element id="min-length" minlength="3"></basic-input-element>
         <basic-input-element id="placeholder" placeholder="123"></basic-input-element>
-        <basic-input-element id="default" default="def"></basic-input-element>
+        <basic-input-element id="default" default="45"></basic-input-element>
         <basic-input-element id="min-length-and-placeholder" minlength="3" placeholder="123"></basic-input-element>
-        <basic-input-element id="min-length-and-placeholder-and-default" minlength="3" placeholder="123" default="def"></basic-input-element>
+        <basic-input-element id="min-length-and-placeholder-and-default" minlength="2" placeholder="88" default="11"></basic-input-element>
       </div>
     </template>
   </test-fixture>
@@ -204,7 +204,6 @@
         if (!element._isSet(0)) {
           assert.equal(element.input, element.default);
         } else {
-          console.log(element.input, element.value, element.default);
           assert.equal(element.input, 0);
         }
         done();
@@ -424,7 +423,7 @@
 
       test('default', done => {
         let element = f.querySelector('#default');
-        assert.equal(element._minlengthString.length, 3);
+        assert.equal(element._minlengthString.length, 2);
         done();
       });
 
@@ -558,9 +557,14 @@
             assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
             assert.notEqual(element.shadowRoot.querySelector('#input').getBoundingClientRect().width, 0, 'element\'s \'input\' width');
             assert.notEqual(element.shadowRoot.querySelector('#size').getBoundingClientRect().width, 0, 'element\'s \'size\' width');
-            assert.equal(element.shadowRoot.querySelector('#minlength').getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
             assert.equal(element.getBoundingClientRect().width.toFixed(1), elementShown.getBoundingClientRect().width.toFixed(1), 'element\'s width');
-            assert.equal(document.defaultView.getComputedStyle(element.shadowRoot.querySelector('#input')).width, document.defaultView.getComputedStyle(elementShown.shadowRoot.querySelector('#input')).width, 'element\'s \'input\' width');
+            if (!element._minlengthString) {
+              assert.equal(element.shadowRoot.querySelector('#minlength').getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+              assert.equal(document.defaultView.getComputedStyle(element.shadowRoot.querySelector('#input')).width, document.defaultView.getComputedStyle(elementShown.shadowRoot.querySelector('#input')).width, 'element\'s \'input\' width');
+            } else {
+              assert.notEqual(element.shadowRoot.querySelector('#minlength').getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
+              assert.equal(document.defaultView.getComputedStyle(element.shadowRoot.querySelector('#input')).minWidth, document.defaultView.getComputedStyle(elementShown.shadowRoot.querySelector('#input')).minWidth, 'element\'s \'input\' minWidth');
+            }
             done();
           }, 0);
         }, 0);

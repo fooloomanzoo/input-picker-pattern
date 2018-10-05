@@ -168,11 +168,13 @@
         }
       }
 
-      _defaultChanged(def, oldDef) {
-        super._defaultChanged && super._defaultChanged(def, oldDef);
+      _defaultChanged(def) {
+        if (this._isSet(def) === false) {
+          this.default = '';
+        }
         if (this._isSet(this.value) === false) {
           // set value to default
-          this.value = def;
+          this.value = this.default ;
         }
       }
 
