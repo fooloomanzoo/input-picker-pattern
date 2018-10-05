@@ -178,7 +178,6 @@
       static get observers() {
         return [
           '_computeInvalid(input, required)',
-          '_computeValueIsSet(input)',
           '_computeMinlengthString(minlength, default, placeholder)',
           'resize(_minlengthString)'
         ]
@@ -252,19 +251,23 @@
         // update the value, when input validates
         if (this._validate(this.input)) {
           this.value = this.input;
+          this._debouncedResizeWidth();
+          e && e.stopPropagation && e.stopPropagation();
         } else {
           // else reset the input to value
-          this.input = this.value;
+          this._updateInput(e);
         }
-        this._debouncedResizeWidth();
-        e && e.stopPropagation && e.stopPropagation();
       }
 
       /**
        * update manually the native input with the given value
        */
       _updateInput(e) {
-        this.input = this.value;
+        if (this._isSet(this.value)) {
+          this.input = this.value;
+        } else {
+          this.input = '';
+        }
         this._debouncedResizeWidth();
         e && e.stopPropagation && e.stopPropagation();
       }

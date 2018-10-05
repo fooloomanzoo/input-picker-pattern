@@ -385,13 +385,12 @@
 
       test('aborting and bluring with esc', done => {
         MockInteractions.focus(element);
-        let value = element.value;
         element.input = '123';
         MockInteractions.pressAndReleaseKeyOn(input, 27);
-        assert.equal(element.input, value, 'input changes');
-        assert.equal(element.value, value, 'value does not change');
+        assert.equal(element.input, '', 'input changes');
+        assert.isFalse(element._isSet(element.value), 'value is not set');
         MockInteractions.focus(element);
-        value = element.value = '456';
+        let value = element.value = '456';
         element.input = '123';
         MockInteractions.pressAndReleaseKeyOn(input, 27);
         assert.equal(element.input, value, 'input changes when value is preset');
