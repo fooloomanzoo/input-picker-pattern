@@ -107,21 +107,14 @@
           assert.isUndefined(element.disabled, 'disabled is not defined');
           assert.isUndefined(element.name, 'name is not defined');
           assert.isUndefined(element.title, 'title is not defined');
-          assert.isUndefined(element.value, 'value is not defined');
-          assert.isUndefined(element.default, 'default is not defined');
-          assert.isFalse(element._valueIsSet, '_valueIsSet is false');
           done();
         });
 
         test('custom "_isSet"', done => {
-          assert.isFalse(element._valueIsSet, '_valueIsSet is false');
           assert.isUndefined(element.value, 'value is not defined');
           element._isSet = (value) => {
-            return value !== false;
+            return value !== 2;
           }
-          element._computeValueIsSet(element.value);
-          assert.isUndefined(element.value, 'value is not defined');
-          assert.isTrue(element._valueIsSet, 'when value is undefined');
           element.value = '';
           assert.equal(element.value, '', 'value is set to emmpty string');
           assert.isTrue(element._valueIsSet, 'when value is \'\'');
@@ -130,16 +123,17 @@
           assert.isTrue(element._valueIsSet, 'when value is 0');
           element.value = false;
           assert.equal(element.value, false, 'value is set to false');
-          assert.isFalse(element._valueIsSet, 'when value is false');
+          assert.isTrue(element._valueIsSet, 'when value is false');
+          element.value = 2;
+          assert.equal(element.value, 2, 'value is set to 2');
+          assert.isFalse(element._valueIsSet, 'when value is 2');
           done();
         });
 
         test('custom "_validate"', done => {
           element._validate = (value) => {
-            return value !== '123';
+            return value != '123';
           }
-          assert.isFalse(element.invalid, 'invalid is false');
-          assert.isUndefined(element.value, 'value is not defined');
           element.value = '';
           assert.isFalse(element.invalid, 'invalid is false');
           assert.equal(element.value, '', 'value is set');
