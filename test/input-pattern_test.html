@@ -456,13 +456,13 @@
         setTimeout(function() {
           assert.notEqual(element.getBoundingClientRect().width, 0, 'element\'s width');
           assert.notEqual(element.shadowRoot.querySelector('#input').getBoundingClientRect().width, 0, 'element\'s \'input\' width');
-          assert.notEqual(document.defaultView.getComputedStyle(element.shadowRoot.querySelector('#input')).minWidth, '0px');
+          assert.notEqual(document.defaultView.getComputedStyle(element.shadowRoot.querySelector('#input')).minWidth, '0px', 'element\'s \'input\' minWidth');
           assert.notEqual(element.shadowRoot.querySelector('#minlength').getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
           if (element.input) {
-            assert.notEqual(element.shadowRoot.querySelector('#size').getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+            assert.notEqual(element.shadowRoot.querySelector('#size').getBoundingClientRect().width, 0, 'element\'s \'size\' width with input');
             assert.notEqual(document.defaultView.getComputedStyle(element.shadowRoot.querySelector('#input')).width, '0px', 'element\'s \'minlength\' width');
           } else {
-            assert.equal(element.shadowRoot.querySelector('#size').getBoundingClientRect().width, 0, 'element\'s \'size\' width');
+            assert.equal(element.shadowRoot.querySelector('#size').getBoundingClientRect().width, 0, 'element\'s \'size\' width with no input');
           }
           let beforeWidth = element.shadowRoot.querySelector('#input').getBoundingClientRect().width;
           element.value = element._minlengthString;
