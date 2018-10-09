@@ -170,7 +170,7 @@
 
       _defaultChanged(def) {
         if (this._isSet(def) === false) {
-          this.default = '';
+          this.default = undefined;
         }
         if (this._isSet(this.value) === false) {
           // set value to default

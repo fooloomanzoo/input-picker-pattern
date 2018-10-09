@@ -277,10 +277,10 @@
        * compute the minimal string the input is sized for
        */
       _computeMinlengthString() {
-        const def = this.default || '',
-          placeholder = this.placeholder || '',
+        const def = '' + (this.default || ''),
+          placeholder = '' + (this.placeholder || ''),
           minlength = this.minlength < 1 ? 1 : this.minlength,
-          charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // to compute a random string for minlength to estemate usage of space
+          charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; // to compute a random string for minlength to estemate usage of space
         let minlengthString = '';
         for (let i = 0; i < minlength; i++) {
           minlengthString += charset.charAt(Math.floor(Math.random() * charset.length));
