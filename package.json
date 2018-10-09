@@ -18,7 +18,9 @@
   "scripts": {
     "postinstall": "bower install",
     "prepublish": "npm run build && git add . && git commit -m \"publish new version\" && npm version patch && git push",
-    "build": "git pull && bower update -f && polymer analyze > analysis.json",
+    "build": "git pull && bower update && npm run analyze",
+    "start": "npm run analyze && polymer serve -o",
+    "analyze": "polymer analyze -i form-element-mixin.html integer-pattern.html integer-picker-pattern.html overlay-picker-mixin.html overlay-element.html switch-mixin > analysis.json",
     "test": "polymer test",
     "test:p": "polymer test -p --config-file=wct.p.conf.js"
   },
