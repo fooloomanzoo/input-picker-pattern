@@ -144,10 +144,29 @@
         done();
       });
 
+      test('unset value', done => {
+        if (!element._isSet('')) {
+          element.value = '';
+          assert.isFalse(element._valueIsSet);
+          assert.equal(element.input, '', 'input is unset');
+        }
+        done();
+      });
+
       test('setting a input', done => {
         element.input = '456';
         assert.equal(element.value, '123');
         assert.equal(element.input, '456');
+        done();
+      });
+
+      test('unset input', done => {
+        if (!element._isSet('')) {
+          element.input = '';
+          element._confirmInput();
+          assert.equal(element.input, '', 'input is unset');
+          assert.isFalse(element._valueIsSet);
+        }
         done();
       });
 

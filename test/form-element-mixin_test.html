@@ -69,7 +69,7 @@
           </iron-form>
           <iron-form id="custom-property-for-value">
             <form action="/get" method="get">
-              <basic-form-element id="custom" name="TestValue" property-for-value="name"></basic-form-element>
+              <basic-form-element id="custom" name="123" property-for-value="name"></basic-form-element>
             </form>
           </iron-form>
         </div>
@@ -111,7 +111,7 @@
         });
 
         test('custom "_isSet"', done => {
-          assert.isUndefined(element.value, 'value is not defined');
+          assert.isFalse(element._isSet(element.value), 'value is not set');
           element._isSet = (value) => {
             return value !== 2;
           }
@@ -136,13 +136,10 @@
           }
           element.value = '';
           assert.isFalse(element.invalid, 'invalid is false');
-          assert.equal(element.value, '', 'value is set');
           element.value = 'ab';
           assert.isFalse(element.invalid, 'invalid is false');
-          assert.equal(element.value, 'ab', 'value is set');
           element.value = '123';
           assert.isTrue(element.invalid, 'invalid is true');
-          assert.equal(element.value, '123', 'value is set');
           done();
         });
       });
@@ -164,7 +161,7 @@
 
         test('unsetting works', function(done) {
           element.value = '';
-          assert.isFalse(element._valueIsSet, 'value is unset'+ element.value + '' + element.valueAsNumber);
+          assert.isFalse(element._valueIsSet, 'value is unset');
           done();
         });
 
@@ -455,7 +452,7 @@
         test('custom property-for-value', function(done) {
           let form = f.querySelector('#custom-property-for-value');
           form.addEventListener('iron-form-response', function(event) {
-            expect(event.detail.url).to.equal('/get?TestValue=TestValue');
+            expect(event.detail.url).to.equal('/get?123=123');
             expect(event.detail.response.success).to.be.equal(true);
             done();
           });
