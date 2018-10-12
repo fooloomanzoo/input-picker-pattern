@@ -10,6 +10,7 @@
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
   <script src="../../web-component-tester/browser.js"></script>
   <script src="../../iron-test-helpers/mock-interactions.js"></script>
+  <script src="../utils/wct-mixin-test-helper.js"></script>
 
   <link rel="import" href="elements/basic-input-element.html">
   <link rel="import" href="../overlay-element.html">
@@ -75,27 +76,12 @@
   </test-fixture>
 
   <script>
-    const specifier = new URLSearchParams(window.location.search).get('specifier');
-    const url = new URLSearchParams(window.location.search).get('url');
-
-    // applying suites to another element (e.g. when another element depends on the the same mixin)
-    if (specifier) {
-      suite(`Suite for ${specifier.toUpperCase()}`, function() {
-        test('loading dependencies', done => {
-          Polymer.importHref(window.location.origin + '/components/' + url, e => done(), e => {
-            console.warn(`failed to load: ${url}`)
-          })
-        })
-      })
-    }
+    WCT.helpers.mixinSuite('basic-input-element');
 
     suite('basic', function() {
       let element;
 
       setup(function() {
-        if (specifier) {
-          replace('basic-input-element').with(specifier)
-        }
         element = fixture('Basic');
       });
 
@@ -132,9 +118,6 @@
       let element;
 
       setup(function() {
-        if (specifier) {
-          replace('basic-input-element').with(specifier)
-        }
         element = fixture('ChangedPropertyTestFixture');
       });
 
@@ -191,9 +174,6 @@
       let element;
 
       setup(function() {
-        if (specifier) {
-          replace('basic-input-element').with(specifier)
-        }
         element = fixture('DefaultValue');
       });
 
@@ -269,9 +249,6 @@
       let f;
 
       setup(function() {
-        if (specifier) {
-          replace('basic-input-element').with(specifier)
-        }
         f = fixture('Validation');
       });
 
@@ -355,9 +332,6 @@
       let element, input;
 
       setup(function() {
-        if (specifier) {
-          replace('basic-input-element').with(specifier)
-        }
         element = fixture('Basic');
         input = element.shadowRoot.querySelector('#input');
       });
@@ -422,9 +396,6 @@
       let f;
 
       setup(function() {
-        if (specifier) {
-          replace('basic-input-element').with(specifier)
-        }
         f = fixture('MinLength');
       });
 
@@ -463,9 +434,6 @@
       let f;
 
       setup(function() {
-        if (specifier) {
-          replace('basic-input-element').with(specifier)
-        }
         f = fixture('Sizing');
       });
 

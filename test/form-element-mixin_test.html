@@ -8,6 +8,7 @@
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
+    <script src="../utils/wct-mixin-test-helper.js"></script>
 
     <link rel="import" href="../../iron-form/iron-form.html">
     <link rel="import" href="elements/basic-form-element.html">
@@ -77,27 +78,12 @@
     </test-fixture>
 
     <script>
-      const specifier = new URLSearchParams(window.location.search).get('specifier');
-      const url = new URLSearchParams(window.location.search).get('url');
-
-      // applying suites to another element (e.g. when another element depends on the the same mixin)
-      if (specifier) {
-        suite(`Suite for ${specifier.toUpperCase()}`, function() {
-          test('loading dependencies', done => {
-            Polymer.importHref(window.location.origin + '/components/' + url, e => done(), e => {
-              console.warn(`failed to load: ${url}`)
-            })
-          })
-        })
-      }
+      WCT.helpers.mixinSuite('basic-form-element');
 
       suite('basic', function() {
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-form-element').with(specifier)
-          }
           element = fixture('Basic');
         });
 
@@ -111,18 +97,17 @@
         });
 
         test('custom "_isSet"', done => {
-          assert.isFalse(element._isSet(element.value), 'value is not set');
           element._isSet = (value) => {
-            return value !== 2;
+            return value != 2;
           }
           element.value = '';
-          assert.equal(element.value, '', 'value is set to emmpty string');
+          assert.isTrue(element.value === '' || element.value === undefined, 'value is set to empty string or undefined');
           assert.isTrue(element._valueIsSet, 'when value is \'\'');
           element.value = 0;
-          assert.equal(element.value, 0, 'value is set to 0');
+          assert.isTrue(element.value === 0 || element.value === undefined, 'value is set to 0 or undefined');
           assert.isTrue(element._valueIsSet, 'when value is 0');
           element.value = false;
-          assert.equal(element.value, false, 'value is set to false');
+          assert.isTrue(element.value === false || element.value === undefined, 'value is set to false or undefined' + element.value);
           assert.isTrue(element._valueIsSet, 'when value is false');
           element.value = 2;
           assert.equal(element.value, 2, 'value is set to 2');
@@ -135,11 +120,11 @@
             return value != '123';
           }
           element.value = '';
-          assert.isFalse(element.invalid, 'invalid is false');
+          assert.isFalse(element.invalid, '1: invalid is false');
           element.value = 'ab';
-          assert.isFalse(element.invalid, 'invalid is false');
+          assert.isFalse(element.invalid, '2: invalid is false');
           element.value = '123';
-          assert.isTrue(element.invalid, 'invalid is true');
+          assert.isTrue(element.invalid, '3: invalid is true');
           done();
         });
       });
@@ -148,9 +133,6 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-form-element').with(specifier)
-          }
           element = fixture('ChangedPropertyTestFixture');
         });
 
@@ -161,13 +143,18 @@
 
         test('unsetting works', function(done) {
           element.value = '';
-          assert.isFalse(element._valueIsSet, 'value is unset');
+          if (element._isSet('')) {
+            assert.isTrue(element._valueIsSet, 'value is unset');
+          } else {
+            assert.isFalse(element._valueIsSet, 'value is unset');
+          }
           done();
         });
 
         test('resetting works', function(done) {
           element.value = undefined;
           assert.isUndefined(element.value, 'value is unset');
+          assert.isFalse(element._valueIsSet, 'value is unset');
           done();
         });
       });
@@ -176,9 +163,6 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-form-element').with(specifier)
-          }
           element = fixture('DefaultValue');
         });
 
@@ -265,12 +249,8 @@
 
       suite('changing property for value', function() {
         let f;
-        const specifier = new URLSearchParams(window.location.search).get('element');
 
         setup(function() {
-          if (specifier) {
-            replace('basic-form-element').with(specifier)
-          }
           f = fixture('ChangePropertyForValue');
         });
 
@@ -370,9 +350,6 @@
         let f, server;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-form-element').with(specifier)
-          }
           f = fixture('Submit');
           server = sinon.fakeServer.create();
           server.respondWith(
