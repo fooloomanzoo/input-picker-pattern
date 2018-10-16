@@ -47,54 +47,57 @@
         });
 
         test('incrementing an itialized value', done => {
-          let s = element.shadowRoot.querySelector(element._switchSelector);
-          let step = s.getAttribute('step') || 1;
-          let prop = s.getAttribute('prop');
-          element[prop] = 2;
-          MockInteractions.tap(s);
-          assert.equal(element.value, 2 + step, 'incrementing initialized value');
-          done();
+          setTimeout(function(){
+            // wait a tick to let all property effects to take place
+            let s = element.shadowRoot.querySelector(element._switchSelector);
+            let step = +s.getAttribute('step') || 1;
+            let prop = s.getAttribute('prop');
+            element[prop] = 6;
+            MockInteractions.tap(s);
+            assert.equal(element[prop], 6 + step, 'incrementing initialized value');
+            done();
+          }, 0);
         });
 
         test('incrementing an unitialized value', done => {
           let s = element.shadowRoot.querySelector(element._switchSelector);
-          let step = s.getAttribute('step') || 1;
+          let step = +s.getAttribute('step') || 1;
           let prop = s.getAttribute('prop');
           let def = element._getDefaultForProp(prop);
           element[prop] = undefined;
           MockInteractions.tap(s);
-          assert.equal(element.value, def + step, 'incrementing uninitialized value');
+          assert.equal(element[prop], def + step, 'incrementing uninitialized value');
           done();
         });
 
         test('incrementing by enter', done => {
           let s = element.shadowRoot.querySelector(element._switchSelector);
-          let step = s.getAttribute('step') || 1;
+          let step = +s.getAttribute('step') || 1;
           let prop = s.getAttribute('prop');
-          element[prop] = 2;
+          element[prop] = 6;
           MockInteractions.pressAndReleaseKeyOn(s, 32);
-          assert.equal(element.value, 2 + step, 'incrementing by enter');
+          assert.equal(element[prop], 6 + step, 'incrementing by enter');
           done();
         });
 
         test('incrementing by space', done => {
           let s = element.shadowRoot.querySelector(element._switchSelector);
-          let step = s.getAttribute('step') || 1;
+          let step = +s.getAttribute('step') || 1;
           let prop = s.getAttribute('prop');
-          element[prop] = 2;
+          element[prop] = 6;
           MockInteractions.pressAndReleaseKeyOn(s, 13);
-          assert.equal(element.value, 2 + step, 'incrementing by space');
+          assert.equal(element[prop], 6 + step, 'incrementing by space');
           done();
         });
 
         test('incrementing by holding', done => {
           let s = element.shadowRoot.querySelector(element._switchSelector);
-          let step = s.getAttribute('step') || 1;
+          let step = +s.getAttribute('step') || 1;
           let prop = s.getAttribute('prop');
-          element[prop] = 2;
+          element[prop] = 6;
           MockInteractions.down(s);
           setTimeout(() => {
-            assert.equal(element.value, 2 + step*2, 'incrementing by holding down');
+            assert.equal(element[prop], 6 + step*2, 'incrementing by holding down');
             assert.equal(element._activeSwitch, s);
             assert.isTrue(element._activeSwitch.hasAttribute('active'));
             MockInteractions.up(s);

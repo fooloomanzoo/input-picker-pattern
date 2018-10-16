@@ -70,8 +70,8 @@ Custom property                     | Description                               
 `--inner-input-border-width`   | border-width of the inner input element  | thin
 `--inner-input-border-style`   | border-style of the inner input element  | dotted
 `--inner-input-border-color`   | border-color of the inner input element  | transparent
-`--inner-input-padding`        | padding of the inner input element       | 0
-`--inner-input-border-radius`  | border-radius of the inner input element | 0.1em
+`--inner-input-padding`        | padding of the inner input element       | 0.15em
+`--inner-input-border-radius`  | border-radius of the inner input element | 0.2em
 `--inner-input-focus-color`    | text-color of the focused and hovered inner input element | currentColor
 `--inner-input-focus-background`   | background of the focused and hovered inner input element | rgba(0, 0, 0, 0.1)
 `--inner-input-focus-border-style` | border-style of the focused and hovered inner input element | dotted
@@ -86,7 +86,7 @@ Custom property                     | Description                               
 Custom property                   | Description                                  | Default
 ----------------------------------|----------------------------------------------|--------------------
 `--input-picker-color`            | text-color of the picker                     | #dfdfdf
-`--input-picker-background`       | background of the picker                     | #252525
+`--input-picker-background`       | background of the picker                     | #222
 `--input-picker-padding`          | padding of the picker                        | 0.3em
 `--input-picker-border-radius`    | border-radius                                | 0.5em
 `--input-picker-box-shadow`       | box-shadow                                   | 0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 1px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 3px -2px rgba(0, 0, 0, 0.4)
