@@ -26,22 +26,32 @@
       static get properties() {
         return {
           /**
-           * dwell time of incrementing inputs by the buttons in milliseconds. It is minimum 75 milliseconds.
+           * dwell time of incrementing inputs by the buttons in milliseconds. It is minimal 15 milliseconds.
            *
            * @type {number}
            */
           dwellTime: {
             type: Number,
-            value: 150,
+            value: 50,
+            observer: '_dwellTimeChanged'
+          },
+          /**
+           * delay when incrementing inputs by the buttons in milliseconds. It is minimal 15 milliseconds.
+           *
+           * @type {number}
+           */
+          dwellDelay: {
+            type: Number,
+            value: 500,
             observer: '_dwellTimeChanged'
           },
 
           /**
-           * css-selector for switches
+           * class property of switches
            */
-          _switchSelector: {
+          _switchClassSelector: {
             type: String,
-            value: '.switch'
+            value: 'switch'
           }
         }
       }
@@ -62,85 +72,101 @@
         return '<svg viewBox="0 0 24 24"><g><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></g></svg>';
       }
 
-      ready() {
-        super.ready();
-        this.__switchs = new Set();
+      connectedCallback() {
+        super.connectedCallback();
+        this.addEventListener('blur', this._stopActiveIncremJob, {passive: true});
+        this.addEventListener('contextmenu', this._stopActiveIncremJob, {passive: true});
         this._addSwitchListener();
       }
 
       disconnectedCallback() {
         super.disconnectedCallback();
+        this.removeEventListener('blur', this._stopActiveIncremJob, {passive: true});
+        this.removeEventListener('contextmenu', this._stopActiveIncremJob, {passive: true});
         this._removeSwitchListener();
-        this.__switchs.clear();
       }
 
       _addSwitchListener() {
-        this.addEventListener('blur', this._stopActiveIncremJob, {passive: true});
-        this.addEventListener('contextmenu', this._stopActiveIncremJob, {passive: true});
-        const switchs = this.root.querySelectorAll('.switch');
-        if (switchs) {
-          Array.prototype.forEach.call(switchs, s => {
-            if (!this.__switchs.has(s)) {
+        // remove first all existing listeners
+        this._removeSwitchListener();
+        // wait a tick to consider asynchronous build up
+        setTimeout(() => {
+          const switchs = this.root.querySelectorAll('.switch');
+          if (switchs) {
+            Array.prototype.forEach.call(switchs, s => {
               Polymer.Gestures.addListener(s, 'down', this.__increm, false);
               Polymer.Gestures.addListener(s, 'up', this._stopActiveIncremJob, false);
               s.addEventListener('keydown', this._checkKeycodeSwitch, {passive: true});
               s.addEventListener('keyup', this._stopActiveIncremJob, {passive: true});
-              this.__switchs.add(s);
-            }
-          })
-        }
+            })
+          }
+        }, 0)
       }
 
       _removeSwitchListener() {
-        this.removeEventListener('blur', this._stopActiveIncremJob, {passive: true});
-        this.removeEventListener('contextmenu', this._stopActiveIncremJob, {passive: true});
-        this.__switchs.forEach( s => {
-          Polymer.Gestures.removeListener(s, 'down', this.__increm, false);
-          Polymer.Gestures.removeListener(s, 'up', this._stopActiveIncremJob, false);
-          s.removeEventListener('keydown', this._checkKeycodeSwitch, {passive: true});
-          s.removeEventListener('keyup', this._stopActiveIncremJob, {passive: true});
-        }, this);
+        const switchs = this.root.querySelectorAll('.switch');
+        if (switchs) {
+          Array.prototype.forEach( s => {
+            Polymer.Gestures.removeListener(s, 'down', this.__increm, false);
+            Polymer.Gestures.removeListener(s, 'up', this._stopActiveIncremJob, false);
+            s.removeEventListener('keydown', this._checkKeycodeSwitch, {passive: true});
+            s.removeEventListener('keyup', this._stopActiveIncremJob, {passive: true});
+          });
+        }
       }
 
       _checkKeycodeSwitch(e) {
         if (e && (e.keyCode === 13 || e.keyCode === 32)) { // space or enter
-          this.__increm(e);
+          // call icrement once, because keyPressEvents are fired itself repeatedly while the key is pressed
+          this.__increm(e, true);
           e.stopPropagation();
         } else {
           this._stopActiveIncremJob();
         }
       }
 
-      __increm(e) {
-        this._stopActiveIncremJob();
+      __getEventTarget(e, classSelector) {
         if (e === undefined) {
           return;
         }
-        let s;
         if (e.path) {
           for (let i = 0; i < e.path.length; i++) {
-            if (e.path[i].classList.contains('switch')) {
-              s = e.path[i];
+            if (e.path[i].classList.contains(classSelector)) {
+              return e.path[i];
               break;
             }
           }
-        } else if (e.target && e.target.classList.contains('switch')) {
-          s = e.target;
+        } else if (e.target && e.target.classList.contains(classSelector)) {
+          return e.target;
         }
+      }
+
+      /**
+       * increment property by being called by an Event on an `switch`-Node
+       * @param  {Event} e      Event it was called on
+       * @param  {Boolean} once if true, it doesn't setup an intervall to continue incrementing (e.g. keyPressEvents are fired itself repeatedly while the key is pressed)
+       */
+      __increm(e, once) {
+        this._stopActiveIncremJob();
+        const s = this.__getEventTarget(e, this._switchClassSelector);
         if (s === undefined ) {
           return;
         }
 
-        let prop = s.getAttribute('prop');
+        const prop = s.getAttribute('prop');
         const step = s.getAttribute('step') || 1;
         const sign = s.hasAttribute('invert') ? -1 : 1;
         s.setAttribute('active', '');
+        this._activeSwitch = s;
         if (isNaN(this[prop])) {
           this[prop] = this._getDefaultForProp(prop);
         }
         this.__incremProp(prop, +step*sign);
-        this._activeIncremJob = setInterval(this.__incremProp.bind(this, prop, +step*sign), this.dwellTime);
-        this._activeSwitch = s;
+        if (!once) {
+          this._activeDelayJob = setTimeout(function() {
+            this._activeIncremJob = setInterval(this.__incremProp.bind(this, prop, +step*sign), +this.dwellTime || 15);
+          }.bind(this), this.dwellDelay);
+        }
       }
 
       __incremProp(prop, step) {
@@ -152,19 +178,33 @@
       }
 
       _stopActiveIncremJob() {
+        if (this._activeDelayJob) {
+          clearTimeout(this._activeDelayJob);
+          this._activeDelayJob = null;
+        }
         if (this._activeIncremJob) {
           clearInterval(this._activeIncremJob);
           this._activeIncremJob = null;
+        }
+        if (this._activeSwitch) {
           this._activeSwitch.removeAttribute('active');
           this._activeSwitch = null;
         }
       }
 
       _dwellTimeChanged(dwellTime) {
-        if (typeof dwellTime !== 'number') {
-          this.dwellTime = 150;
-        } else if (dwellTime < 75) {
-          this.dwellTime = 75;
+        if (isNaN(dwellTime)) {
+          this.dwellTime = 50;
+        } else if (dwellTime < 15) {
+          this.dwellTime = 15;
+        }
+      }
+
+      _dwellDelayChanged(dwellDelay) {
+        if (isNaN(dwellDelay)) {
+          this.dwellTime = 500;
+        } else if (dwellDelay < 15) {
+          this.dwellTime = 15;
         }
       }
     }

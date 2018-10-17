@@ -74,7 +74,6 @@
 
     // parsing url-search-parameters
     var params = getParams();
-
     if (!(params.specifier && params.url)) {
       // suite is not called with a specifier
       console.info('test-suite called for: ' + Object.keys(oldTags).toString());
@@ -95,6 +94,8 @@
       params.props = JSON.parse(params.props);
       console.info('setting on each "' + params.specifier + '" ', params.props);
     }
+
+    window.WCT.helpers.mixinSuiteParams = params;
 
     suite(`Suite for ${params.specifier.toUpperCase()}`, function() {
       test('loading dependencies', done => {

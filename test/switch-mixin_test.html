@@ -33,79 +33,186 @@
 
         test('instantiating the element with default properties works', done => {
           assert.isDefined(element.dwellTime);
-          assert.isDefined(element._switchSelector);
-          assert.isTrue(Array.prototype.every.call(element.shadowRoot.querySelectorAll(element._switchSelector), el => el.hasAttribute('prop')), 'every switch has a defined prop for incrementing');
+          assert.isDefined(element._switchClassSelector);
           done();
         });
       });
 
-      suite('interactions', function() {
-        let element;
+      suite('basic interactions', function() {
+        let element, switches;
 
         setup(function() {
           element = fixture('Basic');
         });
 
-        test('incrementing an itialized value', done => {
-          setTimeout(function(){
-            // wait a tick to let all property effects to take place
-            let s = element.shadowRoot.querySelector(element._switchSelector);
-            let step = +s.getAttribute('step') || 1;
-            let prop = s.getAttribute('prop');
-            element[prop] = 6;
-            MockInteractions.tap(s);
-            assert.equal(element[prop], 6 + step, 'incrementing initialized value');
+        test('basic', done => {
+          setTimeout(function() {
+            switches = element.shadowRoot.querySelectorAll('.' + element._switchClassSelector);
+            assert.isOk(switches && switches.length, 'there should be switches');
             done();
           }, 0);
         });
 
-        test('incrementing an unitialized value', done => {
-          let s = element.shadowRoot.querySelector(element._switchSelector);
-          let step = +s.getAttribute('step') || 1;
-          let prop = s.getAttribute('prop');
-          let def = element._getDefaultForProp(prop);
-          element[prop] = undefined;
-          MockInteractions.tap(s);
-          assert.equal(element[prop], def + step, 'incrementing uninitialized value');
-          done();
-        });
-
-        test('incrementing by enter', done => {
-          let s = element.shadowRoot.querySelector(element._switchSelector);
-          let step = +s.getAttribute('step') || 1;
-          let prop = s.getAttribute('prop');
-          element[prop] = 6;
-          MockInteractions.pressAndReleaseKeyOn(s, 32);
-          assert.equal(element[prop], 6 + step, 'incrementing by enter');
-          done();
-        });
-
-        test('incrementing by space', done => {
-          let s = element.shadowRoot.querySelector(element._switchSelector);
-          let step = +s.getAttribute('step') || 1;
-          let prop = s.getAttribute('prop');
-          element[prop] = 6;
-          MockInteractions.pressAndReleaseKeyOn(s, 13);
-          assert.equal(element[prop], 6 + step, 'incrementing by space');
-          done();
-        });
-
-        test('incrementing by holding', done => {
-          let s = element.shadowRoot.querySelector(element._switchSelector);
-          let step = +s.getAttribute('step') || 1;
-          let prop = s.getAttribute('prop');
-          element[prop] = 6;
-          MockInteractions.down(s);
-          setTimeout(() => {
-            assert.equal(element[prop], 6 + step*2, 'incrementing by holding down');
-            assert.equal(element._activeSwitch, s);
-            assert.isTrue(element._activeSwitch.hasAttribute('active'));
-            MockInteractions.up(s);
-            assert.isNull(element._activeSwitch);
+        test('prop attributes', done => {
+          setTimeout(function() {
+            switches = element.shadowRoot.querySelectorAll('.' + element._switchClassSelector);
+            // wait a tick to let all property effects to take place
+            assert.isTrue(Array.prototype.every.call(switches, s => s.hasAttribute('prop')), 'every switch should have an prop attribute');
             done();
-          }, 1.5*element.dwellTime);
+          }, 0);
         });
 
+        test('step attribute', done => {
+          setTimeout(function() {
+            switches = element.shadowRoot.querySelectorAll('.' + element._switchClassSelector);
+            // wait a tick to let all property effects to take place
+            assert.isTrue(Array.prototype.every.call(switches, s => s.hasAttribute('step')), 'every switch should have an step attribute');
+            done();
+          }, 0);
+        });
+
+        test('incrementing an initialized property', done => {
+          setTimeout(function() {
+            switches = element.shadowRoot.querySelectorAll('.' + element._switchClassSelector);
+            for (let i = 0; i < switches.length; i++) {
+              let prop = switches[i].getAttribute('prop');
+              let step = +switches[i].getAttribute('step');
+              let invert = switches[i].hasAttribute('invert') ? -1 : 1;
+              element[prop] = step;
+              // there might be a resetting by clamping
+              const value = element[prop];
+              MockInteractions.tap(switches[i]);
+              if (invert * step < 0) {
+                assert.isBelow(element[prop], value, prop + ': switch should increment by ' + step);
+              } else {
+                assert.isAbove(element[prop], value, prop + ': switch should increment by ' + step);
+              }
+            }
+            done();
+          }, 0);
+        });
+
+        test('incrementing an uninitialized property', done => {
+          setTimeout(function() {
+            switches = element.shadowRoot.querySelectorAll('.' + element._switchClassSelector);
+            for (let i = 0; i < switches.length; i++) {
+              let prop = switches[i].getAttribute('prop');
+              if (isNaN(element[prop])) {
+                MockInteractions.tap(switches[i]);
+                assert.isNotNaN(element[prop], prop + ': property should be defined');
+                element[prop] = undefined; // resetting property for other switches to test
+              }
+            }
+            done();
+          }, 0);
+        });
+
+        test('incrementing an pressing enter-key', done => {
+          setTimeout(function() {
+            switches = element.shadowRoot.querySelectorAll('.' + element._switchClassSelector);
+            for (let i = 0; i < switches.length; i++) {
+              let prop = switches[i].getAttribute('prop');
+              let step = +switches[i].getAttribute('step');
+              let invert = switches[i].hasAttribute('invert') ? -1 : 1;
+              element[prop] = step;
+              // there might be a resetting by clamping
+              const value = element[prop];
+              MockInteractions.pressAndReleaseKeyOn(switches[i], 32);
+              if (invert * step < 0) {
+                assert.isBelow(element[prop], value, prop + ': switch should increment by ' + step);
+              } else {
+                assert.isAbove(element[prop], value, prop + ': switch should increment by ' + step);
+              }
+            }
+            done();
+          }, 0);
+        });
+
+        test('incrementing an pressing space-key', done => {
+          setTimeout(function() {
+            switches = element.shadowRoot.querySelectorAll('.' + element._switchClassSelector);
+            for (let i = 0; i < switches.length; i++) {
+              let prop = switches[i].getAttribute('prop');
+              let step = +switches[i].getAttribute('step');
+              let invert = switches[i].hasAttribute('invert') ? -1 : 1;
+              element[prop] = step;
+              // there might be a resetting by clamping
+              const value = element[prop];
+              MockInteractions.pressAndReleaseKeyOn(switches[i], 13);
+              if (invert * step < 0) {
+                assert.isBelow(element[prop], value, prop + ': switch should increment by ' + step);
+              } else {
+                assert.isAbove(element[prop], value, prop + ': switch should increment by ' + step);
+              }
+            }
+            done();
+          }, 0);
+        });
+      });
+
+      suite('interactions by holding', function() {
+        let f, switchSpecifiers;
+
+        setup(function() {
+          f = fixture('Basic');
+        })
+
+        test('each switch', Done => {
+          setTimeout(function() {
+            // wait a tick to let all property effects to take place
+
+            switchSpecifiers = [];
+            Array.prototype.forEach.call(f.shadowRoot.querySelectorAll('.' + f._switchClassSelector), s => {
+              switchSpecifiers.push({
+                step: +s.getAttribute('step'),
+                prop: s.getAttribute('prop'),
+                invert: (s.hasAttribute('invert') ? -1 : 1)
+              });
+            })
+            // set dwellTime to not run into timeout
+            let dwellTime = 15, dwellDelay = 15;
+            for (let i = 0; i < switchSpecifiers.length; i++) {
+              let specifier = switchSpecifiers[i];
+              // create new suite for each switch, so that there no interferences when changing propeties
+              suite('interactions by holding for ' + specifier.prop, function() {
+                let element;
+
+                setup(function() {
+                  element = fixture('Basic');
+                  element.dwellTime = dwellTime;
+                  element.dwellDelay = dwellDelay;
+                });
+
+                test('incrementing by holding', done => {
+                  // wait a tick to let all property effects to take place
+                  setTimeout(function() {
+                    // find the switch that was found earlier, to test it in this suite
+                    let s = Array.prototype.find.call(element.shadowRoot.querySelectorAll('.' + element._switchClassSelector), sw => (specifier.step === +sw.getAttribute('step') && specifier.prop === sw.getAttribute('prop') && specifier.invert === (sw.hasAttribute('invert') ? -1 : 1)));
+                    assert.isOk(s, 'the switch should be available');
+                    // defaulting the prop
+                    element[specifier.prop] = specifier.step * 2;
+                    const value = element[specifier.prop];
+                    MockInteractions.down(s);
+                    setTimeout(() => {
+                      assert.equal(s, element._activeSwitch, 'active switch should be the holded switch');
+                      assert.isTrue(s.hasAttribute('active'), 'holded switch should have the attribute \'active\'');
+                      MockInteractions.up(s);
+                      assert.notEqual(s, element._activeSwitch, 'active switch should not be the holded switch when being released');
+                      assert.isFalse(s.hasAttribute('active'), 'holded switch should not have the attribute \'active\' when being released');
+                      if (specifier.invert * specifier.step < 0) {
+                        assert.isBelow(element[specifier.prop], value, 'property should increment');
+                      } else {
+                        assert.isAbove(element[specifier.prop], value, 'property should increment');
+                      }
+                      done();
+                    }, element.dwellDelay + element.dwellTime*1.75); // calling increment maximal twice
+                  }, 0)
+                });
+              });
+            }
+            Done();
+          }, 0)
+        })
       });
     </script>
 
