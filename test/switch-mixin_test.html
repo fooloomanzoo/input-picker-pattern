@@ -83,9 +83,17 @@
               const value = element[prop];
               MockInteractions.tap(switches[i]);
               if (invert * step < 0) {
-                assert.isBelow(element[prop], value, prop + ': switch should increment by ' + step);
+                if (element[prop] === 0 && value === 0) {
+                  assert.isBelow(1/element[prop], 1/value, prop + ': switch should increment by ' + step);
+                } else {
+                  assert.isBelow(element[prop], value, prop + ': switch should increment by ' + step);
+                }
               } else {
-                assert.isAbove(element[prop], value, prop + ': switch should increment by ' + step);
+                if (element[prop] === 0 && value === 0) {
+                  assert.isAbove(1/element[prop], 1/value, prop + ': switch should increment by ' + step);
+                } else {
+                  assert.isAbove(element[prop], value, prop + ': switch should increment by ' + step);
+                }
               }
             }
             done();
@@ -117,9 +125,17 @@
               const value = element[prop];
               MockInteractions.pressAndReleaseKeyOn(switches[i], 32);
               if (invert * step < 0) {
-                assert.isBelow(element[prop], value, prop + ': switch should increment by ' + step);
+                if (element[prop] === 0 && value === 0) {
+                  assert.isBelow(1/element[prop], 1/value, prop + ': switch should increment by ' + step);
+                } else {
+                  assert.isBelow(element[prop], value, prop + ': switch should increment by ' + step);
+                }
               } else {
-                assert.isAbove(element[prop], value, prop + ': switch should increment by ' + step);
+                if (element[prop] === 0 && value === 0) {
+                  assert.isAbove(1/element[prop], 1/value, prop + ': switch should increment by ' + step);
+                } else {
+                  assert.isAbove(element[prop], value, prop + ': switch should increment by ' + step);
+                }
               }
             }
             done();
@@ -138,9 +154,17 @@
               const value = element[prop];
               MockInteractions.pressAndReleaseKeyOn(switches[i], 13);
               if (invert * step < 0) {
-                assert.isBelow(element[prop], value, prop + ': switch should increment by ' + step);
+                if (element[prop] === 0 && value === 0) {
+                  assert.isBelow(1/element[prop], 1/value, prop + ': switch should increment by ' + step);
+                } else {
+                  assert.isBelow(element[prop], value, prop + ': switch should increment by ' + step);
+                }
               } else {
-                assert.isAbove(element[prop], value, prop + ': switch should increment by ' + step);
+                if (element[prop] === 0 && value === 0) {
+                  assert.isAbove(1/element[prop], 1/value, prop + ': switch should increment by ' + step);
+                } else {
+                  assert.isAbove(element[prop], value, prop + ': switch should increment by ' + step);
+                }
               }
             }
             done();
@@ -185,11 +209,13 @@
                   // wait a tick to let all property effects to take place
                   setTimeout(function() {
                     // find the switch that was found earlier, to test it in this suite
-                    let s = Array.prototype.find.call(element.shadowRoot.querySelectorAll('.' + element._switchClassSelector), sw => (specifier.step === +sw.getAttribute('step') && specifier.prop === sw.getAttribute('prop') && specifier.invert === (sw.hasAttribute('invert') ? -1 : 1)));
+                    let prop = specifier.prop,
+                      invert = specifier.invert,
+                      step = specifier.step;
+                    let s = Array.prototype.find.call(element.shadowRoot.querySelectorAll('.' + element._switchClassSelector), sw => (step === +sw.getAttribute('step') && prop === sw.getAttribute('prop') && invert === (sw.hasAttribute('invert') ? -1 : 1)));
                     assert.isOk(s, 'the switch should be available');
                     // defaulting the prop
-                    element[specifier.prop] = specifier.step * 2;
-                    const value = element[specifier.prop];
+                    const value = element[prop];
                     MockInteractions.down(s);
                     setTimeout(() => {
                       assert.equal(s, element._activeSwitch, 'active switch should be the holded switch');
@@ -197,11 +223,7 @@
                       MockInteractions.up(s);
                       assert.notEqual(s, element._activeSwitch, 'active switch should not be the holded switch when being released');
                       assert.isFalse(s.hasAttribute('active'), 'holded switch should not have the attribute \'active\' when being released');
-                      if (specifier.invert * specifier.step < 0) {
-                        assert.isBelow(element[specifier.prop], value, 'property should increment');
-                      } else {
-                        assert.isAbove(element[specifier.prop], value, 'property should increment');
-                      }
+                      assert.notEqual(element[prop], value, prop + ': switch should increment by ' + step);
                       done();
                     }, element.dwellDelay + element.dwellTime*1.75); // calling increment maximal twice
                   }, 0)
