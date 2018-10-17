@@ -154,17 +154,23 @@
         }
 
         const prop = s.getAttribute('prop');
-        const step = s.getAttribute('step') || 1;
         const sign = s.hasAttribute('invert') ? -1 : 1;
+        const step = (+s.getAttribute('step') || 1) * sign;
         s.setAttribute('active', '');
         this._activeSwitch = s;
         if (isNaN(this[prop])) {
           this[prop] = this._getDefaultForProp(prop);
+        } else if (this[prop] === 0 && step/this[prop] < 0) {
+          // switch with negative zero
+          const kindOfZero = this[prop];
+          this[prop] = undefined;
+          this[prop] = -kindOfZero;
+        } else {
+          this.__incremProp(prop, step);
         }
-        this.__incremProp(prop, +step*sign);
         if (!once) {
           this._activeDelayJob = setTimeout(function() {
-            this._activeIncremJob = setInterval(this.__incremProp.bind(this, prop, +step*sign), +this.dwellTime || 15);
+            this._activeIncremJob = setInterval(this.__incremProp.bind(this, prop, step), +this.dwellTime || 15);
           }.bind(this), this.dwellDelay);
         }
       }

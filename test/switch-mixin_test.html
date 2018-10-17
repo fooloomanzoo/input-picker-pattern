@@ -97,11 +97,9 @@
             switches = element.shadowRoot.querySelectorAll('.' + element._switchClassSelector);
             for (let i = 0; i < switches.length; i++) {
               let prop = switches[i].getAttribute('prop');
-              if (isNaN(element[prop])) {
-                MockInteractions.tap(switches[i]);
-                assert.isNotNaN(element[prop], prop + ': property should be defined');
-                element[prop] = undefined; // resetting property for other switches to test
-              }
+              MockInteractions.tap(switches[i]);
+              assert.isNotNaN(element[prop], prop + ': property should be defined');
+              element[prop] = undefined; // resetting property for other switches to test
             }
             done();
           }, 0);
