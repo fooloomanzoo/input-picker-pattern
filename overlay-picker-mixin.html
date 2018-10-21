@@ -1,3 +1,4 @@
+<link rel="import" href="../polymer/lib/utils/mixin.html">
 <link rel="import" href="overlay-element.html">
 <link rel="import" href="input-picker-shared-style.html">
 <link rel="import" href="dropdown-tip-style.html">
@@ -9,7 +10,7 @@
    * @mixinFunction
    * @polymer
    */
-  const OverlayPickerMixin = superClass => { // eslint-disable-line no-unused-vars
+  const OverlayPickerMixin = function(superClass) { // eslint-disable-line no-unused-vars
 
     return class extends superClass {
 
@@ -143,5 +144,5 @@
     }
   }
 
-  window.OverlayPickerMixin = OverlayPickerMixin;
+  window.OverlayPickerMixin = Polymer.dedupingMixin(OverlayPickerMixin);
 </script>

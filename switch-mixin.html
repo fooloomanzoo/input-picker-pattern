@@ -1,3 +1,4 @@
+<link rel="import" href="../polymer/lib/utils/mixin.html">
 <link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html">
 
 <script>
@@ -11,7 +12,7 @@
    * @param {Object} superClass class to extend
    * @return {Object} extended class
    */
-  const SwitchMixin = (superClass) => { // eslint-disable-line no-unused-vars
+  const SwitchMixin = function(superClass) { // eslint-disable-line no-unused-vars
 
     return class extends superClass { // eslint-disable-line no-undef
 
@@ -215,5 +216,5 @@
       }
     }
   }
-  window.SwitchMixin = SwitchMixin;
+  window.SwitchMixin = Polymer.dedupingMixin(SwitchMixin);
 </script>

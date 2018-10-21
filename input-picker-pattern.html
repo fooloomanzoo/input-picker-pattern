@@ -1,3 +1,4 @@
+<link rel="import" href="../polymer/lib/utils/mixin.html">
 <link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="input-picker-shared-style.html">
 <link rel="import" href="dropdown-tip-style.html">
@@ -7,12 +8,13 @@
   /**
    * mixin to extend an element with a test for an expected input type and implement a polyfill, when wanted or needed
    *
+   * @appliesMixin Polymer.GestureEventListeners
    * @appliesMixin FormElementMixin
    *
    * @mixinFunction
    * @polymer
    */
-  const InputPickerPattern = (superClass) => { // eslint-disable-line no-unused-vars
+  const InputPickerPattern = function(superClass) { // eslint-disable-line no-unused-vars
 
     return class extends Polymer.GestureEventListeners(FormElementMixin(superClass)) { // eslint-disable-line no-undef
 
@@ -27,6 +29,7 @@
         this.close = this.close.bind(this);
         this.toggle = this.toggle.bind(this);
       }
+
       /**
        * the expected input type, that should be polyfilled, if not available
        * @type {string}
@@ -60,7 +63,7 @@
        * @type {string}
        */
       static get styleToInclude() {
-        return `${super.styleToInclude || ''} input-picker-shared-style dropdown-tip-style`;
+        return `input-picker-shared-style dropdown-tip-style ${super.styleToInclude || ''}`;
       }
 
       /**
@@ -275,7 +278,8 @@
 
       static get observers() {
         return [
-          '_confirmedValueChanged(confirmedValue)'
+          '_confirmedValueChanged(confirmedValue)',
+          '_openedChanged(opened)'
         ];
       }
 
@@ -293,9 +297,9 @@
 
       _addPickerTransitionEndListener() {
         if (!this.opened) {
-          // enshure display style for the picker, for ignoring the tabindex of the picker elements
+          // enshure display style for the picker, so that the tabindex of the inner elements will be ignored
           this.$.picker.style.visibility = 'hidden';
-          this.$.picker.style.display = 'hidden';
+          this.$.picker.style.display = 'none';
         }
         this.$.picker.addEventListener('transitionend', this._onPickerTransitionEnd, false);
       }
@@ -312,17 +316,15 @@
       }
 
       _addCancelOnClickListener() {
+        Polymer.Gestures.addListener(document, 'tap', this.cancel, false);
+        Polymer.Gestures.setTouchAction(this, 'auto');
         // prevent when clicking on the picker that it is closes
-        if (!this.noCancelOnOutsideClick) {
-          Polymer.Gestures.addListener(document, 'tap', this.cancel, false);
-          Polymer.Gestures.setTouchAction(this, 'auto');
-          this.addEventListener('tap', this._stopPropagation, false);
-        }
+        Polymer.Gestures.addListener(this, 'tap', this._stopPropagation, false);
       }
 
       _removeCancelOnClickListener() {
         Polymer.Gestures.removeListener(document, 'tap', this.cancel, false);
-        this.removeEventListener('tap', this._stopPropagation, false);
+        Polymer.Gestures.removeListener(this, 'tap', this._stopPropagation, false);
       }
 
       _stopPropagation(e) {
@@ -380,6 +382,23 @@
         }
       }
 
+      _openedChanged(opened) {
+        super._openedChanged && super._openedChanged(opened);
+        if (opened) {
+          // dispatch `input-picker-opened`-Event
+          this.dispatchEvent(new (CustomEvent || Event)('input-picker-opened', { bubbles: true, detail: this }));
+          // add outside click listener if needed
+          if (!this.noCancelOnOutsideClick) {
+            this._addCancelOnClickListener();
+          }
+        } else {
+          // dispatch `input-picker-closed`-Event
+          this.dispatchEvent(new (CustomEvent || Event)('input-picker-closed', { bubbles: true, detail: this }));
+          // remove outside click listener if needed
+          this._removeCancelOnClickListener();
+        }
+      }
+
       validate() {
         if (this._valueIsSet) {
           this._setConfirmedValue();
@@ -399,11 +418,7 @@
         this.$.picker.style.display = '';
         this.$.picker.style.visibility = '';
         super.open && super.open();
-
-        if (!this.opened) {
-          this.dispatchEvent(new (CustomEvent || Event)('input-picker-opened', { bubbles: true, detail: this }));
-          this._addCancelOnClickListener();
-        }
+        this.$.picker.focus();
         this.opened = true;
       }
 
@@ -415,10 +430,8 @@
         if (e && e.stopPropagation) {
           e.stopPropagation();
         }
-        this._removeCancelOnClickListener();
         super.close && super.close();
         this.opened = false;
-        this.dispatchEvent(new (CustomEvent || Event)('input-picker-closed', { bubbles: true, detail: this }));
       }
 
       /**
@@ -489,6 +502,10 @@
         this.value = confirmedValue;
       }
 
+      /**
+       * reset confirmedValue and value
+       * @param {Number} value value to set
+       */
       _reset(value) {
         this.setProperties({
           value: this.default || value,
@@ -521,5 +538,5 @@
     }
   }
 
-  window.InputPickerPattern = InputPickerPattern;
+  window.InputPickerPattern = Polymer.dedupingMixin(InputPickerPattern);
 </script>

@@ -5,7 +5,8 @@
     <style>
       :host {
         display: inline-flex;
-        vertical-align: middle;
+        vertical-align: baseline;
+        align-self: baseline;
         justify-content: center;
         box-sizing: content-box;
       }
@@ -181,9 +182,8 @@
        * reset button
        */
        #input .reset {
-         display: inline-flex;
+         display: block;
          align-self: center;
-         margin: 0 0.1em;
          cursor: pointer;
          border-width: var(--inner-input-border-width, thin);
          border-style: var(--inner-input-border-style, dotted);
@@ -197,6 +197,7 @@
          width: 1em;
          border-radius: 50%;
          padding: 0.15em;
+         margin: 0 2px;
        }
        #input .reset > svg {
          height: 100%;

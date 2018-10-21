@@ -1,3 +1,4 @@
+<link rel="import" href="../polymer/lib/utils/mixin.html">
 <script>
   /**
    * mixin to extend an element, to be compatible with iron-form
@@ -5,7 +6,7 @@
    * @mixinFunction
    * @polymer
    */
-  const FormElementMixin = (superClass) => { // eslint-disable-line no-unused-vars
+  const FormElementMixin = function(superClass) { // eslint-disable-line no-unused-vars
 
     return class extends superClass {
 
@@ -200,5 +201,5 @@
     }
   }
 
-  window.FormElementMixin = FormElementMixin;
+  window.FormElementMixin = Polymer.dedupingMixin(FormElementMixin);
 </script>

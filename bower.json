@@ -18,7 +18,7 @@
   },
   "licence": "https://github.com/fooloomanzoo/input-picker-pattern/raw/master/LICENSE.txt",
   "dependencies": {
-    "polymer": "Polymer/polymer#2",
+    "polymer": "Polymer/polymer#2.6.1",
     "iron-overlay-behavior": "PolymerElements/iron-overlay-behavior#2"
   },
   "devDependencies": {

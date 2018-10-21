@@ -110,12 +110,19 @@ Custom property                   | Default
 `--input-disabled`                | { font-weight: lighter; }
 
 
-#### drop-down-tip-style
-Custom property                   | Description                                  | Default
-----------------------------------|----------------------------------------------|--------------------
---dropdown-tip-size               | dimensions of the tip of the dropdown        | 6px
---dropdown-tip-gap                | gap to the outside of the tip                | 12px
---dropdown-tip-background         | background of the tip of the dropdown        | --input-picker-background, transparent
+#### dropdown-style
+Custom property                       | Description                                                      | Default
+--------------------------------------|------------------------------------------------------------------|--------------------
+--dropdown-transition-duration        | transition duration for changing opacity when opening or closing | 250ms
+--dropdown-transition-timing-function | dimensions of the tip of the dropdown                            | cubic-bezier(0.6, 1, 0.2, 1)
+--dropdown-background                 | background of the dropdown                                       | --input-picker-background, transparent
+
+#### dropdown-tip-style
+Custom property                   | Description                                   | Default
+----------------------------------|-----------------------------------------------|--------------------
+--dropdown-tip-size               | dimensions of the tip of the dropdown         | 6px
+--dropdown-tip-gap                | gap to the outside of the tip                 | 12px
+--dropdown-background             | background of the of the dropdown and the tip | --input-picker-background, transparent
 
 
 #### overlays

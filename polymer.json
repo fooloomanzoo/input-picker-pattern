@@ -1,0 +1,16 @@
+{
+  "moduleResolution": "none",
+  "sources": [
+    "form-element-mixin.html",
+    "input-pattern.html",
+    "input-picker-pattern.html",
+    "overlay-element.html",
+    "overlay-picker-mixin.html",
+    "switch-mixin.html"
+  ],
+  "lint": {
+    "rules": [
+      "polymer-2"
+    ]
+  }
+}

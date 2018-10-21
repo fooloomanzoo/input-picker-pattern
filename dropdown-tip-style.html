@@ -8,13 +8,11 @@ styles for used for a tip of the dropdown
 <dom-module id="dropdown-tip-style">
   <template>
     <style>
-
       :host {
         --computed-dropdown-tip-size: var(--dropdown-tip-size, 6px);
         --computed-dropdown-tip-gap: var(--dropdown-tip-gap, 12px);
-        --dropdown-tip-background: var(--input-picker-background, transparent);
+        --computed-dropdown-background: var(--dropdown-background, var(--input-picker-background, transparent));
       }
-
       .dropdown:after {
         content: "";
         position: absolute;
@@ -42,7 +40,7 @@ styles for used for a tip of the dropdown
       :host([horizontal-align="left"]) .dropdown:after {
         top: 0;
         left: var(--computed-dropdown-tip-gap);
-        border-bottom-color: var(--dropdown-tip-background);
+        border-bottom-color: var(--computed-dropdown-background);
         transform: translateY(-100%);
       }
 
@@ -59,7 +57,7 @@ styles for used for a tip of the dropdown
       :host([horizontal-align][vertical-align="bottom"]) .dropdown:after {
         top: auto; bottom: 0;
         border-bottom-color: transparent;
-        border-top-color: var(--dropdown-tip-background);
+        border-top-color: var(--computed-dropdown-background);
         transform: translateY(100%);
       }
 
@@ -69,14 +67,14 @@ styles for used for a tip of the dropdown
         border-top-color: transparent;
         border-bottom-color: transparent;
         border-right-color: transparent;
-        border-left-color: var(--dropdown-tip-background);
+        border-left-color: var(--computed-dropdown-background);
       }
 
       :host([horizontal-align="left"][vertical-align="middle"]) .dropdown:after {
         right: auto; left: 0;
         transform: translate(-100%, 50%);
         border-left-color: transparent;
-        border-right-color: var(--dropdown-tip-background);
+        border-right-color: var(--computed-dropdown-background);
       }
 
       :host([horizontal-align="center"][vertical-align="middle"]) .dropdown:after {

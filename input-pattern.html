@@ -1,3 +1,4 @@
+<link rel="import" href="../polymer/lib/utils/mixin.html">
 <link rel="import" href="form-element-mixin.html">
 <link rel="import" href="input-shared-style.html">
 
@@ -43,7 +44,7 @@
    * @mixinFunction
    * @polymer
    */
-  const InputPattern = (superClass) => { // eslint-disable-line no-unused-vars
+  const InputPattern = function(superClass) { // eslint-disable-line no-unused-vars
 
     return class extends FormElementMixin(superClass) {  // eslint-disable-line no-undef
 
@@ -77,7 +78,6 @@
         return `
           ${super.styleTemplate || ''}
           #input {
-            box-sizing: content-box;
             width: 0;
           }
           #minlength,
@@ -368,5 +368,5 @@
     }
   }
 
-  window.InputPattern = InputPattern;
+  window.InputPattern = Polymer.dedupingMixin(InputPattern);
 </script>
