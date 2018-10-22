@@ -333,12 +333,10 @@
       }
 
       _addKeyListener() {
-        super._addKeyListener && super._addKeyListener();
         this.addEventListener('keydown', this._checkKeycode, false);
       }
 
       _removeKeyListener() {
-        super._removeKeyListener && super._removeKeyListener();
         this.removeEventListener('keydown', this._checkKeycode, false);
       }
 
@@ -377,13 +375,9 @@
           }
           return;
         }
-        if (super._checkKeycode) {
-          super._checkKeycode(e);
-        }
       }
 
       _openedChanged(opened) {
-        super._openedChanged && super._openedChanged(opened);
         if (opened) {
           // dispatch `input-picker-opened`-Event
           this.dispatchEvent(new (CustomEvent || Event)('input-picker-opened', { bubbles: true, detail: this }));
@@ -412,12 +406,9 @@
        * open the picker
        */
       open(e) {
-        if (e && e.stopPropagation) {
-          e.stopPropagation();
-        }
+        e && e.stopPropagation && e.stopPropagation();
         this.$.picker.style.display = '';
         this.$.picker.style.visibility = '';
-        super.open && super.open();
         this.$.picker.focus();
         this.opened = true;
       }
@@ -427,10 +418,7 @@
        * @param  {[type]} e Event
        */
       close(e) {
-        if (e && e.stopPropagation) {
-          e.stopPropagation();
-        }
-        super.close && super.close();
+        e && e.stopPropagation && e.stopPropagation();
         this.opened = false;
       }
 
@@ -439,12 +427,7 @@
        * @param  {[type]} e Event
        */
       toggle(e) {
-        if (e && e.stopPropagation) {
-          e.stopPropagation();
-        }
-        if (super.toggle) {
-          super.toggle();
-        }
+        e && e.stopPropagation && e.stopPropagation();
         this.opened = !this.opened;
       }
 
@@ -453,10 +436,7 @@
        * @param  {[type]} e Event
        */
       confirm(e) {
-        if (e && e.stopPropagation) {
-          e.stopPropagation();
-        }
-        super.confirm && super.confirm();
+        e && e.stopPropagation && e.stopPropagation();
         if (!this.disabled) {
           this._setConfirmedValue();
         }
@@ -468,11 +448,7 @@
        * @param  {[type]} e Event
        */
       cancel(e) {
-        if (e && e.stopPropagation) {
-          e.stopPropagation();
-        }
-        super.cancel && super.cancel();
-
+        e && e.stopPropagation && e.stopPropagation();
         if (!this.disabled) {
           if (this.autoConfirm) {
             this.confirm();

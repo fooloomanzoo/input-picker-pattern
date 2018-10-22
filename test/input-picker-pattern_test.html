@@ -113,6 +113,8 @@
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           element.confirm();
           assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
+          assert.isTrue(element._isSet(element.value), 'value is set');
+          assert.isTrue(element._isSet(element.confirmedValue), 'confirmedValue is set');
           done();
         });
 
@@ -124,6 +126,8 @@
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           MockInteractions.tap(button);
           assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
+          assert.isTrue(element._isSet(element.value), 'value is set');
+          assert.isTrue(element._isSet(element.confirmedValue), 'confirmedValue is set');
           done();
         });
 
@@ -133,6 +137,8 @@
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           MockInteractions.pressAndReleaseKeyOn(element, 32);
           assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
+          assert.isTrue(element._isSet(element.value), 'value is set');
+          assert.isTrue(element._isSet(element.confirmedValue), 'confirmedValue is set');
           done();
         });
 
@@ -142,6 +148,8 @@
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           MockInteractions.pressAndReleaseKeyOn(element, 13);
           assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
+          assert.isTrue(element._isSet(element.value), 'value is set');
+          assert.isTrue(element._isSet(element.confirmedValue), 'confirmedValue is set');
           done();
         });
 
@@ -195,8 +203,8 @@
           assert.isTrue(element._isSet(element.value), 'value is set');
           assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
           element._reset();
-          assert.isTrue(element._isSet(element.value), 'value is set');
-          assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
+          assert.isTrue(element._isSet(element.value), 'value is set after reset');
+          assert.equal(element.confirmedValue, element.value, 'confirmedValue is set after reset');
           done();
         });
 
