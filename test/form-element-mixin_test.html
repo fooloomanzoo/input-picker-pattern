@@ -12,8 +12,8 @@
 
     <link rel="import" href="../../iron-form/iron-form.html">
     <link rel="import" href="elements/basic-form-element.html">
-
   </head>
+  
   <body>
 
     <test-fixture id="Basic">
@@ -372,6 +372,7 @@
 
           // Wait one tick for observeNodes.
           Polymer.Base.async(function() {
+            expect(form.validate()).to.be.equal(true);
             form.submit();
             server.respond();
           });
@@ -387,6 +388,7 @@
 
           // Wait one tick for observeNodes.
           Polymer.Base.async(function() {
+            expect(form.validate()).to.be.equal(true);
             form.submit();
             server.respond();
           });
@@ -421,6 +423,7 @@
 
           // Wait one tick for observeNodes.
           Polymer.Base.async(function() {
+            expect(form.validate()).to.be.equal(true);
             form.submit();
             server.respond();
           });
