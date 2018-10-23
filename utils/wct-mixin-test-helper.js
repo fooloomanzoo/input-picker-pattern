@@ -28,8 +28,8 @@
     decodeURIComponent(window.location.search)
       .replace('?', '')
       .split('&')
-      .map(current => {
-        const pair = current.split('=');
+      .map(function(current) {
+        var pair = current.split('=');
         if (pair[0]) {
           params[pair[0]] = pair[1];
         }
@@ -61,10 +61,12 @@
       oldTags = tmp;
     } else if (Object.prototype.toString.call(oldTags) === "[object Object]") {
       Object.keys(oldTags).forEach(function(tag) {
-        if (typeof oldTags[tag] !== 'string') {
+        if (!tag) {
+          return;
+        } else if (typeof oldTags[tag] !== 'string') {
           oldTags[tag] = '';
         } else {
-          oldTags[tag].toLowerCase();
+          oldTags[tag] = (oldTags[tag] || '').toLowerCase();
         }
       });
     } else {
@@ -80,7 +82,7 @@
       return;
     }
 
-    params.specifier = params.specifier.toLowerCase();
+    params.specifier = (params.specifier || '').toLowerCase();
 
     // setting replacement tags for given tags of the suite
     Object.keys(oldTags).forEach(function(tag) {
@@ -98,7 +100,7 @@
     window.WCT.helpers.mixinSuiteParams = params;
 
     suite(`Suite for ${params.specifier.toUpperCase()}`, function() {
-      test('loading dependencies', done => {
+      test('loading dependencies', function(done) {
         Polymer.importHref(window.location.origin + '/components/' + params.url,
           function() {
             var specifier = params.specifier;
@@ -122,6 +124,9 @@
               // so if a node is replaced, it will be checked if it needs to be
               // replaced again.
               while (node = nodeIterator.nextNode()) {
+                if (!node.tagName) {
+                  continue;
+                }
                 var tagName = node.tagName.toLowerCase();
                 if (replacementTagNames.hasOwnProperty(tagName)) {
                   // Create a replacement:
@@ -144,7 +149,7 @@
                        * }
                        */
                       if (props.hasOwnProperty(node.id)) {
-                        Object.keys(props[node.id]).forEach(prop => {
+                        Object.keys(props[node.id]).forEach(function(prop) {
                           // only set attribute if it hasn't been set in the test suite
                           if (!node.hasAttribute(prop)) {
                             replacement.setAttribute(prop, props[node.id][prop]);
@@ -159,7 +164,7 @@
                        *   min: 0
                        * }
                        */
-                      Object.keys(props).forEach(prop => {
+                      Object.keys(props).forEach(function(prop) {
                         // only set attribute if it hasn't been set in the test suite
                         if (!node.hasAttribute(prop)) {
                           replacement.setAttribute(prop, props[prop]);
