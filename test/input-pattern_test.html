@@ -347,16 +347,20 @@
       test('setting input and focus updates the value', done => {
         element.input = '123';
         MockInteractions.focus(element);
-        assert.equal(element.value, '123', 'value is set when focussed');
-        done();
+        setTimeout(() => {
+          assert.equal(element.value, '123', 'value is set when focussed');
+          done();
+        }, 0)
       });
 
       test('setting input and focus updates the value when value is set', done => {
         element.input = '456';
         element.input = '123';
         MockInteractions.focus(element);
-        assert.equal(element.value, '123', 'value is set when focussed');
-        done();
+        setTimeout(() => {
+          assert.equal(element.value, '123', 'value is set when focussed');
+          done();
+        }, 0)
       });
 
       test('confirming with enter', done => {
