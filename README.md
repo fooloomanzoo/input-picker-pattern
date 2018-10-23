@@ -50,7 +50,7 @@ Custom property                     | Description                               
 `--input-disabled-color`            | text-color of the disabled input              | inherit
 `--input-disabled-background`       | background of the disabled input              | transparent
 `--input-disabled-font-style`       | font-style of the disabled elements           | oblique
-`--input-disabled-opacity`          | opacity of the disabled input                 | 0.9
+`--input-disabled-opacity`          | opacity of the disabled input                 | 0.75
 `--input-placeholder-opacity`       | opacity of the placeholder                    | 0.75
 `--input-placeholder-align`         | text-align of the placeholder                 | center
 `--input-selection-color`           | text-color of the selected text               | inherit

@@ -109,6 +109,11 @@
         outline: none;
       }
 
+      .icon[disabled] {
+        pointer-events: none;
+        opacity: var(--input-disabled-opacity, 0.75);
+      }
+
       #picker,
       #picker > * {
         color: var(--input-picker-color);
