@@ -5,8 +5,8 @@
     <style>
       :host {
         display: inline-flex;
-        vertical-align: baseline;
-        align-self: baseline;
+        vertical-align: middle;
+        align-self: center;
         justify-content: center;
         box-sizing: content-box;
       }
@@ -21,6 +21,29 @@
       :host(:focus),
       :focus {
         outline: none;
+      }
+
+      /**
+       * inner inputs
+       */
+      integer-input,
+      number-input,
+      text-input {
+        --input-color: var(--inner-input-color, inherit);
+        --input-background: var(--inner-input-background, transparent);
+        --input-border-width: var(--inner-input-border-width, thin);
+        --input-border-color: var(--inner-input-border-color, transparent);
+        --input-border-style: var(--inner-input-border-style, dotted);
+        --input-padding: var(--inner-input-padding, 0);
+        --input-border-radius: var(--inner-input-border-radius, 0.1em);
+        --input-focus-color: var(--inner-input-focus-color, inherit);
+        --input-focus-background: var(--inner-input-focus-background, rgba(0,0,0,0.1));
+        --input-focus-border-color: var(--inner-input-focus-border-color, rgba(0,0,0,0.15));
+        --input-focus-border-style: var(--inner-input-focus-border-style, dotted);
+        --input-invalid-color: var(--inner-input-invalid-color, inherit);
+        --input-invalid-background: var(--inner-input-invalid-background, rgba(0,0,0,0.1));
+        --input-invalid-border-style: var(--inner-input-invalid-border-style, dotted);
+        --input-invalid-border-color: var(--inner-input-invalid-border-color, rgba(0,0,0,0.25));
       }
 
       /**
@@ -144,29 +167,6 @@
       }
 
       /**
-       * inner inputs
-       */
-      integer-input,
-      number-input,
-      text-input {
-        --input-color: var(--inner-input-color, inherit);
-        --input-background: var(--inner-input-background, transparent);
-        --input-border-width: var(--inner-input-border-width, thin);
-        --input-border-color: var(--inner-input-border-color, transparent);
-        --input-border-style: var(--inner-input-border-style, dotted);
-        --input-padding: var(--inner-input-padding, 0);
-        --input-border-radius: var(--inner-input-border-radius, 0.1em);
-        --input-focus-color: var(--inner-input-focus-color, inherit);
-        --input-focus-background: var(--inner-input-focus-background, rgba(0,0,0,0.1));
-        --input-focus-border-color: var(--inner-input-focus-border-color, rgba(0,0,0,0.15));
-        --input-focus-border-style: var(--inner-input-focus-border-style, dotted);
-        --input-invalid-color: var(--inner-input-invalid-color, inherit);
-        --input-invalid-background: var(--inner-input-invalid-background, rgba(0,0,0,0.1));
-        --input-invalid-border-style: var(--inner-input-invalid-border-style, dotted);
-        --input-invalid-border-color: var(--inner-input-invalid-border-color, rgba(0,0,0,0.25));
-      }
-
-      /**
        * disabled
        */
       :host([disabled]) #input {
@@ -189,7 +189,7 @@
          border-style: var(--inner-input-border-style, dotted);
          border-color: var(--inner-input-border-color, transparent);
          box-sizing: content-box;
-         opacity: 0.5;
+         opacity: 0;
          color: inherit;
          background-color: transparent;
          transition-property: background, opacity;
@@ -209,6 +209,9 @@
          border-style: var(--inner-input-focus-border-style, dotted);
          outline: none;
        }
+       #input:hover .reset {
+         opacity: 0.5;
+       }
        #input .reset:hover {
          opacity: 1;
          color: var(--inner-input-focus-color, inherit);
@@ -216,6 +219,9 @@
        }
        #input .reset:focus {
          border-color: var(--inner-input-focus-border-color, var(--inner-input-focus-background, rgba(0,0,0,0.2)));
+       }
+       :host([hide-reset-button]) #input .reset {
+         display: none;
        }
       /**
        * placeholder
@@ -289,7 +295,36 @@
       ::-webkit-search-cancel-button,
       ::-webkit-clear-button {
         color: currentColor;
+        align-self: center;
+        vertical-align: middle;
         cursor: pointer;
+      }
+
+      ::-webkit-search-cancel-button,
+      ::-webkit-clear-button {
+        -webkit-appearance: none;
+        height: 1em;
+        width: 1em;
+        opacity: 0;
+        transition-property: opacity;
+        transition-duration: var(--input-transition-duration, 250ms);
+        transition-timing-function: var(--input-transition-timing-function, cubic-bezier(0.6, 1, 0.2, 1));
+        background-image: url("data:image/svg+xml;utf8,%3Csvg%20viewBox%3D%220%200%2024%2024%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20style%3D%22height%3A100%25%3B%22%3E%3Cg%3E%3Cpath%20d%3D%22M19%206.41L17.59%205%2012%2010.59%206.41%205%205%206.41%2010.59%2012%205%2017.59%206.41%2019%2012%2013.41%2017.59%2019%2019%2017.59%2013.41%2012z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+      }
+
+      input:hover ::-webkit-search-cancel-button,
+      input:hover ::-webkit-clear-button {
+        opacity: 0.5;
+      }
+
+      ::-webkit-search-cancel-button:hover,
+      ::-webkit-clear-button:hover {
+        opacity: 1;
+      }
+
+      :host([hide-reset-button]) ::-webkit-search-cancel-button,
+      :host([hide-reset-button]) ::-webkit-clear-button {
+        display: none;
       }
 
       [invisible] {

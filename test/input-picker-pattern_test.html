@@ -33,9 +33,9 @@
     <test-fixture id="Confirming">
       <template>
         <div>
-          <basic-input-picker-element id="value" value="123" opened></basic-input-picker-element>
-          <basic-input-picker-element id="default" default="123" opened></basic-input-picker-element>
-          <basic-input-picker-element id="auto-confirm" auto-confirm value="123" opened></basic-input-picker-element>
+          <basic-input-picker-element id="value" value="123"></basic-input-picker-element>
+          <basic-input-picker-element id="default" default="123"></basic-input-picker-element>
+          <basic-input-picker-element id="auto-confirm" auto-confirm value="123"></basic-input-picker-element>
         </div>
       </template>
     </test-fixture>
@@ -47,6 +47,12 @@
           <basic-input-picker-element id="esc" no-cancel-on-esc-key></basic-input-picker-element>
           <basic-input-picker-element id="outsideclick" no-cancel-on-outside-click></basic-input-picker-element>
         </div>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="Native">
+      <template>
+        <basic-input-picker-element native></basic-input-picker-element>
       </template>
     </test-fixture>
 
@@ -73,7 +79,7 @@
           assert.isDefined(element.verticalAlign, 'verticalAlign is defined');
           assert.isNotOk(element.opened, 'picker is not opened');
           assert.isDefined(element.native, 'native is defined');
-          assert.isDefined(element.constructor._hasNative, '_isNative is defined');
+          assert.isDefined(element.constructor._hasNative, '_hasNative is defined');
           done();
         });
       });
@@ -120,36 +126,42 @@
 
         test('confirming by clicking button', done => {
           let element = f.querySelector('#value');
+          element.opened = true;
           let button = element.shadowRoot.querySelector('#confirm');
           assert.isOk(button, 'confirm-button exists');
+          assert.isTrue(element.opened, 'element is opened');
           assert.isTrue(element._isSet(element.value), 'value is set');
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           MockInteractions.tap(button);
-          assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
-          assert.isTrue(element._isSet(element.value), 'value is set');
-          assert.isTrue(element._isSet(element.confirmedValue), 'confirmedValue is set');
-          done();
+          setTimeout(() => {
+            assert.isTrue(element._isSet(element.value), 'value is set');
+            assert.isTrue(element._isSet(element.confirmedValue), 'confirmedValue is set');
+            assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
+            done();
+          })
         });
 
         test('confirming by enter', done => {
           let element = f.querySelector('#value');
+          element.opened = true;
           assert.isTrue(element._isSet(element.value), 'value is set');
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           MockInteractions.pressAndReleaseKeyOn(element, 32);
-          assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
           assert.isTrue(element._isSet(element.value), 'value is set');
           assert.isTrue(element._isSet(element.confirmedValue), 'confirmedValue is set');
+          assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
           done();
         });
 
         test('confirming by space', done => {
           let element = f.querySelector('#value');
+          element.opened = true;
           assert.isTrue(element._isSet(element.value), 'value is set');
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           MockInteractions.pressAndReleaseKeyOn(element, 13);
-          assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
           assert.isTrue(element._isSet(element.value), 'value is set');
           assert.isTrue(element._isSet(element.confirmedValue), 'confirmedValue is set');
+          assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
           done();
         });
 
@@ -169,7 +181,7 @@
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           element.confirm();
           assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
-          element._reset();
+          element.reset();
           assert.isFalse(element._isSet(element.value), 'value is unset');
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           done();
@@ -177,6 +189,7 @@
 
         test('canceling by clicking button', done => {
           let element = f.querySelector('#value');
+          element.opened = true;
           let button = element.shadowRoot.querySelector('#cancel');
           assert.isOk(button, 'cancel-button exists');
           assert.isTrue(element._isSet(element.value), 'value is set');
@@ -202,7 +215,7 @@
           assert.isDefined(element.default, 'default is set');
           assert.isTrue(element._isSet(element.value), 'value is set');
           assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
-          element._reset();
+          element.reset();
           assert.isTrue(element._isSet(element.value), 'value is set after reset');
           assert.equal(element.confirmedValue, element.value, 'confirmedValue is set after reset');
           done();
@@ -374,6 +387,50 @@
           assert.isTrue(element.opened, 'picker is opened');
           assert.equal(element.value, value, 'value is not reset');
           done();
+        });
+      });
+
+      suite('native inputs', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('Native');
+        });
+
+        test('picker should not open setting opened-property', done => {
+          element.opened = true;
+          setTimeout(function() {
+            const picker = element.shadowRoot.querySelector('#picker');
+            if (element._hasNative) {
+              assert.equal(document.defaultView.getComputedStyle(picker).visibility, 'hidden', 'picker is hidden');
+              assert.equal(document.defaultView.getComputedStyle(picker).display, 'none', 'picker is hidden');
+            }
+            done();
+          }, 0);
+        });
+
+        test('picker should not open calling open-fn', done => {
+          element.open();
+          setTimeout(function() {
+            const picker = element.shadowRoot.querySelector('#picker');
+            if (element._hasNative) {
+              assert.equal(document.defaultView.getComputedStyle(picker).visibility, 'hidden', 'picker is hidden');
+              assert.equal(document.defaultView.getComputedStyle(picker).display, 'none', 'picker is hidden');
+            }
+            done();
+          }, 0);
+        });
+
+        test('picker should not open by clicking', done => {
+          MockInteractions.tap(element);
+          setTimeout(function() {
+            const picker = element.shadowRoot.querySelector('#picker');
+            if (element._hasNative) {
+              assert.equal(document.defaultView.getComputedStyle(picker).visibility, 'hidden', 'picker is hidden');
+              assert.equal(document.defaultView.getComputedStyle(picker).display, 'none', 'picker is hidden');
+            }
+            done();
+          }, 0);
         });
       });
     </script>
