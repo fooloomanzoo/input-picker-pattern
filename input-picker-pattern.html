@@ -416,7 +416,7 @@
       }
 
       validate() {
-        if (this._valueIsSet) {
+        if (this.valueIsSet) {
           this._setConfirmedValue();
         } else if (this._isSet(this.confirmedValue)) {
           this._resetValue();

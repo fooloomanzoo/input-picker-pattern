@@ -2689,7 +2689,7 @@
           }
         },
         {
-          "name": "_valueIsSet",
+          "name": "valueIsSet",
           "type": "boolean",
           "description": "is true when the value is not undefined",
           "privacy": "protected",
@@ -3190,7 +3190,7 @@
           "inheritedFrom": "FormElementMixin"
         },
         {
-          "name": "_valueIsSet",
+          "name": "valueIsSet",
           "type": "boolean",
           "description": "is true when the value is not undefined",
           "privacy": "protected",
@@ -4228,7 +4228,7 @@
           "inheritedFrom": "FormElementMixin"
         },
         {
-          "name": "_valueIsSet",
+          "name": "valueIsSet",
           "type": "boolean",
           "description": "is true when the value is not undefined",
           "privacy": "protected",

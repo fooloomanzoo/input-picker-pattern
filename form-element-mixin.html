@@ -10,6 +10,27 @@
 
     return class extends superClass {
 
+      constructor() {
+        super();
+        // set default validate and isSet functions
+        this._validate = this._defaultValidate.bind(this);
+        this._isSet = this._defaultIsSet.bind(this);
+      }
+
+      /**
+       * attach dom with `delegatesFocus: true` so that the element is also focussed while its's children are too, and to autofocus to first tabable
+       */
+      _attachDom(dom) {
+        if (!this.shadowRoot) {
+          this.attachShadow({
+              mode: 'open',
+              delegatesFocus: true
+          });
+          this.shadowRoot.appendChild(dom);
+        }
+        return this.shadowRoot;
+      }
+
       static get properties() {
         return {
           /**
@@ -28,24 +49,6 @@
           },
 
           /**
-           * disables the input
-           */
-          disabled: {
-            type: Boolean,
-            reflectToAttribute: true,
-            notify: true
-          },
-
-          /**
-           * required attribute
-           */
-          required: {
-            type: Boolean,
-            reflectToAttribute: true,
-            notify: true
-          },
-
-          /**
            * defines the property that should be used for the value
            */
           propertyForValue: {
@@ -54,23 +57,12 @@
           },
 
           /**
-           * required attribute
+           * value of the input
            */
-          invalid: {
-            type: Boolean,
-            readOnly: true,
-            reflectToAttribute: true,
+          value: {
+            type: Object,
             notify: true,
-            value: false
-          },
-
-          /**
-           * is true when the value is not undefined
-           */
-          _valueIsSet: {
-            type: Boolean,
-            readOnly: true,
-            value: false
+            observer: '_valueChanged'
           },
 
           /**
@@ -82,35 +74,64 @@
           },
 
           /**
-           * value of the input
+           * disables the input
            */
-          value: {
-            type: Object,
+          disabled: {
+            type: Boolean,
+            reflectToAttribute: true,
             notify: true
+          },
+
+          /**
+           * required attribute
+           */
+          invalid: {
+            type: Boolean,
+            readOnly: true,
+            reflectToAttribute: true,
+            notify: true
+          },
+
+          /**
+           * required attribute
+           */
+          required: {
+            type: Boolean,
+            reflectToAttribute: true,
+            notify: true,
+            value: false
+          },
+
+          /**
+           * is true when the value is set
+           */
+          valueIsSet: {
+            type: Boolean,
+            readOnly: true,
+            value: false
+          },
+
+          /**
+           * validate a value (when required)
+           */
+          _validate: {
+            type: Function
+          },
+
+          /**
+           * defines wheather a value is set correctly
+           */
+          _isSet: {
+            type: Function
           }
         }
       }
 
       static get observers() {
         return [
-          '_computeInvalid(value, required)',
-          '_computeValueIsSet(value)',
-          '_valueChanged(value)'
+          '_computeInvalid(_validate, value, required)',
+          '_computeValueIsSet(_isSet, value)'
         ]
-      }
-
-      /**
-       * attach dom with `delegatesFocus: true` so that the element is also focussed while its's children are too, and to autofocus to first tabable
-       */
-      _attachDom(dom) {
-        if (!this.shadowRoot) {
-          this.attachShadow({
-              mode: 'open',
-              delegatesFocus: true
-          });
-          this.shadowRoot.appendChild(dom);
-        }
-        return this.shadowRoot;
       }
 
       connectedCallback() {
@@ -119,37 +140,14 @@
       }
 
       /**
-       * validates the input for iron-form
-       */
-      validate() {
-        return !this.invalid;
-      }
-
-      /**
-       * defines whether the value is set
-       * @param  {[Object]} value
-       */
-      _computeInvalid(value) {
-        this._setInvalid(!this._validate(value));
-      }
-
-      /**
        * @overwrite
        * validate a value (when required)
        * @param  {Object} value      value to validate
-       * @param  {Boolean} required  whether the value is required
+       * @param  {Boolean} required  if true, the value is required
        * @return {Boolean}           true, if the value is valid
        */
-      _validate(value) {
-        return Boolean(!this.required || this._isSet(value));
-      }
-
-      /**
-       * defines whether the value is set
-       * @param  {[Object]} value
-       */
-      _computeValueIsSet(value) {
-        this._set_valueIsSet(this._isSet(value));
+      _defaultValidate(value, required) {
+        return Boolean(!required || this._isSet(value));
       }
 
       /**
@@ -158,8 +156,27 @@
        * @param  {Object} value      value to test
        * @return {Boolean}           true, if the value is set
        */
-      _isSet(value) {
+      _defaultIsSet(value) {
         return !(value === undefined || value === null || value === '');
+      }
+
+      /**
+       * defines whether the value is set
+       * @param  {Function} the validate function
+       * @param  {Object} the value to validate
+       * @param  {Boolean} the required atrribute
+       */
+      _computeInvalid(validate, value, required) {
+        this._setInvalid(!validate(value, required));
+      }
+
+      /**
+       * defines whether the value is set
+       * @param  {Function} the "isSet" function
+       * @param  {Object} the value
+       */
+      _computeValueIsSet(isSet, value) {
+        this._setValueIsSet(isSet(value));
       }
 
       _valueChanged(value) {
@@ -197,6 +214,13 @@
 
       _reflectValueToProperty(value) {
         this.set(this.propertyForValue, value);
+      }
+
+      /**
+       * validates the input for iron-form
+       */
+      validate() {
+        return !this.invalid;
       }
     }
   }

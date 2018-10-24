@@ -130,7 +130,7 @@
       test('unset value', done => {
         if (!element._isSet('')) {
           element.value = '';
-          assert.isFalse(element._valueIsSet);
+          assert.isFalse(element.valueIsSet);
           assert.equal(element.input, '', 'input is unset');
         }
         done();
@@ -148,7 +148,7 @@
           element.input = '';
           element._confirmInput();
           assert.equal(element.input, '', 'input is unset');
-          assert.isFalse(element._valueIsSet);
+          assert.isFalse(element.valueIsSet);
         }
         done();
       });
@@ -301,7 +301,7 @@
       test('required set empty value', done => {
         let element = f.querySelector('#required-with-value');
         element.value = '';
-        if (element._validate('')) {
+        if (element._validate('', element.required)) {
           assert.isFalse(element.invalid);
         } else {
           assert.isTrue(element.invalid);
@@ -312,7 +312,7 @@
       test('not required set empty value', done => {
         let element = f.querySelector('#not-required-with-value');
         element.value = '';
-        if (element._validate('')) {
+        if (element._validate('', element.required)) {
           assert.isFalse(element.invalid);
         } else {
           assert.isTrue(element.invalid);

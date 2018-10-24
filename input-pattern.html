@@ -178,7 +178,7 @@
 
       static get observers() {
         return [
-          '_computeInvalid(input, required)',
+          '_computeInvalid(_validate, input, required)',
           '_computeMinlengthString(minlength, default, placeholder)',
           'resize(_minlengthString)'
         ]
