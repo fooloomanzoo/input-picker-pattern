@@ -112,16 +112,16 @@
           },
 
           /**
-           * validate a value (when required)
+           * defines wheather a value is set correctly
            */
-          _validate: {
+          _isSet: {
             type: Function
           },
 
           /**
-           * defines wheather a value is set correctly
+           * validate a value (when required)
            */
-          _isSet: {
+          _validate: {
             type: Function
           }
         }
@@ -129,14 +129,24 @@
 
       static get observers() {
         return [
-          '_computeInvalid(_validate, value, required)',
-          '_computeValueIsSet(_isSet, value)'
+          '_computeValueIsSet(_isSet, value)',
+          '_computeInvalid(_validate, value, required)'
         ]
       }
 
       connectedCallback() {
         super.connectedCallback();
         this._ensureAttribute('tabindex', 0);
+      }
+
+      /**
+       * @overwrite
+       * defines wheather a value is set correctly
+       * @param  {Object} value      value to test
+       * @return {Boolean}           true, if the value is set
+       */
+      _defaultIsSet(value) {
+        return !(value === undefined || value === null || value === '');
       }
 
       /**
@@ -148,16 +158,6 @@
        */
       _defaultValidate(value, required) {
         return Boolean(!required || this._isSet(value));
-      }
-
-      /**
-       * @overwrite
-       * defines wheather a value is set correctly
-       * @param  {Object} value      value to test
-       * @return {Boolean}           true, if the value is set
-       */
-      _defaultIsSet(value) {
-        return !(value === undefined || value === null || value === '');
       }
 
       /**
