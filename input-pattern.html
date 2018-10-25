@@ -8,16 +8,17 @@
    * @param  {Node} node      the node to apply the sizing attribute of the relative node to the width
    * @param  {Node} relative  the node to get the sizing information from
    * @param  {String} attrToSet the attribute to set on the node
+   * @param  {Boolean} forceClone force to clone the relative (e.g. initial loading)
    */
-  function resizeWidthByRelative(node, relative, attrToSet) {
+  function resizeWidthByRelative(node, relative, attrToSet, forceClone) {
     // measure the width of the test element
     let width = relative.getBoundingClientRect().width;
-    if (width !== 0) {
+    if (width !== 0 && !forceClone) {
       node.style[attrToSet] = `${width.toFixed(1)}px`;
     } else {
       // if that fails, it could be, that the element is hidden
-      // therefore clone the node to document level and add some basic styles, that could define the elements's width
       const relativeClone = relative.cloneNode(true);
+      // therefore clone the node to document level and add some basic styles, that could define the elements's width
       const style = document.defaultView.getComputedStyle(relative, '');
       ['font-family', 'font-size', 'font-weight', 'font-style', 'min-width', 'max-width'].reduce(
         ( accumulator, currentValue) => {
@@ -57,6 +58,7 @@
         this._confirmInput = this._confirmInput.bind(this);
         this._checkKeycode = this._checkKeycode.bind(this);
         this._resizeWidth = this._resizeWidth.bind(this);
+        this.__minSizeInitialized = false;
       }
 
       static get template() {
@@ -179,14 +181,13 @@
       static get observers() {
         return [
           '_computeInvalid(_validate, input, required)',
-          '_computeMinlengthString(minlength, default, placeholder)',
-          'resize(_minlengthString)'
+          '_computeMinlengthString(minlength, default, placeholder)'
         ]
       }
 
       connectedCallback() {
         super.connectedCallback();
-        this._addEventListeners();
+        this._delayedAddEventListeners();
         if (this.input && this.input.length) {
           this._debouncedResizeWidth();
         }
@@ -197,20 +198,39 @@
         this._removeEventListeners();
       }
 
+      _delayedAddEventListeners() {
+        let readyStateListener = function() {
+          if (document.readyState !== 'loading') {
+            // add a minlength observer to compute the minWidth of the input
+            this._createPropertyObserver('_minlengthString', 'resize', true);
+            // if ready state is not loading, add all listeners without a delay
+            this._addEventListeners();
+            this.resize();
+            // remove readystate listener
+            document.removeEventListener('readystatechange', readyStateListener);
+          }
+        }
+        readyStateListener = readyStateListener.bind(this);
+        document.addEventListener('readystatechange', readyStateListener);
+        readyStateListener();
+      }
+
       _addEventListeners() {
-        this.addEventListener('focus', this.focus, false);
-        this.addEventListener('blur', this.blur, false);
-        this.$.input.addEventListener('focus', this._confirmInput, false);
-        this.$.input.addEventListener('blur', this._confirmInput, false);
-        this.$.input.addEventListener('keydown', this._checkKeycode, false);
+        this.addEventListener('focus', this.focus);
+        this.addEventListener('blur', this.blur);
+        this.$.input.addEventListener('focus', this._confirmInput);
+        this.$.input.addEventListener('blur', this._confirmInput);
+        this.$.input.addEventListener('keydown', this._checkKeycode);
+        window.addEventListener('resize', this.resize);
       }
 
       _removeEventListeners() {
-        this.removeEventListener('focus', this.focus, false);
-        this.removeEventListener('blur', this.blur, false);
-        this.$.input.removeEventListener('focus', this._confirmInput, false);
-        this.$.input.removeEventListener('blur', this._confirmInput, false);
-        this.$.input.removeEventListener('keydown', this._checkKeycode, false);
+        this.removeEventListener('focus', this.focus);
+        this.removeEventListener('blur', this.blur);
+        this.$.input.removeEventListener('focus', this._confirmInput);
+        this.$.input.removeEventListener('blur', this._confirmInput);
+        this.$.input.removeEventListener('keydown', this._checkKeycode);
+        window.removeEventListener('resize', this.resize);
       }
 
       _checkKeycode(e) {
@@ -295,10 +315,13 @@
       resize() {
         // compute minimal width of the input
         if (this._minSizeJob) {
-          clearTimeout(this._minSizeJob);
+          cancelAnimationFrame(this._minSizeJob);
         }
         if (this._minlengthString) {
-          this._minSizeJob = setTimeout(resizeWidthByRelative(this.$.input, this.$.minlength, 'minWidth'), 0);
+          this._minSizeJob = requestAnimationFrame(function() {
+            resizeWidthByRelative(this.$.input, this.$.minlength, 'minWidth', !this.__minSizeInitialized);
+            this.__minSizeInitialized = true;
+          }.bind(this));
         }
         // compute width of the input
         if (this.input && this.input.length) {
@@ -309,6 +332,7 @@
       _debouncedResizeWidth() {
         if (this._activeResizeJob) {
           clearTimeout(this._activeResizeJob);
+          this._activeResizeJob = null;
         }
         this._activeResizeJob = setTimeout(this._resizeWidth, 0);
       }
@@ -363,7 +387,6 @@
       reportValidity() {
         return this.$.input.reportValidity();
       }
-
     }
   }
 

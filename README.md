@@ -77,9 +77,9 @@ Custom property                     | Description                               
 `--inner-input-focus-border-style` | border-style of the focused and hovered inner input element | dotted
 `--inner-input-focus-border-color` | border-color of the focused and hovered inner input element | rgba(0,0,0,0.1)
 `--inner-input-invalid-color`      | text-color of the invalid inner input element | inherit
-`--inner-input-invalid-background` | background of the invalid inner input element | transparent
+`--inner-input-invalid-background` | background of the invalid inner input element | rgba(255,255,255,0.5)
 `--inner-input-invalid-border-style` | border-style of the invalid inner input element | dotted
-`--inner-input-invalid-border-color` | border-color of the invalid inner input element | transparent
+`--inner-input-invalid-border-color` | border-color of the invalid inner input element | rgba(0,0,0,0.15)
 
 
 #### input-picker-shared-style
