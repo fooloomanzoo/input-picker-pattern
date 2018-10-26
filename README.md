@@ -79,7 +79,7 @@ Custom property                     | Description                               
 `--inner-input-invalid-color`      | text-color of the invalid inner input element | inherit
 `--inner-input-invalid-background` | background of the invalid inner input element | rgba(255,255,255,0.5)
 `--inner-input-invalid-border-style` | border-style of the invalid inner input element | dotted
-`--inner-input-invalid-border-color` | border-color of the invalid inner input element | rgba(0,0,0,0.15)
+`--inner-input-invalid-border-color` | border-color of the invalid inner input element | rgba(255,0,0,0.25)
 
 
 #### input-picker-shared-style

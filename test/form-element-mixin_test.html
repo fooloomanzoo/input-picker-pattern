@@ -15,7 +15,6 @@
   </head>
 
   <body>
-
     <test-fixture id="Basic">
       <template>
         <basic-form-element></basic-form-element>
@@ -78,6 +77,7 @@
     </test-fixture>
 
     <script>
+      const params = WCT.helpers.getParams();
       WCT.helpers.mixinSuite('basic-form-element');
 
       suite('basic', function() {
@@ -97,8 +97,9 @@
         });
 
         test('custom "_isSet"', done => {
+          const isNotSetSpecifier = params.isNotSet || 2;
           element._isSet = (value) => {
-            return value != 2;
+            return value != isNotSetSpecifier;
           }
           element.value = '';
           assert.isTrue(element.value === '' || element.value === undefined, 'value is set to empty string or undefined');
@@ -107,23 +108,24 @@
           assert.isTrue(element.value === 0 || element.value === undefined, 'value is set to 0 or undefined');
           assert.isTrue(element.valueIsSet, 'when value is 0');
           element.value = false;
-          assert.isTrue(element.value === false || element.value === undefined, 'value is set to false or undefined' + element.value);
+          assert.isTrue(element.value === false || element.value === undefined, 'value is set to false or undefined');
           assert.isTrue(element.valueIsSet, 'when value is false');
-          element.value = 2;
-          assert.equal(element.value, 2, 'value is set to 2');
-          assert.isFalse(element.valueIsSet, 'when value is 2');
+          element.value = isNotSetSpecifier;
+          assert.equal(element.value, isNotSetSpecifier, 'value is set to ' + isNotSetSpecifier);
+          assert.isFalse(element.valueIsSet, 'when value is ' + isNotSetSpecifier);
           done();
         });
 
         test('custom "_validate"', done => {
+          const doesNotValidateSpecifier = params.doesNotValidate || '123';
           element._validate = (value, required) => {
-            return value != '123';
+            return value != doesNotValidateSpecifier;
           }
           element.value = '';
           assert.isFalse(element.invalid, '1: invalid is false');
           element.value = 'ab';
           assert.isFalse(element.invalid, '2: invalid is false');
-          element.value = '123';
+          element.value = doesNotValidateSpecifier;
           assert.isTrue(element.invalid, '3: invalid is true');
           done();
         });
@@ -134,17 +136,20 @@
 
         setup(function() {
           element = fixture('ChangedPropertyTestFixture');
+          if (params.validAttribute) {
+            element.setAttribute('value', params.validAttribute);
+          }
         });
 
         test('setting a value on the element works', function(done) {
-          assert.equal(element.value, '123', 'property is set');
+          assert.equal(element.value, params.validAttribute || '123', 'property is set');
           done();
         });
 
         test('unsetting works', function(done) {
           element.value = '';
           if (element._isSet('')) {
-            assert.isTrue(element.valueIsSet, 'value is unset');
+            assert.isTrue(element.valueIsSet, 'value is unset'+ element.value + element.colorString);
           } else {
             assert.isFalse(element.valueIsSet, 'value is unset');
           }
@@ -351,6 +356,9 @@
 
         setup(function() {
           f = fixture('Submit');
+          if (params.validAttribute) {
+            Array.prototype.forEach.call(f.querySelectorAll('[value]'), element => element.setAttribute('value', params.validAttribute));
+          }
           server = sinon.fakeServer.create();
           server.respondWith(
             'GET',
@@ -381,7 +389,7 @@
         test('not required element with value', function(done) {
           let form = f.querySelector('#not-required-and-value');
           form.addEventListener('iron-form-response', function(event) {
-            expect(event.detail.url).to.equal('/get?TestValue=123');
+            expect(event.detail.url).to.equal('/get?TestValue=' + encodeURIComponent(params.validAttribute || '123'));
             expect(event.detail.response.success).to.be.equal(true);
             done();
           });
@@ -416,7 +424,7 @@
         test('required element with value', function(done) {
           let form = f.querySelector('#required-and-value');
           form.addEventListener('iron-form-response', function(event) {
-            expect(event.detail.url).to.equal('/get?TestValue=345');
+            expect(event.detail.url).to.equal('/get?TestValue=' + encodeURIComponent(params.validAttribute || '345'));
             expect(event.detail.response.success).to.be.equal(true);
             done();
           });

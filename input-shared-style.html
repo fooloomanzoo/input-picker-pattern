@@ -43,7 +43,7 @@
         --input-invalid-color: var(--inner-input-invalid-color, inherit);
         --input-invalid-background: var(--inner-input-invalid-background, rgba(255,255,255,0.5));
         --input-invalid-border-style: var(--inner-input-invalid-border-style, dotted);
-        --input-invalid-border-color: var(--inner-input-invalid-border-color, rgba(0,0,0,0.15));
+        --input-invalid-border-color: var(--inner-input-invalid-border-color, rgba(255,0,0,0.25));
       }
 
       /**
@@ -147,23 +147,15 @@
       :host([invalid]) #input,
       :host([invalid]:hover) #input,
       :host([invalid]:focus) #input,
+      #input:invalid
       #input:invalid:hover,
       #input:invalid:focus {
         color: var(--input-invalid-color, inherit);
         background-color: var(--input-invalid-background, rgba(255,0,0,0.25));
         border-width: var(--input-border-width, thin);
         border-style: var(--input-invalid-border-style, dotted);
+        border-color: var(--input-invalid-border-color, rgba(255,0,0,0.25));
         @apply --input-invalid;
-      }
-      :host([invalid]) #input,
-      #input:invalid {
-        border-color: var(--input-invalid-border-color, rgba(255,0,0,0.5));
-      }
-      :host([invalid]:hover) #input,
-      :host([invalid]:focus) #input,
-      #input:invalid:hover,
-      #input:invalid:focus {
-        border-color: var(--input-focus-border-color, rgba(255,0,0,1));
       }
 
       /**

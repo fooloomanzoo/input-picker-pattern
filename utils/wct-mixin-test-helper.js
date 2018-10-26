@@ -30,12 +30,12 @@
       .split('&')
       .map(function(current) {
         var pair = current.split('=');
-        if (pair[0]) {
-          params[pair[0]] = pair[1];
-        }
+        params[pair[0]] = pair[1] || true;
       });
     return params;
   }
+
+  window.WCT.helpers.getParams = getParams;
 
   // applying suites to another element (e.g. when another element depends on the the same mixin)
   window.WCT.helpers.mixinSuite = function(oldTags) {
@@ -84,6 +84,10 @@
 
     params.specifier = (params.specifier || '').toLowerCase();
 
+    // prevent from calling the mixin specifier on itself
+    if (oldTags.hasOwnProperty(params.specifier)) {
+      delete oldTags[params.specifier];
+    }
     // setting replacement tags for given tags of the suite
     Object.keys(oldTags).forEach(function(tag) {
       if (!oldTags[tag]) {
