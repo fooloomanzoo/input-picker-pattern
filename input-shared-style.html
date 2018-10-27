@@ -147,7 +147,7 @@
       :host([invalid]) #input,
       :host([invalid]:hover) #input,
       :host([invalid]:focus) #input,
-      #input:invalid
+      #input:invalid,
       #input:invalid:hover,
       #input:invalid:focus {
         color: var(--input-invalid-color, inherit);
@@ -219,23 +219,38 @@
       /**
        * placeholder
        */
-      #input::-webkit-input-placeholder,
-      #input::placeholder {
+      ::-webkit-input-placeholder,
+      ::-moz-placeholder,
+      :-moz-placeholder,
+      ::placeholder {
         color: currentColor;
         opacity: var(--input-placeholder-opacity, 0.5);
         text-align: var(--input-placeholder-align, center);
+      }
+
+      :-ms-input-placeholder {
+        color: currentColor !important;
+        opacity: var(--input-placeholder-opacity, 0.5) !important;
+      }
+
+      ::-ms-input-placeholder {
+        color: currentColor !important;
+        opacity: var(--input-placeholder-opacity, 0.5) !important;
+      }
+
+      ::placeholder {
         @apply --input-placeholder;
       }
 
-      #input::-ms-input-placeholder {
-        color: currentColor;
-        opacity: var(--input-placeholder-opacity, 0.5);
-        text-align: var(--input-placeholder-align, center);
+      :host([invalid]) ::-webkit-input-placeholder,
+      :host([invalid]) ::-moz-placeholder,
+      :host([invalid]) :-moz-placeholder,
+      :host([invalid]) ::placeholder {
+        color: var(--input-invalid-color, currentColor);
       }
 
-      :host([invalid]) #input::-webkit-input-placeholder,
-      :host([invalid]) #input::placeholder {
-        color: var(--input-invalid-color, currentColor);
+      :host([invalid]) :-ms-input-placeholder {
+        color: var(--input-invalid-color, currentColor) !important;
       }
 
       /**
