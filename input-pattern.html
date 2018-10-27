@@ -360,6 +360,14 @@
       }
 
       /**
+       * validates the input for iron-form
+       */
+      validate() {
+        this._confirmInput();
+        return !this.invalid;
+      }
+
+      /**
        * selects the input text in the element, and focuses it so the user can subsequently replace the whole entry
        */
       select() {
