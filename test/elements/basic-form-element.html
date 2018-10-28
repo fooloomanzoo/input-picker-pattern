@@ -25,6 +25,14 @@
       static get is() {
         return 'basic-form-element';
       }
+      static get properties() {
+        return {
+          custom1: String,
+          propertyForValue: {
+            value: 'custom1'
+          }
+        }
+      }
     }
     window.customElements.define(BasicFormElement.is, BasicFormElement);
   </script>

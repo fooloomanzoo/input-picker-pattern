@@ -472,10 +472,6 @@
 
       _valueChanged(value) {
         super._valueChanged(value);
-        if (this._isSet(this.value) === false) {
-          this.reset(this.value);
-          return; // return, if reseting, so that the picker is not itself resetted
-        }
         if (this.autoConfirm) {
           this._setConfirmedValue();
         }
@@ -484,9 +480,9 @@
       _confirmedValueChanged(confirmedValue) {
         if (this._isSet(confirmedValue) === false) {
           this.reset(confirmedValue);
-          return;
+        } else {
+          this.value = confirmedValue;
         }
-        this.value = confirmedValue;
       }
 
       /**

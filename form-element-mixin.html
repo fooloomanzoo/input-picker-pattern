@@ -181,8 +181,8 @@
 
       _valueChanged(value) {
         // test if value is set and if needed set value to default
-        if (this._isSet(value) === false && this.default !== undefined) {
-          this.value = this.default;
+        if (this._isSet(value) === false) {
+          this.reset(value);
         }
       }
 
@@ -221,6 +221,17 @@
        */
       validate() {
         return !this.invalid;
+      }
+
+      /**
+       * reset the value
+       */
+      reset(value) {
+        if (this._isSet(this.default)) {
+          this.value = this.default;
+        } else {
+          this.value = value;
+        }
       }
     }
   }

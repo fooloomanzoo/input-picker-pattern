@@ -99,19 +99,10 @@
         test('custom "_isSet"', done => {
           const isNotSetSpecifier = params.isNotSet || 2;
           element._isSet = (value) => {
-            return value != isNotSetSpecifier;
+            return value != isNotSetSpecifier && value != undefined;
           }
-          element.value = '';
-          assert.isTrue(element.value === '' || element.value === undefined, 'value is set to empty string or undefined');
-          assert.isTrue(element.valueIsSet, 'when value is \'\'');
-          element.value = 0;
-          assert.isTrue(element.value === 0 || element.value === undefined, 'value is set to 0 or undefined');
-          assert.isTrue(element.valueIsSet, 'when value is 0');
-          element.value = false;
-          assert.isTrue(element.value === false || element.value === undefined, 'value is set to false or undefined');
-          assert.isTrue(element.valueIsSet, 'when value is false');
           element.value = isNotSetSpecifier;
-          assert.equal(element.value, isNotSetSpecifier, 'value is set to ' + isNotSetSpecifier);
+          assert.isTrue(element.value === isNotSetSpecifier, 'value is set to ' + isNotSetSpecifier);
           assert.isFalse(element.valueIsSet, 'when value is ' + isNotSetSpecifier);
           done();
         });
