@@ -99,25 +99,11 @@
         test('custom "_isSet"', done => {
           const isNotSetSpecifier = params.isNotSet || 2;
           element._isSet = (value) => {
-            return value != isNotSetSpecifier && value != undefined;
+            return value != isNotSetSpecifier && value !== undefined;
           }
           element.value = isNotSetSpecifier;
-          assert.isTrue(element.value === isNotSetSpecifier, 'value is set to ' + isNotSetSpecifier);
+          assert.isTrue(element.value === isNotSetSpecifier || element.value === undefined, 'value is set to ' + isNotSetSpecifier);
           assert.isFalse(element.valueIsSet, 'when value is ' + isNotSetSpecifier);
-          done();
-        });
-
-        test('custom "_validate"', done => {
-          const doesNotValidateSpecifier = params.doesNotValidate || '123';
-          element._validate = (value, required) => {
-            return value != doesNotValidateSpecifier;
-          }
-          element.value = '';
-          assert.isFalse(element.invalid, '1: invalid is false');
-          element.value = 'ab';
-          assert.isFalse(element.invalid, '2: invalid is false');
-          element.value = doesNotValidateSpecifier;
-          assert.isTrue(element.invalid, '3: invalid is true');
           done();
         });
       });

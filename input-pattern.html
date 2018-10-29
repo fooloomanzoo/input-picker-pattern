@@ -202,10 +202,10 @@
       _delayedAddEventListeners() {
         let readyStateListener = function() {
           if (document.readyState !== 'loading') {
-            // add a minlength observer to compute the minWidth of the input
-            this._createPropertyObserver('_minlengthString', 'resize', true);
             // if ready state is not loading, add all listeners without a delay
             this._addEventListeners();
+            // add a minlength observer to compute the minWidth of the input
+            this._createPropertyObserver('_minlengthString', 'resize', true);
             this.resize();
             // remove readystate listener
             document.removeEventListener('readystatechange', readyStateListener);
@@ -322,11 +322,11 @@
           this._minSizeJob = requestAnimationFrame(function() {
             this.$.input.style.minWidth = `${Math.ceil(getBoundingClientRectByRelative(this.$.minlength, !this.__minSizeInitialized).width)}px`;
             this.__minSizeInitialized = true;
+            // compute width of the input
+            if (this.input && this.input.length) {
+              this._debouncedResizeWidth();
+            }
           }.bind(this));
-        }
-        // compute width of the input
-        if (this.input && this.input.length) {
-          this._debouncedResizeWidth();
         }
       }
 
