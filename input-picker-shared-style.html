@@ -37,7 +37,9 @@
         -webkit-appearance: none;
         text-align-last: var(--input-align, center);
         background-image: none;
-        border: var(--inner-input-border-width, thin) solid var(--inner-input-border-color, transparent);
+        border-width: var(--inner-input-border-width, thin);
+        border-style: solid;
+        border-color: var(--inner-input-border-color, transparent);
       }
 
       button:focus,
