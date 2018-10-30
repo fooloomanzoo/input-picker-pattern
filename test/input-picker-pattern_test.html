@@ -57,6 +57,7 @@
     </test-fixture>
 
     <script>
+      const params = WCT.helpers.getParams();
       WCT.helpers.mixinSuite('basic-input-picker-element');
 
       suite('basic', function() {
@@ -89,6 +90,12 @@
 
         setup(function() {
           f = fixture('ChangedPropertyTestFixture');
+          if (params.validValue) {
+            let element = f.querySelector('#value');
+            element.setAttribute('value', params.validValue);
+            element = f.querySelector('#confirmed-value');
+            element.setAttribute('confirmed-value', params.validValue);
+          }
         });
 
         test('setting value not does not confirm the picker', done => {
@@ -111,6 +118,14 @@
 
         setup(function() {
           f = fixture('Confirming');
+          if (params.validValue) {
+            let element = f.querySelector('#value');
+            element.setAttribute('value', params.validValue);
+            element = f.querySelector('#default');
+            element.setAttribute('default', params.validValue);
+            element = f.querySelector('#auto-confirm');
+            element.setAttribute('value', params.validValue);
+          }
         });
 
         test('confirming by calling function', done => {

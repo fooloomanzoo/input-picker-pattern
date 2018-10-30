@@ -113,13 +113,13 @@
 
         setup(function() {
           element = fixture('ChangedPropertyTestFixture');
-          if (params.validAttribute) {
-            element.setAttribute('value', params.validAttribute);
+          if (params.validValue) {
+            element.setAttribute('value', params.validValue);
           }
         });
 
         test('setting a value on the element works', function(done) {
-          assert.equal(element.value, params.validAttribute || '123', 'property is set');
+          assert.equal(element.value, params.validValue || '123', 'property is set');
           done();
         });
 
@@ -333,8 +333,8 @@
 
         setup(function() {
           f = fixture('Submit');
-          if (params.validAttribute) {
-            Array.prototype.forEach.call(f.querySelectorAll('[value]'), element => element.setAttribute('value', params.validAttribute));
+          if (params.validValue) {
+            Array.prototype.forEach.call(f.querySelectorAll('[value]'), element => element.setAttribute('value', params.validValue));
           }
           server = sinon.fakeServer.create();
           server.respondWith(
@@ -366,7 +366,7 @@
         test('not required element with value', function(done) {
           let form = f.querySelector('#not-required-and-value');
           form.addEventListener('iron-form-response', function(event) {
-            expect(event.detail.url).to.equal('/get?TestValue=' + encodeURIComponent(params.validAttribute || '123'));
+            expect(event.detail.url).to.equal('/get?TestValue=' + encodeURIComponent(params.validValue || '123'));
             expect(event.detail.response.success).to.be.equal(true);
             done();
           });
@@ -401,7 +401,7 @@
         test('required element with value', function(done) {
           let form = f.querySelector('#required-and-value');
           form.addEventListener('iron-form-response', function(event) {
-            expect(event.detail.url).to.equal('/get?TestValue=' + encodeURIComponent(params.validAttribute || '345'));
+            expect(event.detail.url).to.equal('/get?TestValue=' + encodeURIComponent(params.validValue || '345'));
             expect(event.detail.response.success).to.be.equal(true);
             done();
           });

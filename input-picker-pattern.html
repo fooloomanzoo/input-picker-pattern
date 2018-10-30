@@ -285,6 +285,9 @@
         super.connectedCallback();
         this._addPickerTransitionEndListener();
         this._addKeyListener();
+        if (this._isSet(this.value)) {
+          this._setConfirmedValue();
+        }
       }
 
       disconnectedCallback() {
@@ -451,7 +454,8 @@
       /**
        * confirms the input
        */
-      confirm() {
+      confirm(e) {
+        this._stopPropagation(e);
         if (!this.disabled) {
           this._setConfirmedValue();
         }
