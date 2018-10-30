@@ -429,7 +429,8 @@
       /**
        * open the picker
        */
-      open() {
+      open(e) {
+        this._stopPropagation(e);
         this.opened = true;
       }
 
