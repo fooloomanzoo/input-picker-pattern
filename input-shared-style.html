@@ -5,8 +5,6 @@
     <style>
       :host {
         display: inline-flex;
-        vertical-align: middle;
-        align-self: center;
         justify-content: center;
         box-sizing: content-box;
       }
@@ -61,7 +59,9 @@
 
       input,
       #input {
-        vertical-align: inherit;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
         color: inherit;
         min-width: inherit;
         max-width: inherit;
@@ -176,7 +176,6 @@
        */
        #input .reset {
          display: block;
-         align-self: center;
          cursor: pointer;
          border-width: var(--inner-input-border-width, thin);
          border-style: var(--inner-input-border-style, dotted);
