@@ -130,7 +130,7 @@
       static get observers() {
         return [
           '_computeValueIsSet(_isSet, value)',
-          '_computeInvalid(_validate, value, required)'
+          '_computeInvalid(_validate, _isSet, value, required)'
         ]
       }
 
@@ -152,22 +152,24 @@
       /**
        * @overwrite
        * validate the value (when required)
+       * @param  {Function} isSet    The function that defines if the value is set
        * @param  {Object} value      value to validate
        * @param  {Boolean} required  if true, the value is required
        * @return {Boolean}           true, if the value is valid
        */
-      _defaultValidate(value, required) {
-        return Boolean(!required || this._isSet(value));
+      _defaultValidate(isSet, value, required) {
+        return Boolean(!required || isSet(value));
       }
 
       /**
        * defines whether the value is set
        * @param  {Function} the validate function
+       * @param  {Function} the isSet function
        * @param  {Object} the value to validate
        * @param  {Boolean} the required atrribute
        */
-      _computeInvalid(validate, value, required) {
-        this._setInvalid(!validate(value, required));
+      _computeInvalid(validate, isSet, value, required) {
+        this._setInvalid(!validate(isSet, value, required));
       }
 
       /**

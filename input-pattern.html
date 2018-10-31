@@ -181,7 +181,7 @@
 
       static get observers() {
         return [
-          '_computeInvalid(_validate, input, required)',
+          '_computeInvalid(_validate, _isSet, input, required)',
           '_computeMinlengthString(minlength, default, placeholder)'
         ]
       }
@@ -250,7 +250,7 @@
 
       _inputChanged(input) {
         // test if value is set and if needed set input to default
-        if (this._isSet(input) === false && this.default !== undefined) {
+        if (!input && this._isSet(this.default)) {
           this.input = this.default;
           return;
         }
@@ -270,7 +270,7 @@
        */
       _confirmInput(e) {
         // update the value, when input validates
-        if (this._validate(this.input)) {
+        if (this._isSet(this.input)) {
           this.value = this.input;
           this._debouncedResizeWidth();
           e && e.stopPropagation && e.stopPropagation();
