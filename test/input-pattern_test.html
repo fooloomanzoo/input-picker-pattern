@@ -51,7 +51,7 @@
     <template>
       <div>
         <basic-input-element id="min-length" minlength="3"></basic-input-element>
-        <basic-input-element id="placeholder" placeholder="123"></basic-input-element>
+        <basic-input-element id="placeholder" placeholder="12"></basic-input-element>
         <basic-input-element id="default" default="45"></basic-input-element>
         <basic-input-element id="min-length-and-placeholder" minlength="3" placeholder="123"></basic-input-element>
         <basic-input-element id="min-length-and-placeholder-and-default" minlength="2" placeholder="88" default="11"></basic-input-element>
@@ -411,7 +411,7 @@
 
       test('placeholder', done => {
         let element = f.querySelector('#placeholder');
-        assert.equal(element._minlengthString.length, 3);
+        assert.equal(element._minlengthString.length, 2);
         done();
       });
 
@@ -569,7 +569,7 @@
           element.value = element._minlengthString + '123';
           // Wait one tick for observeNodes.
           setTimeout(function() {
-            assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
+            assert.isBelow(beforeWidth, element.getBoundingClientRect().width);
             done();
           }, 0);
         }, 0);
@@ -580,11 +580,10 @@
         // Wait one tick for observeNodes.
         setTimeout(function() {
           let beforeWidth = element.getBoundingClientRect().width;
-          assert.equal(beforeWidth, element.getBoundingClientRect().width);
           element.input = element._minlengthString + '123';
           element._confirmInput();
           setTimeout(function() {
-            assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
+            assert.isBelow(beforeWidth, element.getBoundingClientRect().width);
             done();
           }, 0);
         }, 0);
@@ -592,12 +591,14 @@
 
       test('autoresize', done => {
         let element = f.querySelector('#autoresize');
-        let beforeWidth = element.getBoundingClientRect().width;
-        element.input = element.input + '123';
-        // Wait one tick for observeNodes.
         setTimeout(function() {
-          assert.isTrue(beforeWidth < element.getBoundingClientRect().width);
-          done();
+          let beforeWidth = element.getBoundingClientRect().width;
+          element.input = element.input + '123';
+          // Wait one tick for observeNodes.
+          setTimeout(function() {
+            assert.isBelow(beforeWidth, element.getBoundingClientRect().width);
+            done();
+          }, 0);
         }, 0);
       });
 
