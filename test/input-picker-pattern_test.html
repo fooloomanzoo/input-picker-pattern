@@ -33,7 +33,7 @@
     <test-fixture id="Confirming">
       <template>
         <div>
-          <basic-input-picker-element id="value" value="123"></basic-input-picker-element>
+          <basic-input-picker-element id="value"></basic-input-picker-element>
           <basic-input-picker-element id="default" default="123"></basic-input-picker-element>
           <basic-input-picker-element id="auto-confirm" auto-confirm value="123"></basic-input-picker-element>
         </div>
@@ -98,10 +98,10 @@
           }
         });
 
-        test('setting value not does not confirm the picker', done => {
+        test('setting value does confirm the picker', done => {
           let element = f.querySelector('#value');
           assert.isTrue(element._isSet(element.value), 'value is set');
-          assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
+          assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
           done();
         });
 
@@ -119,9 +119,7 @@
         setup(function() {
           f = fixture('Confirming');
           if (params.validValue) {
-            let element = f.querySelector('#value');
-            element.setAttribute('value', params.validValue);
-            element = f.querySelector('#default');
+            let element = f.querySelector('#default');
             element.setAttribute('default', params.validValue);
             element = f.querySelector('#auto-confirm');
             element.setAttribute('value', params.validValue);
@@ -130,7 +128,7 @@
 
         test('confirming by calling function', done => {
           let element = f.querySelector('#value');
-          assert.isTrue(element._isSet(element.value), 'value is set');
+          element.setAttribute('value', params.validValue || '123');
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           element.confirm();
           assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
@@ -145,7 +143,7 @@
           let button = element.shadowRoot.querySelector('#confirm');
           assert.isOk(button, 'confirm-button exists');
           assert.isTrue(element.opened, 'element is opened');
-          assert.isTrue(element._isSet(element.value), 'value is set');
+          element.setAttribute('value', params.validValue || '123');
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           MockInteractions.tap(button);
           setTimeout(() => {
@@ -159,7 +157,7 @@
         test('confirming by enter', done => {
           let element = f.querySelector('#value');
           element.opened = true;
-          assert.isTrue(element._isSet(element.value), 'value is set');
+          element.setAttribute('value', params.validValue || '123');
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           MockInteractions.pressAndReleaseKeyOn(element, 32);
           assert.isTrue(element._isSet(element.value), 'value is set');
@@ -171,7 +169,7 @@
         test('confirming by space', done => {
           let element = f.querySelector('#value');
           element.opened = true;
-          assert.isTrue(element._isSet(element.value), 'value is set');
+          element.setAttribute('value', params.validValue || '123');
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           MockInteractions.pressAndReleaseKeyOn(element, 13);
           assert.isTrue(element._isSet(element.value), 'value is set');
@@ -182,7 +180,8 @@
 
         test('canceling by calling function', done => {
           let element = f.querySelector('#value');
-          assert.isTrue(element._isSet(element.value), 'value is set');
+          element.opened = true;
+          element.setAttribute('value', params.validValue || '123');
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           element.cancel();
           assert.isFalse(element._isSet(element.value), 'value is unset');
@@ -192,7 +191,8 @@
 
         test('resetting by calling function', done => {
           let element = f.querySelector('#value');
-          assert.isTrue(element._isSet(element.value), 'value is set');
+          element.opened = true;
+          element.setAttribute('value', params.validValue || '123');
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           element.confirm();
           assert.equal(element.confirmedValue, element.value, 'confirmedValue is set');
@@ -205,6 +205,7 @@
         test('canceling by clicking button', done => {
           let element = f.querySelector('#value');
           element.opened = true;
+          element.setAttribute('value', params.validValue || '123');
           let button = element.shadowRoot.querySelector('#cancel');
           assert.isOk(button, 'cancel-button exists');
           assert.isTrue(element._isSet(element.value), 'value is set');
@@ -217,6 +218,8 @@
 
         test('canceling by esc', done => {
           let element = f.querySelector('#value');
+          element.opened = true;
+          element.setAttribute('value', params.validValue || '123');
           assert.isTrue(element._isSet(element.value), 'value is set');
           assert.isFalse(element._isSet(element.confirmedValue), 'confirmedValue is not set');
           MockInteractions.pressAndReleaseKeyOn(element, 27);
