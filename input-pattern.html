@@ -250,7 +250,7 @@
 
       _inputChanged(input) {
         // test if value is set and if needed set input to default
-        if (!input && this._isSet(this.default)) {
+        if (this._defaultIsSet(input) === false && this._isSet(this.default)) {
           this.input = this.default;
           return;
         }
@@ -269,7 +269,7 @@
        * update manually the value with the native input
        */
       _confirmInput(e) {
-        // update the value, when input validates
+        // update the value, when input is set
         if (this._isSet(this.input)) {
           this.value = this.input;
           this._debouncedResizeWidth();
