@@ -272,12 +272,12 @@
         // update the value, when input is set
         if (this._isSet(this.input)) {
           this.value = this.input;
-          this._debouncedResizeWidth();
-          e && e.stopPropagation && e.stopPropagation();
         } else {
-          // else reset the input to value
-          this._updateInput(e);
+          // else reset the input
+          this.reset();
         }
+        this._debouncedResizeWidth();
+        e && e.stopPropagation && e.stopPropagation();
       }
 
       /**

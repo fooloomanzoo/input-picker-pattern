@@ -77,7 +77,7 @@
 
   <script>
     WCT.helpers.mixinSuite('basic-input-element');
-
+    
     suite('basic', function() {
       let element;
 
@@ -132,6 +132,7 @@
           element.value = '';
           assert.isFalse(element.valueIsSet);
           assert.equal(element.input, '', 'input is unset');
+          assert.isFalse(element._isSet(element.value));
         }
         done();
       });
@@ -147,8 +148,9 @@
         if (!element._isSet('')) {
           element.input = '';
           element._confirmInput();
-          assert.equal(element.input, '123', 'input is reset');
-          assert.isTrue(element.valueIsSet);
+          assert.equal(element.input, '', 'input is reset');
+          assert.isFalse(element.valueIsSet);
+          assert.isFalse(element._isSet(element.value));
         }
         done();
       });
@@ -188,10 +190,10 @@
         element.value = '456';
         element.input = '';
         assert.equal(element.value, '456', 'setting input empty');
-        if (!element._isSet('')) {
-          assert.equal(element.input, element.default);
+        if (!element._defaultIsSet('')) {
+          assert.equal(element.input, element.default, 'set to default');
         } else {
-          assert.equal(element.input, '');
+          assert.equal(element.input, '', 'keep empty string');
         }
         done();
       });
@@ -200,10 +202,10 @@
         element.value = '456';
         element.input = 0;
         assert.equal(element.value, '456', 'setting input 0');
-        if (!element._isSet(0)) {
-          assert.equal(element.input, element.default);
+        if (!element._defaultIsSet(0)) {
+          assert.equal(element.input, element.default, 'set to default');
         } else {
-          assert.equal(element.input, 0);
+          assert.equal(element.input, 0, 'keep 0');
         }
         done();
       });
@@ -212,10 +214,10 @@
         element.value = '456';
         element.input = false;
         assert.equal(element.value, '456', 'setting input false');
-        if (!element._isSet(false)) {
-          assert.equal(element.input, element.default);
+        if (!element._defaultIsSet(false)) {
+          assert.equal(element.input, element.default, 'set to default');
         } else {
-          assert.equal(element.input, false);
+          assert.equal(element.input, false, 'keep false');
         }
         done();
       });
@@ -224,10 +226,10 @@
         element.value = '456';
         element.input = undefined;
         assert.equal(element.value, '456', 'setting input undefined');
-        if (!element._isSet(undefined)) {
-          assert.equal(element.input, element.default);
+        if (!element._defaultIsSet(undefined)) {
+          assert.equal(element.input, element.default, 'set to default');
         } else {
-          assert.isUndefined(element.input);
+          assert.isUndefined(element.input, 'keep undefined');
         }
         done();
       });
@@ -236,10 +238,10 @@
         element.value = '456';
         element.input = null;
         assert.equal(element.value, '456', 'setting input null');
-        if (!element._isSet(null)) {
-          assert.equal(element.input, element.default);
+        if (!element._defaultIsSet(null)) {
+          assert.equal(element.input, element.default, 'set to default');
         } else {
-          assert.isNull(element.input);
+          assert.isNull(element.input, 'keep null');
         }
         done();
       });
@@ -491,13 +493,13 @@
           assert.equal(element.shadowRoot.querySelector('#size').getBoundingClientRect().width, 0, 'element\'s \'size\' width');
           assert.equal(element.shadowRoot.querySelector('#minlength').getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
           let elementMinWidth = document.defaultView.getComputedStyle(element.shadowRoot.querySelector('#input')).minWidth;
-          if (!element._minlengthString) {
+          if (element._minlengthString) {
             assert.notEqual(elementMinWidth, '0px', 'element\'s \'input\' minWidth');
             assert.notEqual(elementMinWidth, 'auto', 'element\'s \'input\' minWidth');
             assert.notEqual(elementMinWidth, '', 'element\'s \'input\' minWidth');
           }
           done();
-        }, 0);
+        }, 1);
       });
 
       test('sizing of hidden elements with value', done => {
@@ -509,13 +511,13 @@
           assert.equal(element.shadowRoot.querySelector('#size').getBoundingClientRect().width, 0, 'element\'s \'size\' width');
           assert.equal(element.shadowRoot.querySelector('#minlength').getBoundingClientRect().width, 0, 'element\'s \'minlength\' width');
           let elementWidth = document.defaultView.getComputedStyle(element.shadowRoot.querySelector('#input')).width;
-          if (element.input) {
+          if (element._minlengthString) {
             assert.notEqual(elementWidth, '0px', 'element\'s \'input\' minWidth');
             assert.notEqual(elementWidth, 'auto', 'element\'s \'input\' minWidth');
             assert.notEqual(elementWidth, '', 'element\'s \'input\' minWidth');
           }
           done();
-        }, 0);
+        }, 1);
       });
 
       test('sizing of hidden elements that are asynchronically shown with minlength', done => {
@@ -533,8 +535,8 @@
             assert.equal(element.getBoundingClientRect().width.toFixed(1), elementShown.getBoundingClientRect().width.toFixed(1), 'element\'s width');
             assert.equal(document.defaultView.getComputedStyle(element.shadowRoot.querySelector('#input')).minWidth, document.defaultView.getComputedStyle(elementShown.shadowRoot.querySelector('#input')).minWidth, 'element\'s \'input\' minWidth');
             done();
-          }, 0);
-        }, 0);
+          }, 1);
+        }, 1);
       });
 
       test('sizing of hidden elements that are asynchronically shown with value', done => {
@@ -557,8 +559,8 @@
               assert.equal(document.defaultView.getComputedStyle(element.shadowRoot.querySelector('#input')).minWidth, document.defaultView.getComputedStyle(elementShown.shadowRoot.querySelector('#input')).minWidth, 'element\'s \'input\' minWidth');
             }
             done();
-          }, 0);
-        }, 0);
+          }, 1);
+        }, 1);
       });
 
       test('resizing on changing value', done => {
@@ -566,13 +568,13 @@
         // Wait one tick for observeNodes.
         setTimeout(function() {
           let beforeWidth = element.getBoundingClientRect().width;
-          element.value = element._minlengthString + '123';
+          element.value = '123' + element._minlengthString;
           // Wait one tick for observeNodes.
           setTimeout(function() {
             assert.isBelow(beforeWidth, element.getBoundingClientRect().width);
             done();
-          }, 0);
-        }, 0);
+          }, 1);
+        }, 1);
       });
 
       test('resizing on confirming input', done => {
@@ -580,26 +582,26 @@
         // Wait one tick for observeNodes.
         setTimeout(function() {
           let beforeWidth = element.getBoundingClientRect().width;
-          element.input = element._minlengthString + '123';
+          element.input = '1234';
           element._confirmInput();
           setTimeout(function() {
             assert.isBelow(beforeWidth, element.getBoundingClientRect().width);
             done();
-          }, 0);
-        }, 0);
+          }, 1);
+        }, 1);
       });
 
       test('autoresize', done => {
         let element = f.querySelector('#autoresize');
         setTimeout(function() {
           let beforeWidth = element.getBoundingClientRect().width;
-          element.input = element.input + '123';
+          element.input = element.input + '1';
           // Wait one tick for observeNodes.
           setTimeout(function() {
             assert.isBelow(beforeWidth, element.getBoundingClientRect().width);
             done();
-          }, 0);
-        }, 0);
+          }, 1);
+        }, 1);
       });
 
       test('size in an overlay-element', done => {
@@ -611,7 +613,7 @@
         // Wait one tick for observeNodes.
         setTimeout(function() {
           overlay.opened = true;
-          requestAnimationFrame(function() {
+          setTimeout(function() {
             let outsideWidth1 = element_o1.getBoundingClientRect().width.toFixed(1);
             let outsideWidth2 = element_o2.getBoundingClientRect().width.toFixed(1);
             let insideWidth1 = element_i1.getBoundingClientRect().width.toFixed(1);
@@ -622,8 +624,8 @@
             assert.equal(outsideWidth2, insideWidth1);
             assert.equal(outsideWidth2, insideWidth2);
             done();
-          });
-        }, 0);
+          }, 1);
+        }, 1);
       });
 
     });
