@@ -7,17 +7,12 @@
 
   <title>input-element test</title>
 
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-  <script src="../../web-component-tester/browser.js"></script>
-  <script src="../../iron-test-helpers/mock-interactions.js"></script>
-  <script src="../utils/wct-mixin-test-helper.js"></script>
-
-  <link rel="import" href="elements/basic-input-element.html">
-  <link rel="import" href="../overlay-element.html">
+  <script src="/components/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+  <script src="/components/wct-browser-legacy/browser.js"></script>
+  <script type="module" src="elements/basic-input-element.js"></script>
 </head>
 
 <body>
-
   <test-fixture id="Basic">
     <template>
       <basic-input-element></basic-input-element>
@@ -75,9 +70,14 @@
     </template>
   </test-fixture>
 
-  <script>
-    WCT.helpers.mixinSuite('basic-input-element');
-    
+
+  <script type="module">
+    import { Base } from '@polymer/polymer/polymer-legacy.js';
+    import { getParams, mixinSuite } from '../utils/wct-mixin-test-helper.js';
+
+    const params = getParams();
+    mixinSuite('basic-input-element');
+
     suite('basic', function() {
       let element;
 
@@ -627,10 +627,7 @@
           }, 1);
         }, 1);
       });
-
     });
   </script>
-
 </body>
-
 </html>

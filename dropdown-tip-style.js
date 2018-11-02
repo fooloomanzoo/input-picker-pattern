@@ -1,12 +1,11 @@
-<link rel="import" href="../polymer/polymer.html">
-
-<!--
+/*
 `dropdown-style`
 styles for used for a tip of the dropdown
--->
+*/
+const dropdownTipStyle = document.createElement('dom-module');
 
-<dom-module id="dropdown-tip-style">
-  <template>
+dropdownTipStyle.innerHTML =
+  `<template>
     <style>
       :host {
         --computed-dropdown-tip-size: var(--dropdown-tip-size, 6px);
@@ -80,8 +79,7 @@ styles for used for a tip of the dropdown
       :host([horizontal-align="center"][vertical-align="middle"]) .dropdown:after {
         border: none;
       }
-
     </style>
-  </template>
+  </template>`;
 
-</dom-module>
+dropdownTipStyle.register('dropdown-tip-style');
