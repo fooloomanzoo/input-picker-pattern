@@ -29,17 +29,17 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@polymer/polymer": "^3.0.0",
-    "@polymer/iron-overlay-behavior": "^3.0.0-pre.18"
+    "@polymer/polymer": "^3",
+    "@polymer/iron-overlay-behavior": "^3"
   },
   "devDependencies": {
-    "@webcomponents/webcomponentsjs": "^2.0.0",
-    "@polymer/iron-component-page": "^3.0.0-pre.18",
-    "@polymer/iron-flex-layout": "^3.0.0-pre.18",
-    "@polymer/iron-demo-helpers": "^3.0.0-pre.18",
-    "@polymer/iron-form": "^3.0.0-pre.18",
-    "@polymer/iron-test-helpers": "^3.0.0-pre.18",
-    "wct-browser-legacy": "^1.0.1"
+    "@webcomponents/webcomponentsjs": "^2",
+    "@polymer/iron-component-page": "^4",
+    "@polymer/iron-flex-layout": "^3",
+    "@polymer/iron-demo-helpers": "^3",
+    "@polymer/iron-form": "^3",
+    "@polymer/iron-test-helpers": "^3",
+    "wct-browser-legacy": "^1"
   },
   "author": "Johannes Brautzsch <fooloomanzoo>"
 }
