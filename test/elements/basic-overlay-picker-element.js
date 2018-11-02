@@ -1,14 +1,14 @@
-import '@polymer/polymer/polymer-legacy.js';
-import { InputPickerPattern } from '../../overlay-picker-mixin.js';
-import { OverlayPickerMixin } from '../../input-picker-pattern.js';
+import { InputPickerPattern } from '../../input-picker-pattern.js';
+import { OverlayPickerMixin } from '../../overlay-picker-mixin.js';
 import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { htmlLiteral } from '@polymer/polymer/lib/utils/html-tag.js';
 
-class BasicOverlayPickerElement extends OverlayPickerMixin(InputPickerPattern(PolymerElement)) { // eslint-disable-line no-undef
+class BasicOverlayPickerElement extends OverlayPickerMixin(InputPickerPattern(PolymerElement)) {
   static get is() {
     return 'basic-overlay-picker-element';
   }
   static get expectedNativeInputType() {
-    return 'number';
+    return htmlLiteral`text`;
   }
 }
 customElements.define(BasicOverlayPickerElement.is, BasicOverlayPickerElement);

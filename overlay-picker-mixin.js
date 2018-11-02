@@ -1,7 +1,6 @@
 import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
+import { html, htmlLiteral } from '@polymer/polymer/lib/utils/html-tag.js';
 import './overlay-element.js';
-import './input-picker-shared-style.js';
-import './dropdown-tip-style.js';
 
 /**
  * mixin to extend an picker with an `overlay-element`
@@ -9,7 +8,7 @@ import './dropdown-tip-style.js';
  * @mixinFunction
  * @polymer
  */
-export const OverlayPickerMixin = dedupingMixin( superClass => { // eslint-disable-line no-unused-vars
+export const OverlayPickerMixin = dedupingMixin( superClass => {
 
   return class extends superClass {
 
@@ -84,7 +83,7 @@ export const OverlayPickerMixin = dedupingMixin( superClass => { // eslint-disab
     }
 
     static get pickerTemplate() {
-      return `
+      return html`
         <overlay-element id="overlay"
           always-on-top="[[alwaysOnTop]]"
           with-backdrop="[[withBackdrop]]"
@@ -105,8 +104,8 @@ export const OverlayPickerMixin = dedupingMixin( superClass => { // eslint-disab
     }
 
     static get styleTemplate() {
-      return `
-        ${super.styleTemplate || ''}
+      return htmlLiteral`
+        ${super.styleTemplate || htmlLiteral``}
         #overlay {
           display: inline-flex;
           flex-shrink: 0;

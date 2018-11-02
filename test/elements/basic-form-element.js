@@ -1,7 +1,5 @@
-import '@polymer/polymer/polymer-legacy.js';
 import { FormElementMixin } from '../../form-element-mixin.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 
 class BasicFormElement extends FormElementMixin(PolymerElement) {
 

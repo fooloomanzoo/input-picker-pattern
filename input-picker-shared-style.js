@@ -1,3 +1,5 @@
+import '@polymer/polymer/lib/elements/dom-module.js';
+
 const inputPickerSharedStyle = document.createElement('dom-module');
 
 inputPickerSharedStyle.innerHTML =

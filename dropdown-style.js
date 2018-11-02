@@ -1,3 +1,4 @@
+import '@polymer/polymer/lib/elements/dom-module.js';
 /*
 `dropdown-style`
 styles for used for a inner dropdown
@@ -10,7 +11,7 @@ dropdownStyle.innerHTML =
       :host {
         --computed-dropdown-background: var(--dropdown-background, var(--input-picker-background, transparent));
       }
-      
+
       .dropdown {
         margin: 0;
         padding: 0;

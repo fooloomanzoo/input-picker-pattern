@@ -5,7 +5,7 @@ import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
  * @mixinFunction
  * @polymer
  */
-export const FormElementMixin = dedupingMixin( superClass => { // eslint-disable-line no-unused-vars
+export const FormElementMixin = dedupingMixin( superClass => {
 
   return class extends superClass {
 

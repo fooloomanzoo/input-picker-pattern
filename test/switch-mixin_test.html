@@ -7,8 +7,8 @@
 
   <title>switch-mixin test</title>
 
-  <script src="../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
-  <script src="../../wct-browser-legacy/browser.js"></script>
+  <script src="../../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+  <script src="../../../wct-browser-legacy/browser.js"></script>
   <script type="module" src="./elements/basic-switch-element.js"></script>
 </head>
 
@@ -21,6 +21,7 @@
 
   <script type="module">
     import { Base } from '@polymer/polymer/polymer-legacy.js';
+    import { pressAndReleaseKeyOn, tap, down, up } from '@polymer/iron-test-helpers/mock-interactions.js';
     import { getParams, mixinSuite } from '../utils/wct-mixin-test-helper.js';
 
     const params = getParams();
@@ -82,7 +83,7 @@
             element[prop] = step;
             // there might be a resetting by clamping
             const value = element[prop];
-            MockInteractions.tap(switches[i]);
+            tap(switches[i]);
             if (invert * step < 0) {
               if (element[prop] === 0 && value === 0) {
                 assert.isBelow(1/element[prop], 1/value, prop + ': switch should increment by ' + step);
@@ -106,7 +107,7 @@
           switches = element.shadowRoot.querySelectorAll('.' + element._switchClassSelector);
           for (let i = 0; i < switches.length; i++) {
             let prop = switches[i].getAttribute('prop');
-            MockInteractions.tap(switches[i]);
+            tap(switches[i]);
             assert.isNotNaN(element[prop], prop + ': property should be defined');
             element[prop] = undefined; // resetting property for other switches to test
           }
@@ -124,7 +125,7 @@
             element[prop] = step;
             // there might be a resetting by clamping
             const value = element[prop];
-            MockInteractions.pressAndReleaseKeyOn(switches[i], 32);
+            pressAndReleaseKeyOn(switches[i], 32);
             if (invert * step < 0) {
               if (element[prop] === 0 && value === 0) {
                 assert.isBelow(1/element[prop], 1/value, prop + ': switch should increment by ' + step);
@@ -153,7 +154,7 @@
             element[prop] = step;
             // there might be a resetting by clamping
             const value = element[prop];
-            MockInteractions.pressAndReleaseKeyOn(switches[i], 13);
+            pressAndReleaseKeyOn(switches[i], 13);
             if (invert * step < 0) {
               if (element[prop] === 0 && value === 0) {
                 assert.isBelow(1/element[prop], 1/value, prop + ': switch should increment by ' + step);
@@ -217,11 +218,11 @@
                   assert.isOk(s, 'the switch should be available');
                   // defaulting the prop
                   const value = element[prop];
-                  MockInteractions.down(s);
+                  down(s);
                   setTimeout(() => {
                     assert.equal(s, element._activeSwitch, 'active switch should be the holded switch');
                     assert.isTrue(s.hasAttribute('active'), 'holded switch should have the attribute \'active\'');
-                    MockInteractions.up(s);
+                    up(s);
                     assert.notEqual(s, element._activeSwitch, 'active switch should not be the holded switch when being released');
                     assert.isFalse(s.hasAttribute('active'), 'holded switch should not have the attribute \'active\' when being released');
                     assert.notEqual(element[prop], value, prop + ': switch should increment by ' + step);

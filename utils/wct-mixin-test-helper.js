@@ -15,7 +15,9 @@ export const getParams = () => {
     .split('&')
     .map( current => {
       var pair = current.split('=');
-      params[pair[0]] = pair[1] || true;
+      if (pair[0]) {
+        params[pair[0]] = pair[1] || true;
+      }
     });
   return params;
 }
@@ -59,6 +61,7 @@ export const mixinSuite = oldTags => {
 
   // parsing url-search-parameters
   var params = getParams();
+
   if (!(params.specifier && params.url)) {
     // suite is not called with a specifier
     console.info('test-suite called for: ' + Object.keys(oldTags).toString());
@@ -84,21 +87,27 @@ export const mixinSuite = oldTags => {
     console.info('setting on each "' + params.specifier + '" ', params.props);
   }
 
-  window.WCT.helpers.mixinSuiteParams = params;
-
   suite(`Suite for ${params.specifier.toUpperCase()}`, () => {
     test('loading dependencies', done => {
-      import(window.location.origin + '/components/' + params.url)
+      import(window.location.origin + '/components/' + params.url + '.js')
         .then(() => {
           var specifier = params.specifier;
-          var replacementTagNames = oldTags;
+          var replacements = oldTags;
           var props = params.props;
           // replace in document the standard element with the specifier and set given properties
           // NOTE: modification of WCT implementation
+
+          if (document.importNode.isSinonProxy) {
+              return;
+          }
+          if (window.Polymer && !window.Polymer.Element) {
+              window.Polymer.Element = function () { };
+              window.Polymer.Element.prototype._stampTemplate = function () { };
+          }
           // Keep a reference to the original `document.importNode` implementation for later:
           var originalImportNode = document.importNode;
           // Use Sinon to stub `document.ImportNode`:
-          window.sinon.stub(document, 'importNode', (origContent, deep) => {
+          sinon.stub(document, 'importNode', function(origContent, deep) {
             var templateClone = document.createElement('template');
             var content = templateClone.content;
             var inertDoc = content.ownerDocument;
@@ -114,10 +123,10 @@ export const mixinSuite = oldTags => {
               if (!node.tagName) {
                 continue;
               }
-              var tagName = node.tagName.toLowerCase();
-              if (replacementTagNames.hasOwnProperty(tagName)) {
+              var currentTagName = node.tagName.toLowerCase();
+              if (replacements.hasOwnProperty(currentTagName)) {
                 // Create a replacement:
-                var replacement = document.createElement(replacementTagNames[tagName]);
+                var replacement = document.createElement(replacements[currentTagName]);
                 // For all attributes in the original node..
                 for (var index = 0; index < node.attributes.length; ++index) {
                   // Set that attribute on the replacement:

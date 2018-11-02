@@ -1,7 +1,7 @@
 import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
 import { GestureEventListeners } from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
 import { addListener, setTouchAction, removeListener } from '@polymer/polymer/lib/utils/gestures.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { html, htmlLiteral } from '@polymer/polymer/lib/utils/html-tag.js';
 
 import './input-picker-shared-style.js';
 import './dropdown-tip-style.js';
@@ -15,9 +15,9 @@ import { FormElementMixin } from './form-element-mixin.js';
  * @mixinFunction
  * @polymer
  */
-export const InputPickerPattern = dedupingMixin( superClass => { // eslint-disable-line no-unused-vars
+export const InputPickerPattern = dedupingMixin( superClass => {
 
-  return class extends GestureEventListeners(FormElementMixin(superClass)) { // eslint-disable-line no-undef
+  return class extends GestureEventListeners(FormElementMixin(superClass)) {
 
     constructor() {
       super();
@@ -36,7 +36,7 @@ export const InputPickerPattern = dedupingMixin( superClass => { // eslint-disab
      * @type {string}
      */
     static get expectedNativeInputType() {
-      return 'text';
+      return htmlLiteral`text`;
     }
 
     /**
@@ -46,14 +46,13 @@ export const InputPickerPattern = dedupingMixin( superClass => { // eslint-disab
     static get hasNative() {
       const testInput = document.createElement('input');
       testInput.setAttribute('type', `${this.expectedNativeInputType}`);
-      return this._hasNative = (testInput.type === `${this.expectedNativeInputType}`);
+      return this._hasNative = (testInput.type == `${this.expectedNativeInputType}`);
     }
 
     static get template() {
-      return `
-        <style include="${this.styleToInclude || ''}">
-          ${this.styleTemplate}
-        </style>
+      return html`
+        <style include="${this.styleToInclude}"></style>
+        <style>${this.styleTemplate}</style>
         ${this.hasNative ? this.nativeTemplate : this.polyfillTemplate}
       `
     }
@@ -63,7 +62,7 @@ export const InputPickerPattern = dedupingMixin( superClass => { // eslint-disab
      * @type {string}
      */
     static get styleToInclude() {
-      return `input-picker-shared-style dropdown-tip-style ${super.styleToInclude || ''}`;
+      return htmlLiteral`input-picker-shared-style dropdown-tip-style ${super.styleToInclude || htmlLiteral``}`;
     }
 
     /**
@@ -71,8 +70,8 @@ export const InputPickerPattern = dedupingMixin( superClass => { // eslint-disab
      * @type {string}
      */
     static get styleTemplate() {
-      return `
-        ${super.styleTemplate || ''}
+      return htmlLiteral`
+        ${super.styleTemplate || htmlLiteral``}
         :host {
           display: inline-flex;
           position: relative;
@@ -93,7 +92,7 @@ export const InputPickerPattern = dedupingMixin( superClass => { // eslint-disab
      * @type {string}
      */
     static get nativeTemplate() {
-      return `
+      return html`
         ${this.nativeInputTemplate}
         ${this.polyfillTemplate}
       `
@@ -104,7 +103,7 @@ export const InputPickerPattern = dedupingMixin( superClass => { // eslint-disab
      * @type {string}
      */
     static get nativeInputTemplate() {
-      return `
+      return html`
         <template is="dom-if" if="[[_computeShouldNative(native)]]" restamp>
           <input class="native" type="${this.expectedNativeInputType}" disabled$="[[disabled]]" readonly="[[disabled]]" required="[[required]]" value="{{confirmedValue::input}}">
         </template>
@@ -116,9 +115,9 @@ export const InputPickerPattern = dedupingMixin( superClass => { // eslint-disab
      * @type {string}
      */
     static get polyfillTemplate() {
-      return `
+      return html`
         <div id="input" on-tap="open" hidden$="[[_computeShouldNative(native)]]">
-          ${this.inputTemplate || ''}
+          ${this.inputTemplate || html``}
         </div>
         ${this.pickerTemplate}
       `;
@@ -129,9 +128,9 @@ export const InputPickerPattern = dedupingMixin( superClass => { // eslint-disab
      * @type {string}
      */
     static get pickerTemplate() {
-      return `
+      return html`
         <div id="picker" class="dropdown" tabindex="-1" hidden$="[[_computeShouldNative(native)]]">
-          ${super.pickerTemplate || ''}
+          ${super.pickerTemplate || html``}
           <div id="buttons">
             ${this.buttonTemplate}
           <div>
@@ -143,19 +142,19 @@ export const InputPickerPattern = dedupingMixin( superClass => { // eslint-disab
      * @type {string}
      */
     static get buttonTemplate() {
-      return `
-        ${super.buttonTemplate || ''}
+      return html`
+        ${super.buttonTemplate || html``}
         <button id="confirm" class="icon" hidden$="[[disabled]]" on-tap="confirm" on-keydown="_stopPropagation">${this._iconConfirmTemplate}</button>
         <button id="cancel" class="icon" on-tap="cancel" on-keydown="_stopPropagation" hidden$="[[autoConfirm]]">${this._iconCloseTemplate}</button>
       `;
     }
 
     static get _iconCloseTemplate() {
-      return '<svg viewBox="0 0 24 24"><g><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></g></svg>';
+      return html`<svg viewBox="0 0 24 24"><g><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></g></svg>`;
     }
 
     static get _iconConfirmTemplate() {
-      return '<svg viewBox="0 0 24 24"><g><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></g></svg>';
+      return html`<svg viewBox="0 0 24 24"><g><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></g></svg>`;
     }
 
     static get properties() {

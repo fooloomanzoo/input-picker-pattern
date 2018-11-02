@@ -1,4 +1,3 @@
-import '@polymer/polymer/polymer-legacy.js';
 import { IronOverlayBehavior } from '@polymer/iron-overlay-behavior/iron-overlay-behavior.js';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 import { PolymerElement } from '@polymer/polymer/polymer-element.js';
@@ -14,12 +13,13 @@ import { html } from '@polymer/polymer/lib/utils/html-tag.js';
  *
  */
 class OverlayElement extends mixinBehaviors([IronOverlayBehavior], PolymerElement) {
+
   static get is() {
     return 'overlay-element';
   }
 
   static get template() {
-    return `
+    return html`
       <slot></slot>
     `;
   }

@@ -7,9 +7,9 @@
 
   <title>input-element test</title>
 
-  <script src="/components/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
-  <script src="/components/wct-browser-legacy/browser.js"></script>
-  <script type="module" src="elements/basic-input-element.js"></script>
+  <script src="../../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+  <script src="../../../wct-browser-legacy/browser.js"></script>
+  <script type="module" src="./elements/basic-input-element.js"></script>
 </head>
 
 <body>
@@ -73,6 +73,7 @@
 
   <script type="module">
     import { Base } from '@polymer/polymer/polymer-legacy.js';
+    import { pressAndReleaseKeyOn, focus, blur, pressEnter } from '@polymer/iron-test-helpers/mock-interactions.js';
     import { getParams, mixinSuite } from '../utils/wct-mixin-test-helper.js';
 
     const params = getParams();
@@ -339,16 +340,16 @@
       });
 
       test('focus and blur', done => {
-        MockInteractions.focus(element);
+        focus(element);
         assert.equal(element.ownerDocument.activeElement, element);
-        MockInteractions.blur(element);
+        blur(element);
         assert.notEqual(element.ownerDocument.activeElement, element);
         done();
       });
 
       test('setting input and focus updates the value', done => {
         element.input = '123';
-        MockInteractions.focus(element);
+        focus(element);
         setTimeout(() => {
           assert.equal(element.value, '123', 'value is set when focussed');
           done();
@@ -358,7 +359,7 @@
       test('setting input and focus updates the value when value is set', done => {
         element.input = '456';
         element.input = '123';
-        MockInteractions.focus(element);
+        focus(element);
         setTimeout(() => {
           assert.equal(element.value, '123', 'value is set when focussed');
           done();
@@ -367,7 +368,7 @@
 
       test('confirming with enter', done => {
         element.input = '123';
-        MockInteractions.pressEnter(input);
+        pressEnter(input);
         assert.equal(element.input, '123', 'input does not change');
         assert.equal(element.value, '123', 'value changes');
         done();
@@ -375,22 +376,22 @@
 
       test('confirming with tab', done => {
         element.input = '123';
-        MockInteractions.pressAndReleaseKeyOn(input, 9);
+        pressAndReleaseKeyOn(input, 9);
         assert.equal(element.input, '123', 'input does not change');
         assert.equal(element.value, '123', 'value changes');
         done();
       });
 
       test('aborting and bluring with esc', done => {
-        MockInteractions.focus(element);
+        focus(element);
         element.input = '123';
-        MockInteractions.pressAndReleaseKeyOn(input, 27);
+        pressAndReleaseKeyOn(input, 27);
         assert.equal(element.input, '', 'input changes');
         assert.isFalse(element._isSet(element.value), 'value is not set');
-        MockInteractions.focus(element);
+        focus(element);
         let value = element.value = '456';
         element.input = '123';
-        MockInteractions.pressAndReleaseKeyOn(input, 27);
+        pressAndReleaseKeyOn(input, 27);
         assert.equal(element.input, value, 'input changes when value is preset');
         assert.equal(element.value, value, 'value does not change when value is preset');
         assert.notEqual(element.ownerDocument.activeElement, element, 'element is blured');

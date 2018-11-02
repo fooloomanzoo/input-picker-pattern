@@ -1,5 +1,5 @@
 import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { html, htmlLiteral } from '@polymer/polymer/lib/utils/html-tag.js';
 import { FormElementMixin } from './form-element-mixin.js';
 import './input-shared-style.js';
 
@@ -44,9 +44,9 @@ export const getBoundingClientRectByRelative = (relative, forceClone) => {
  * @mixinFunction
  * @polymer
  */
-export const InputPattern = dedupingMixin( superClass => { // eslint-disable-line no-unused-vars
+export const InputPattern = dedupingMixin( superClass => {
 
-  return class extends FormElementMixin(superClass) {  // eslint-disable-line no-undef
+  return class extends FormElementMixin(superClass) { 
 
     constructor() {
       super();
@@ -61,10 +61,9 @@ export const InputPattern = dedupingMixin( superClass => { // eslint-disable-lin
     }
 
     static get template() {
-      return `
-        <style include="${this.styleToInclude}">
-          ${this.styleTemplate}
-        </style>
+      return html`
+        <style include="${this.styleToInclude}"></style>
+        <style>${this.styleTemplate}</style>
         ${this.inputTemplate}
         <div id="size">[[input]]</div>
         <div id="minlength">[[_minlengthString]]</div>
@@ -72,12 +71,11 @@ export const InputPattern = dedupingMixin( superClass => { // eslint-disable-lin
     }
 
     static get styleToInclude() {
-      return 'input-shared-style';
+      return htmlLiteral`input-shared-style`;
     }
 
     static get styleTemplate() {
-      return `
-        ${super.styleTemplate || ''}
+      return htmlLiteral`
         #input {
           width: 0;
         }
@@ -106,7 +104,7 @@ export const InputPattern = dedupingMixin( superClass => { // eslint-disable-lin
     * NOTE: '@fooloomanzoo/text-input' implements also pattern validation
     */
     static get inputTemplate() {
-      return `
+      return html`
         <input id="input"
           type="[[type]]"
           value="{{input::input}}"

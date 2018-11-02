@@ -1,5 +1,6 @@
 import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
 import { addListener, removeListener } from '@polymer/polymer/lib/utils/gestures.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 /**
  * Mixin to extend an element for binding switch button to increment properties. Button-switches should be of class `switch` and have the attributes `prop` and `step` that define the property to increment in the given step.
  * The element is required to be extended with `Polymer.GestureEventListeners`.
@@ -10,9 +11,9 @@ import { addListener, removeListener } from '@polymer/polymer/lib/utils/gestures
  * @param {Object} superClass class to extend
  * @return {Object} extended class
  */
-export const SwitchMixin = dedupingMixin( superClass => { // eslint-disable-line no-unused-vars
+export const SwitchMixin = dedupingMixin( superClass => {
 
-  return class extends superClass { // eslint-disable-line no-undef
+  return class extends superClass {
 
     constructor() {
       super();
@@ -56,19 +57,19 @@ export const SwitchMixin = dedupingMixin( superClass => { // eslint-disable-line
     }
 
     static get _iconStepUpTemplate() {
-      return '<svg viewBox="0 0 24 24"><g><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></g></svg>';
+      return html`<svg viewBox="0 0 24 24"><g><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></g></svg>`;
     }
 
     static get _iconStepDownTemplate() {
-      return '<svg viewBox="0 0 24 24"><g><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></g></svg>';
+      return html`<svg viewBox="0 0 24 24"><g><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></g></svg>`;
     }
 
     static get _iconStepLeftTemplate() {
-      return '<svg viewBox="0 0 24 24"><g><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></g></svg>';
+      return html`<svg viewBox="0 0 24 24"><g><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></g></svg>`;
     }
 
     static get _iconStepRightTemplate() {
-      return '<svg viewBox="0 0 24 24"><g><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></g></svg>';
+      return html`<svg viewBox="0 0 24 24"><g><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></g></svg>`;
     }
 
     connectedCallback() {

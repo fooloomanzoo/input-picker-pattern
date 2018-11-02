@@ -1,13 +1,13 @@
-import '@polymer/polymer/polymer-legacy.js';
 import { InputPattern } from '../../input-pattern.js';
 import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { htmlLiteral } from '@polymer/polymer/lib/utils/html-tag.js';
 
-class BasicInputElement extends InputPattern(PolymerElement) { // eslint-disable-line no-undef
+class BasicInputElement extends InputPattern(PolymerElement) {
   static get is() {
     return 'basic-input-element';
   }
   static get styleTemplate() {
-    return `
+    return htmlLiteral`
       ${super.styleTemplate || ''}
       :host {
         --input-border-style: dashed;
