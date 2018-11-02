@@ -6,12 +6,10 @@
 
     <title>form-element-mixin test</title>
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
-    <script src="../utils/wct-mixin-test-helper.js"></script>
-
-    <link rel="import" href="../../iron-form/iron-form.html">
-    <link rel="import" href="elements/basic-form-element.html">
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+    <script src="../../../wct-browser-legacy/browser.js"></script>
+    <script type="module" src="../../../@polymer/iron-form/iron-form.js"></script>
+    <script type="module" src="./elements/basic-form-element.js"></script>
   </head>
 
   <body>
@@ -76,14 +74,17 @@
       </template>
     </test-fixture>
 
-    <script>
-      const params = WCT.helpers.getParams();
-      WCT.helpers.mixinSuite('basic-form-element');
+    <script type="module">
+      import { Base } from '@polymer/polymer/polymer-legacy.js';
+      import { getParams, mixinSuite } from '../utils/wct-mixin-test-helper.js';
 
-      suite('basic', function() {
+      const params = getParams();
+      mixinSuite('basic-form-element');
+
+      suite('basic', () => {
         let element;
 
-        setup(function() {
+        setup(() => {
           element = fixture('Basic');
         });
 
@@ -108,22 +109,22 @@
         });
       });
 
-      suite('changing properties', function() {
+      suite('changing properties', () => {
         let element;
 
-        setup(function() {
+        setup(() => {
           element = fixture('ChangedPropertyTestFixture');
           if (params.validValue) {
             element.setAttribute('value', params.validValue);
           }
         });
 
-        test('setting a value on the element works', function(done) {
+        test('setting a value on the element works', done => {
           assert.equal(element.value, params.validValue || '123', 'property is set');
           done();
         });
 
-        test('unsetting works', function(done) {
+        test('unsetting works', done => {
           element.value = '';
           if (element._isSet('')) {
             assert.isTrue(element.valueIsSet, 'value is unset'+ element.value + element.colorString);
@@ -133,7 +134,7 @@
           done();
         });
 
-        test('resetting works', function(done) {
+        test('resetting works', done => {
           element.value = undefined;
           assert.isUndefined(element.value, 'value is unset');
           assert.isFalse(element.valueIsSet, 'value is unset');
@@ -141,19 +142,19 @@
         });
       });
 
-      suite('default value', function() {
+      suite('default value', () => {
         let element;
 
-        setup(function() {
+        setup(() => {
           element = fixture('DefaultValue');
         });
 
-        test('value is set to default', function(done) {
+        test('value is set to default', done => {
           assert.equal(element.value, element.default);
           done();
         });
 
-        test('set value empty', function(done) {
+        test('set value empty', done => {
           element.value = '';
           if (!element._isSet('')) {
             assert.equal(element.value, element.default);
@@ -163,7 +164,7 @@
           done();
         });
 
-        test('set value false', function(done) {
+        test('set value false', done => {
           element.value = false;
           if (!element._isSet(false)) {
             assert.equal(element.value, element.default);
@@ -173,7 +174,7 @@
           done();
         });
 
-        test('set value true', function(done) {
+        test('set value true', done => {
           element.value = true;
           if (!element._isSet(true)) {
             assert.equal(element.value, element.default);
@@ -183,7 +184,7 @@
           done();
         });
 
-        test('set value 0', function(done) {
+        test('set value 0', done => {
           element.value = 0;
           if (!element._isSet(0)) {
             assert.equal(element.value, element.default);
@@ -193,7 +194,7 @@
           done();
         });
 
-        test('set value undefined', function(done) {
+        test('set value undefined', done => {
           element.value = undefined;
           if (!element._isSet(undefined)) {
             assert.equal(element.value, element.default);
@@ -203,7 +204,7 @@
           done();
         });
 
-        test('set value null', function(done) {
+        test('set value null', done => {
           element.value = null;
           if (!element._isSet(null)) {
             assert.equal(element.value, element.default);
@@ -213,7 +214,7 @@
           done();
         });
 
-        test('resetting default', function(done) {
+        test('resetting default', done => {
           element.required = true;
           let value = element.value;
           element.default = undefined;
@@ -229,41 +230,41 @@
         });
       });
 
-      suite('changing property for value', function() {
+      suite('changing property for value', () => {
         let f;
 
-        setup(function() {
+        setup(() => {
           f = fixture('ChangePropertyForValue');
         });
 
-        test('basic', function(done) {
+        test('basic', done => {
           let element = f.querySelector('#basic');
           assert.equal(element.propertyForValue, 'name', 'propertyForValue is set');
           done();
         });
 
-        test('changing value', function(done) {
+        test('changing value', done => {
           let element = f.querySelector('#basic');
           element.value = 2;
           assert.equal(element.name, 2, 'property changes');
           done();
         });
 
-        test('changing property', function(done) {
+        test('changing property', done => {
           let element = f.querySelector('#basic');
           element.name = 2;
           assert.equal(element.value, 2, 'value changes');
           done();
         });
 
-        test('initial property', function(done) {
+        test('initial property', done => {
           let element = f.querySelector('#set-property-reflect-value');
           assert.equal(element.name, '123', 'property does not change');
           assert.equal(element.value, '123', 'value is set');
           done();
         });
 
-        test('unsetting initial property', function(done) {
+        test('unsetting initial property', done => {
           let element = f.querySelector('#set-property-reflect-value');
           element.name = undefined;
           assert.isUndefined(element.name, 'property does not change');
@@ -271,7 +272,7 @@
           done();
         });
 
-        test('initial property, propertyForValue changes', function(done) {
+        test('initial property, propertyForValue changes', done => {
           let element = f.querySelector('#set-property-reflect-value');
           element.propertyForValue = 'title';
           assert.equal(element.name, '123', 'name does not change');
@@ -288,14 +289,14 @@
           done();
         });
 
-        test('initial value', function(done) {
+        test('initial value', done => {
           let element = f.querySelector('#set-value-reflect-property');
           assert.equal(element.name, '123', 'property is set');
           assert.equal(element.value, '123', 'value does not change');
           done();
         });
 
-        test('unsetting initial value', function(done) {
+        test('unsetting initial value', done => {
           let element = f.querySelector('#set-value-reflect-property');
           element.value = undefined;
           assert.isUndefined(element.name, 'property is set');
@@ -303,7 +304,7 @@
           done();
         });
 
-        test('initial value, propertyForValue changes', function(done) {
+        test('initial value, propertyForValue changes', done => {
           let element = f.querySelector('#set-value-reflect-property');
           element.propertyForValue = 'title';
           assert.equal(element.name, '123', 'name does not change');
@@ -320,7 +321,7 @@
           done();
         });
 
-        test('initial value and property', function(done) {
+        test('initial value and property', done => {
           let element = f.querySelector('#setting-value-and-property');
           assert.equal(element.name, 2, 'property is set');
           assert.equal(element.value, 2, 'value is set');
@@ -328,10 +329,10 @@
         });
       });
 
-      suite('submit in iron-form', function() {
+      suite('submit in iron-form', () => {
         let f, server;
 
-        setup(function() {
+        setup(() => {
           f = fixture('Submit');
           if (params.validValue) {
             Array.prototype.forEach.call(f.querySelectorAll('[value]'), element => element.setAttribute('value', params.validValue));
@@ -343,11 +344,11 @@
             [200, '{"Content-Type":"application/json"}', '{"success":true}']);
         });
 
-        teardown(function() {
+        teardown(() => {
           server.restore();
         });
 
-        test('not required element with no value', function(done) {
+        test('not required element with no value', done => {
           let form = f.querySelector('#not-required-no-value');
           form.addEventListener('iron-form-response', function(event) {
             expect(event.detail.url).to.equal('/get?TestValue=undefined');
@@ -356,14 +357,14 @@
           });
 
           // Wait one tick for observeNodes.
-          Polymer.Base.async(function() {
+          Base.async(() => {
             expect(form.validate()).to.be.equal(true);
             form.submit();
             server.respond();
           });
         });
 
-        test('not required element with value', function(done) {
+        test('not required element with value', done => {
           let form = f.querySelector('#not-required-and-value');
           form.addEventListener('iron-form-response', function(event) {
             expect(event.detail.url).to.equal('/get?TestValue=' + encodeURIComponent(params.validValue || '123'));
@@ -372,14 +373,14 @@
           });
 
           // Wait one tick for observeNodes.
-          Polymer.Base.async(function() {
+          Base.async(() => {
             expect(form.validate()).to.be.equal(true);
             form.submit();
             server.respond();
           });
         });
 
-        test('required element with no value', function(done) {
+        test('required element with no value', done => {
           let form = f.querySelector('#required-no-value');
           let responses = 0;
           form.addEventListener('iron-form-response', function(event) {
@@ -387,18 +388,18 @@
           });
 
           // Wait one tick for observeNodes.
-          Polymer.Base.async(function() {
+          Base.async(() => {
             expect(form.validate()).to.be.equal(false);
             form.submit();
             server.respond();
-            setTimeout(function() {
+            setTimeout(() => {
               expect(responses).to.be.equal(0);
               done();
             }, 200);
           });
         });
 
-        test('required element with value', function(done) {
+        test('required element with value', done => {
           let form = f.querySelector('#required-and-value');
           form.addEventListener('iron-form-response', function(event) {
             expect(event.detail.url).to.equal('/get?TestValue=' + encodeURIComponent(params.validValue || '345'));
@@ -407,14 +408,14 @@
           });
 
           // Wait one tick for observeNodes.
-          Polymer.Base.async(function() {
+          Base.async(() => {
             expect(form.validate()).to.be.equal(true);
             form.submit();
             server.respond();
           });
         });
 
-        test('custom property-for-value', function(done) {
+        test('custom property-for-value', done => {
           let form = f.querySelector('#custom-property-for-value');
           form.addEventListener('iron-form-response', function(event) {
             expect(event.detail.url).to.equal('/get?123=123');
@@ -423,7 +424,7 @@
           });
 
           // Wait one tick for observeNodes.
-          Polymer.Base.async(function() {
+          Base.async(() => {
             form.submit();
             server.respond();
           });

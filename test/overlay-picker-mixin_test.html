@@ -1,49 +1,50 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>overlay-picker-mixin test</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
-    <script src="../../iron-test-helpers/mock-interactions.js"></script>
-    <script src="../utils/wct-mixin-test-helper.js"></script>
+  <title>overlay-picker-mixin test</title>
 
-    <link rel="import" href="elements/basic-overlay-picker-element.html">
-  </head>
-  <body>
+  <script src="../../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+  <script src="../../../wct-browser-legacy/browser.js"></script>
+  <script type="module" src="./elements/basic-overlay-picker-element.js"></script>
+</head>
 
-    <test-fixture id="Basic">
-      <template>
-        <basic-overlay-picker-element></basic-overlay-picker-element>
-      </template>
-    </test-fixture>
+<body>
+  <test-fixture id="Basic">
+    <template>
+      <basic-overlay-picker-element></basic-overlay-picker-element>
+    </template>
+  </test-fixture>
 
-    <script>
-      WCT.helpers.mixinSuite('basic-overlay-picker-element');
 
-      suite('basic', function() {
-        let element;
+  <script type="module">
+    import { Base } from '@polymer/polymer/polymer-legacy.js';
+    import { getParams, mixinSuite } from '../utils/wct-mixin-test-helper.js';
 
-        setup(function() {
-          element = fixture('Basic');
-        });
+    const params = getParams();
+    mixinSuite('basic-overlay-picker-element');
+    suite('basic', () => {
+      let element;
 
-        test('instantiating the element with default properties works', done => {
-          // properties to propagate to IronOverlayBehavior|OverlayElement
-          assert.isFalse(element.noOverlap);
-          assert.isFalse(element.withBackdrop);
-          assert.isFalse(element.noCancelOnOutsideClick);
-          assert.isFalse(element.autoFitOnAttach);
-          assert.isUndefined(element.alwaysOnTop);
-          assert.isUndefined(element.dynamicAlign);
-          assert.isUndefined(element.fitInto);
-          done();
-        });
+      setup(() => {
+        element = fixture('Basic');
       });
-    </script>
 
-  </body>
+      test('instantiating the element with default properties works', done => {
+        // properties to propagate to IronOverlayBehavior|OverlayElement
+        assert.isFalse(element.noOverlap);
+        assert.isFalse(element.withBackdrop);
+        assert.isFalse(element.noCancelOnOutsideClick);
+        assert.isFalse(element.autoFitOnAttach);
+        assert.isUndefined(element.alwaysOnTop);
+        assert.isUndefined(element.dynamicAlign);
+        assert.isUndefined(element.fitInto);
+        done();
+      });
+    });
+  </script>
+</body>
 </html>

@@ -1,5 +1,5 @@
 {
-  "moduleResolution": "none",
+  "npm": true,
   "sources": [
     "form-element-mixin.html",
     "input-pattern.html",
@@ -10,7 +10,7 @@
   ],
   "lint": {
     "rules": [
-      "polymer-2"
+      "polymer-3"
     ]
   }
 }

@@ -1,11 +1,5 @@
 {
-  "name": "@fooloomanzoo/input-picker-pattern",
-  "version": "2.3.9",
-  "authors": [
-    "Johannes Brautzsch <fooloomanzoo>"
-  ],
   "description": "A pattern for polymer elements to create a picker for an input",
-  "homepage": "https://github.com/fooloomanzoo/input-picker-pattern/",
   "keywords": [
     "webcomponents",
     "polymer",
@@ -14,31 +8,38 @@
     "polyfill",
     "input"
   ],
-  "main": "input-picker-pattern.html",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fooloomanzoo/datetime-picker.git"
+  },
+  "homepage": "https://github.com/fooloomanzoo/input-picker-pattern/",
+  "name": "@fooloomanzoo/input-picker-pattern",
+  "version": "3.0.0",
+  "authors": [
+    "Johannes Brautzsch <fooloomanzoo>"
+  ],
+  "main": "input-picker-pattern.js",
   "scripts": {
-    "postinstall": "bower install",
     "prepublish": "npm run build && git add . && git commit -m \"publish new version\" && npm version patch && git push",
-    "build": "git pull && bower update && npm run analyze",
+    "build": "git pull && npm update && npm run analyze",
     "start": "npm run analyze && polymer serve -o",
     "analyze": "polymer analyze > analysis.json",
     "test": "polymer test",
     "test:p": "polymer test -p --config-file=wct.p.conf.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fooloomanzoo/datetime-picker.git"
-  },
   "license": "MIT",
   "dependencies": {
-    "@polymer/polymer": "^2.6.1",
-    "@polymer/iron-overlay-behavior": "^2"
+    "@polymer/polymer": "^3",
+    "@polymer/iron-overlay-behavior": "^3"
   },
   "devDependencies": {
-    "web-component-tester": "^6.5.0",
-    "@webcomponents/webcomponentsjs": "^1",
-    "@polymer/iron-component-page": "^3",
-    "@polymer/iron-flex-layout": "^2",
-    "@polymer/iron-demo-helpers": "^2",
-    "@polymer/iron-form": "^2"
-  }
+    "@webcomponents/webcomponentsjs": "^2",
+    "@polymer/iron-component-page": "^4",
+    "@polymer/iron-flex-layout": "^3",
+    "@polymer/iron-demo-helpers": "^3",
+    "@polymer/iron-form": "^3",
+    "@polymer/iron-test-helpers": "^3",
+    "wct-browser-legacy": "^1"
+  },
+  "author": "Johannes Brautzsch <fooloomanzoo>"
 }
