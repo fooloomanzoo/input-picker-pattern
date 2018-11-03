@@ -20,8 +20,8 @@
   ],
   "main": "input-picker-pattern.js",
   "scripts": {
-    "prepublish": "npm run build && git add . && git commit -m \"publish new version\" && npm version patch && git push",
-    "build": "git pull && npm update && npm run analyze",
+    "prepublishOnly": "npm run build && git add . && git commit -m \"publish new version\" && npm version patch && git push",
+    "build": "git pull && npm install && npm run analyze",
     "start": "npm run analyze && polymer serve -o",
     "analyze": "polymer analyze > analysis.json",
     "test": "polymer test",
