@@ -1,12 +1,13 @@
 {
+  "moduleResolution": "node",
   "npm": true,
   "sources": [
-    "form-element-mixin.html",
-    "input-pattern.html",
-    "input-picker-pattern.html",
-    "overlay-element.html",
-    "overlay-picker-mixin.html",
-    "switch-mixin.html"
+    "form-element-mixin.js",
+    "input-pattern.js",
+    "input-picker-pattern.js",
+    "overlay-element.js",
+    "overlay-picker-mixin.js",
+    "switch-mixin.js"
   ],
   "lint": {
     "rules": [
