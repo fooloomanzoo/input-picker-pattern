@@ -46,7 +46,7 @@ export const getBoundingClientRectByRelative = (relative, forceClone) => {
  */
 export const InputPattern = dedupingMixin( superClass => {
 
-  return class extends FormElementMixin(superClass) { 
+  return class extends FormElementMixin(superClass) {
 
     constructor() {
       super();
@@ -315,14 +315,14 @@ export const InputPattern = dedupingMixin( superClass => {
         cancelAnimationFrame(this._minSizeJob);
       }
       if (this._minlengthString) {
-        this._minSizeJob = requestAnimationFrame(function() {
+        this._minSizeJob = requestAnimationFrame( () => {
           this.$.input.style.minWidth = `${Math.ceil(getBoundingClientRectByRelative(this.$.minlength, !this.__minSizeInitialized).width)}px`;
           this.__minSizeInitialized = true;
           // compute width of the input
-          if (this.input && this.input.length) {
+          if (this.input) {
             this._debouncedResizeWidth();
           }
-        }.bind(this));
+        });
       }
     }
 
