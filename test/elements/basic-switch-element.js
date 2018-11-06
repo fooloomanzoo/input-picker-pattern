@@ -1,5 +1,5 @@
 import { SwitchMixin } from '../../switch-mixin.js';
-import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import { PolymerElement, html } from '../../../../@polymer/polymer/polymer-element.js';
 
 class BasicSwitchElement extends SwitchMixin(PolymerElement) {
   static get is() {

@@ -1,7 +1,7 @@
-import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
-import { GestureEventListeners } from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
-import { addListener, setTouchAction, removeListener } from '@polymer/polymer/lib/utils/gestures.js';
-import { html, htmlLiteral } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
+import { GestureEventListeners } from '../../@polymer/polymer/lib/mixins/gesture-event-listeners.js';
+import { addListener, setTouchAction, removeListener } from '../../@polymer/polymer/lib/utils/gestures.js';
+import { html, htmlLiteral } from '../../@polymer/polymer/lib/utils/html-tag.js';
 
 import './input-picker-shared-style.js';
 import './dropdown-tip-style.js';

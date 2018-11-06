@@ -1,4 +1,4 @@
-import '@polymer/polymer/lib/elements/dom-module.js';
+import '../../@polymer/polymer/lib/elements/dom-module.js';
 /*
 `dropdown-style`
 styles for used for a inner dropdown

@@ -1,4 +1,4 @@
-import '@polymer/polymer/lib/elements/dom-module.js';
+import '../../@polymer/polymer/lib/elements/dom-module.js';
 
 const inputSharedStyle = document.createElement('dom-module');
 

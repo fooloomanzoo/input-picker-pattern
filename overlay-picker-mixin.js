@@ -1,5 +1,5 @@
-import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
-import { html, htmlLiteral } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
+import { html, htmlLiteral } from '../../@polymer/polymer/lib/utils/html-tag.js';
 import './overlay-element.js';
 
 /**

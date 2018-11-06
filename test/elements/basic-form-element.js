@@ -1,5 +1,5 @@
 import { FormElementMixin } from '../../form-element-mixin.js';
-import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import { PolymerElement, html } from '../../../../@polymer/polymer/polymer-element.js';
 
 class BasicFormElement extends FormElementMixin(PolymerElement) {
 

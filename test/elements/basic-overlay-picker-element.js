@@ -1,7 +1,7 @@
 import { InputPickerPattern } from '../../input-picker-pattern.js';
 import { OverlayPickerMixin } from '../../overlay-picker-mixin.js';
-import { PolymerElement } from '@polymer/polymer/polymer-element.js';
-import { htmlLiteral } from '@polymer/polymer/lib/utils/html-tag.js';
+import { PolymerElement } from '../../../../@polymer/polymer/polymer-element.js';
+import { htmlLiteral } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
 
 class BasicOverlayPickerElement extends OverlayPickerMixin(InputPickerPattern(PolymerElement)) {
   static get is() {

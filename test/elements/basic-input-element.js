@@ -1,6 +1,6 @@
 import { InputPattern } from '../../input-pattern.js';
-import { PolymerElement } from '@polymer/polymer/polymer-element.js';
-import { htmlLiteral } from '@polymer/polymer/lib/utils/html-tag.js';
+import { PolymerElement } from '../../../../@polymer/polymer/polymer-element.js';
+import { htmlLiteral } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
 
 class BasicInputElement extends InputPattern(PolymerElement) {
   static get is() {

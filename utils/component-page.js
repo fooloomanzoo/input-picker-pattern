@@ -1,19 +1,19 @@
-import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
-import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
-import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
-import '@polymer/app-layout/app-drawer/app-drawer.js';
-import '@polymer/app-layout/app-header-layout/app-header-layout.js';
-import '@polymer/app-layout/app-header/app-header.js';
-import '@polymer/app-layout/app-toolbar/app-toolbar.js';
-import '@polymer/iron-ajax/iron-ajax.js';
-import '@polymer/iron-doc-viewer/default-theme.js';
-import '@polymer/iron-doc-viewer/iron-doc-nav.js';
-import '@polymer/iron-doc-viewer/iron-doc-viewer.js';
-import '@polymer/iron-icons/iron-icons.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@polymer/paper-styles/color.js';
-import '@polymer/paper-styles/typography.js';
-import '@polymer/paper-toast/paper-toast.js';
+import { PolymerElement, html } from '../../../@polymer/polymer/polymer-element.js';
+import { setPassiveTouchGestures } from '../../../@polymer/polymer/lib/utils/settings.js';
+import '../../../@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
+import '../../../@polymer/app-layout/app-drawer/app-drawer.js';
+import '../../../@polymer/app-layout/app-header-layout/app-header-layout.js';
+import '../../../@polymer/app-layout/app-header/app-header.js';
+import '../../../@polymer/app-layout/app-toolbar/app-toolbar.js';
+import '../../../@polymer/iron-ajax/iron-ajax.js';
+import '../../../@polymer/iron-doc-viewer/default-theme.js';
+import '../../../@polymer/iron-doc-viewer/iron-doc-nav.js';
+import '../../../@polymer/iron-doc-viewer/iron-doc-viewer.js';
+import '../../../@polymer/iron-icons/iron-icons.js';
+import '../../../@polymer/paper-icon-button/paper-icon-button.js';
+import '../../../@polymer/paper-styles/color.js';
+import '../../../@polymer/paper-styles/typography.js';
+import '../../../@polymer/paper-toast/paper-toast.js';
 
 /**
  * modification of iron-component-page
@@ -131,6 +131,10 @@ class ComponentPage extends PolymerElement {
 
         .github {
           padding: 0 8px;
+          transition: color 250ms ease;
+        }
+        .github:hover {
+          color: var(--iron-component-page-header-color, var(--iron-doc-accent-color, #5a5a5a));
         }
       </style>
 
@@ -152,10 +156,10 @@ class ComponentPage extends PolymerElement {
 
             <a href="[[webcomponentsUrl]]" hidden$="[[!webcomponentsUrl]]"><div class="webcomponents"></div></a>
 
-            <div main-title>[[componentName]]</div>
+            <div main-title>[[pageTitle]]</div>
 
             <a href="[[githubUrl]]" title="Github" hidden$="[[!githubUrl]]">
-              <svg class="github" aria-hidden="true" height="32" version="1.1" viewBox="0 0 16 16" width="32"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+              <svg class="github" aria-hidden="true" height="32" version="1.1" viewBox="0 0 16 16" width="32" style="fill:currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
             </a>
           </app-toolbar>
         </app-header>
@@ -190,7 +194,7 @@ class ComponentPage extends PolymerElement {
   static get properties() {
     return {
 
-      componentName: {
+      pageTitle: {
         type: String,
         value: ''
       },
@@ -326,4 +330,4 @@ function _flatten(descriptor, flat) {
   return flat;
 }
 
-window.customElements.define('component-page', ComponentPage);
+customElements.define('component-page', ComponentPage);
