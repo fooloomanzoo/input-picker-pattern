@@ -14,13 +14,17 @@ import '../../../@polymer/paper-icon-button/paper-icon-button.js';
 import '../../../@polymer/paper-styles/color.js';
 import '../../../@polymer/paper-styles/typography.js';
 import '../../../@polymer/paper-toast/paper-toast.js';
+import '../../../@polymer/iron-component-page/iron-component-page.js';
+
+const IronComponentPage = customElements.get('iron-component-page');
 
 /**
- * modification of iron-component-page
+ * Modification of iron-component-page
+ *
+ * @customElement
+ * @polymer
  */
-setPassiveTouchGestures(true);
-
-class ComponentPage extends PolymerElement {
+class ComponentPage extends IronComponentPage {
   static get template() {
     return html`
       <style include="iron-doc-default-theme">
@@ -167,8 +171,7 @@ class ComponentPage extends PolymerElement {
         <app-drawer-layout narrow="{{_narrow}}">
 
           <app-drawer id="drawer" slot="drawer" swipe-open>
-            <iron-doc-nav descriptor="[[_descriptor]]" base-href="[[baseHref]]" path="[[_path]]" on-select="_onNavSelect">
-            </iron-doc-nav>
+            <iron-doc-nav descriptor="[[_descriptor]]" base-href="[[baseHref]]" path="[[_path]]" on-select="_onNavSelect"></iron-doc-nav>
           </app-drawer>
 
           <app-header-layout has-scrolling-region>
@@ -193,141 +196,35 @@ class ComponentPage extends PolymerElement {
 
   static get properties() {
     return {
-
+      /**
+       * title of the page
+       */
       pageTitle: {
         type: String,
         value: ''
       },
 
+      /**
+       * webcomponents.org url
+       */
       webcomponentsUrl: {
         type: String,
         value: ''
       },
 
+      /**
+       * github url
+       */
       githubUrl: {
         type: String,
         value: ''
-      },
-
-      /**
-       * URL of the Polymer Analyzer descriptor to fetch and display.
-       */
-      descriptorUrl: {
-        type: String,
-        value: 'analysis.json',
-        observer: '_descriptorUrlChanged'
-      },
-
-      /**
-       * By default all routing is performed using the URL fragment
-       * (e.g. `docs.html#/elements/my-element`).
-       *
-       * If your server supports it and you would like to use the real URL
-       * path instead (e.g. `/api/docs/elements/my-element`), set this to
-       * the base path where the page is mounted, omitting the trailing
-       * slash (e.g. `/api/docs` or *empty string* for the root path).
-       */
-      baseHref: {
-        type: String
-      },
-
-      /**
-       * Instead of displaying items relative to the top level of
-       * `descriptor`, start from this namespace.
-       */
-      rootNamespace: {
-        type: String
-      },
-
-      /**
-       * URL prefix for demo iframes.
-       */
-      demoSrcPrefix: {
-        type: String
-      },
-
-      _descriptorError: Object,
-
-      _descriptor: {type: Object, observer: '_descriptorChanged'},
-
-      _path: {
-        type: String
-      },
-
-      _narrow: {
-        type: Boolean
-      },
-
-      _title: {type: String, observer: '_titleChanged'}
-    }
-  }
-
-  _onViewChanged() {
-    this.$.viewer.scrollIntoView();
-  }
-
-  _onNavSelect() {
-    // Note we need to listen for this event, and can't rely just on the
-    // path changing, because the user might click on the nav item they
-    // are already viewing.
-    this.$.viewer.scrollIntoView();
-    if (this._narrow) {
-      this.$.drawer.close();
+      }
     }
   }
 
   _toggleDrawer() {
     this.$.drawer.toggle();
   }
-
-  _descriptorUrlChanged() {
-    this._descriptorError = null;
-  }
-
-  _descriptorChanged(descriptor) {
-    if (!descriptor || this._changing) {
-      return;
-    }
-
-    this._changing = true;
-    this._descriptor = _flatten(descriptor);
-    this._changing = false;
-  }
-
-  _titleChanged(title) {
-    window.document.title = title;
-  }
-}
-
-function _flatten(descriptor, flat) {
-  if (!flat) {
-    flat = {
-      namespaces: [],
-      elements: [],
-      metadata: {polymer: {behaviors: []}},
-      mixins: [],
-      classes: [],
-    };
-  }
-  for (var i = 0; i < (descriptor.namespaces || []).length; i++) {
-    _flatten(descriptor.namespaces[i], flat);
-    flat.namespaces.push(descriptor.namespaces[i]);
-  }
-  for (var i = 0; i < (descriptor.classes || []).length; i++) {
-    flat.classes.push(descriptor.classes[i]);
-  }
-  for (var i = 0; i < (descriptor.elements || []).length; i++) {
-    flat.elements.push(descriptor.elements[i]);
-  }
-  var descriptorBehaviors =
-      ((descriptor.metadata || {}).polymer || {}).behaviors;
-  for (var i = 0; i < (descriptorBehaviors || []).length; i++) {
-    flat.metadata.polymer.behaviors.push(descriptorBehaviors[i]);
-  }
-  for (var i = 0; i < (descriptor.mixins || []).length; i++) {
-    flat.mixins.push(descriptor.mixins[i]);
-  }
-  return flat;
 }
 
 customElements.define('component-page', ComponentPage);
