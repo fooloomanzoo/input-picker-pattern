@@ -12,7 +12,7 @@ import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';
  *   @appliesMixin Polymer.IronOverlayBehavior
  *
  */
-class OverlayElement extends mixinBehaviors([IronOverlayBehavior], PolymerElement) {
+export class OverlayElement extends mixinBehaviors([IronOverlayBehavior], PolymerElement) {
 
   static get is() {
     return 'overlay-element';

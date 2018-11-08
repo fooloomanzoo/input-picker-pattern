@@ -24,7 +24,7 @@ const IronComponentPage = customElements.get('iron-component-page');
  * @customElement
  * @polymer
  */
-class ComponentPage extends IronComponentPage {
+export class ComponentPage extends IronComponentPage {
   static get template() {
     return html`
       <style include="iron-doc-default-theme">
