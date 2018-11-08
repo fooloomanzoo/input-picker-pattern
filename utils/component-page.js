@@ -78,6 +78,12 @@ class ComponentPage extends IronComponentPage {
           white-space: nowrap;
         }
 
+        app-toolbar.top a {
+          text-decoration: none;
+          display: inline-flex;
+          color: #000;
+        }
+
         iron-doc-nav {
           height: 100%;
           overflow-y: auto;
@@ -116,11 +122,6 @@ class ComponentPage extends IronComponentPage {
 
         #error-toast {
           background-color: var(--paper-red-600);
-        }
-
-        app-toolbar a {
-          text-decoration: none;
-          display: inline-flex;
         }
 
         .webcomponents {
