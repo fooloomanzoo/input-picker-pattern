@@ -1,9 +1,9 @@
 import '../../@polymer/polymer/lib/elements/dom-module.js';
+import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';
 
-const inputSharedStyle = document.createElement('dom-module');
-
-inputSharedStyle.innerHTML =
-  `<template>
+const template = html`
+<dom-module id="input-shared-style">
+  <template>
     <style>
       :host {
         display: inline-flex;
@@ -342,6 +342,9 @@ inputSharedStyle.innerHTML =
         visibility: hidden;
       }
       </style>
-    </template>`;
+    </template>
+  </dom-module>
+  `;
 
-  inputSharedStyle.register('input-shared-style');
+  template.setAttribute('style', 'display: none;');
+  document.head.appendChild(template.content);

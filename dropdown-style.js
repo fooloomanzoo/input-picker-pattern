@@ -1,12 +1,11 @@
 import '../../@polymer/polymer/lib/elements/dom-module.js';
-/*
+import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';/*
 `dropdown-style`
 styles for used for a inner dropdown
 */
-const dropdownStyle = document.createElement('dom-module');
-
-dropdownStyle.innerHTML =
-  `<template>
+const template = html`
+<dom-module id="dropdown-style">
+  <template>
     <style>
       :host {
         --computed-dropdown-background: var(--dropdown-background, var(--input-picker-background, transparent));
@@ -87,6 +86,9 @@ dropdownStyle.innerHTML =
         transform: translate(-50%, -50%);
       }
     </style>
-  </template>`;
+  </template>
+</dom-module>
+`;
 
-dropdownStyle.register('dropdown-style');
+template.setAttribute('style', 'display: none;');
+document.head.appendChild(template.content);
