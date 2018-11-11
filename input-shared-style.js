@@ -1,9 +1,6 @@
-import { PolymerElement, html } from '../../@polymer/polymer/polymer-element.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
-const styleElement = document.createElement('dom-module');
-
-styleElement.innerHTML =
-`<template>
+export const style = html`
   <style>
     :host {
       display: inline-flex;
@@ -301,14 +298,17 @@ styleElement.innerHTML =
     }
 
     ::-webkit-input-edit-text,
-    ::-webkit-inner-spin-button,
-    ::-webkit-outer-spin-button,
     ::-webkit-search-cancel-button,
     ::-webkit-clear-button {
       color: currentColor;
       align-self: center;
       vertical-align: middle;
       cursor: pointer;
+    }
+    
+    ::-webkit-inner-spin-button,
+    ::-webkit-outer-spin-button {
+      -webkit-appearance: none;
     }
 
     ::-webkit-search-cancel-button,
@@ -341,7 +341,4 @@ styleElement.innerHTML =
     [invisible] {
       visibility: hidden;
     }
-  </style>
-</template>`;
-
-styleElement.register('input-shared-style');
+  </style>`;

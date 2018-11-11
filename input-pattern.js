@@ -1,7 +1,7 @@
 import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
-import { html, htmlLiteral } from '../../@polymer/polymer/lib/utils/html-tag.js';
+import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';
 import { FormElementMixin } from './form-element-mixin.js';
-import './input-shared-style.js';
+import { style as inputStyle } from './input-shared-style.js';
 
 /**
  * get bounding client rect by a relative node that could be hidden by its context
@@ -62,39 +62,37 @@ export const InputPattern = dedupingMixin( superClass => {
 
     static get template() {
       return html`
-        <style include="${this.styleToInclude}"></style>
-        <style>${this.styleTemplate}</style>
+        ${this.styleTemplate}</style>
         ${this.inputTemplate}
         <div id="size">[[input]]</div>
         <div id="minlength">[[_minlengthString]]</div>
       `;
     }
 
-    static get styleToInclude() {
-      return htmlLiteral`input-shared-style`;
-    }
-
     static get styleTemplate() {
-      return htmlLiteral`
-        #input {
-          width: 0;
-        }
-        #minlength,
-        #size {
-          position: fixed;
-          top: 0; left: 0; right: auto; bottom: auto;
-          font-family: inherit;
-          font-size: inherit;
-          font-weight: inherit;
-          font-style: inherit;
-          letter-spacing: inherit;
-          outline: none;
-          min-width: inherit;
-          max-width: inherit;
-          margin: 0;
-          padding: 0;
-          visibility: hidden;
-        }
+      return html`
+        ${inputStyle}
+        <style>
+          #input {
+            width: 0;
+          }
+          #minlength,
+          #size {
+            position: fixed;
+            top: 0; left: 0; right: auto; bottom: auto;
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            font-style: inherit;
+            letter-spacing: inherit;
+            outline: none;
+            min-width: inherit;
+            max-width: inherit;
+            margin: 0;
+            padding: 0;
+            visibility: hidden;
+          }
+        </style>
       `;
     }
 

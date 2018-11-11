@@ -1,5 +1,5 @@
-import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
-import { html, htmlLiteral } from '../../@polymer/polymer/lib/utils/html-tag.js';
+import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import './overlay-element.js';
 
 /**
@@ -104,13 +104,15 @@ export const OverlayPickerMixin = dedupingMixin( superClass => {
     }
 
     static get styleTemplate() {
-      return htmlLiteral`
-        ${super.styleTemplate || htmlLiteral``}
-        #overlay {
-          display: inline-flex;
-          flex-shrink: 0;
-          padding: 0;
-        }
+      return html`
+        ${super.styleTemplate || html``}
+        <style>
+          #overlay {
+            display: inline-flex;
+            flex-shrink: 0;
+            padding: 0;
+          }
+        </style>
       `;
     }
 

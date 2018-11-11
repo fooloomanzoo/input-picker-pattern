@@ -1,9 +1,6 @@
-import { PolymerElement, html } from '../../@polymer/polymer/polymer-element.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
-const styleElement = document.createElement('dom-module');
-
-styleElement.innerHTML =
-`<template>
+export const style = html`
   <style>
     :host {
       font-family: inherit;
@@ -144,7 +141,4 @@ styleElement.innerHTML =
     [hidden] {
       display: none !important;
     }
-  </style>
-</template>`;
-
-styleElement.register('input-picker-shared-style');
+  </style>`;

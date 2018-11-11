@@ -1,12 +1,6 @@
-import { PolymerElement, html } from '../../@polymer/polymer/polymer-element.js';
-/*
-`dropdown-style`
-styles for used for a tip of the dropdown
-*/
-const styleElement = document.createElement('dom-module');
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
-styleElement.innerHTML =
-`<template>
+export const style = html`
   <style>
     :host {
       --computed-dropdown-tip-size: var(--dropdown-tip-size, 6px);
@@ -80,7 +74,4 @@ styleElement.innerHTML =
     :host([horizontal-align="center"][vertical-align="middle"]) .dropdown:after {
       border: none;
     }
-  </style>
-</template>`;
-
-styleElement.register('dropdown-tip-style');
+  </style>`;

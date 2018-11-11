@@ -1,6 +1,6 @@
-import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
-import { addListener, removeListener } from '../../@polymer/polymer/lib/utils/gestures.js';
-import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';
+import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
+import { addListener, removeListener } from '@polymer/polymer/lib/utils/gestures.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 /**
  * Mixin to extend an element for binding switch button to increment properties. Button-switches should be of class `switch` and have the attributes `prop` and `step` that define the property to increment in the given step.
  * The element is required to be extended with `Polymer.GestureEventListeners`.

@@ -1,7 +1,7 @@
-import { IronOverlayBehavior } from '../../@polymer/iron-overlay-behavior/iron-overlay-behavior.js';
-import { mixinBehaviors } from '../../@polymer/polymer/lib/legacy/class.js';
-import { PolymerElement } from '../../@polymer/polymer/polymer-element.js';
-import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';
+import { IronOverlayBehavior } from '@polymer/iron-overlay-behavior/iron-overlay-behavior.js';
+import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
+import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 /**
  * `overlay-element`
  * A helper-element, that creates an overlay using `iron-overlay-behavior` of Polymer.

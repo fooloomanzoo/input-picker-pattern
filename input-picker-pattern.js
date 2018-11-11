@@ -1,10 +1,10 @@
-import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
-import { GestureEventListeners } from '../../@polymer/polymer/lib/mixins/gesture-event-listeners.js';
-import { addListener, setTouchAction, removeListener } from '../../@polymer/polymer/lib/utils/gestures.js';
-import { html, htmlLiteral } from '../../@polymer/polymer/lib/utils/html-tag.js';
+import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
+import { GestureEventListeners } from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
+import { addListener, setTouchAction, removeListener } from '@polymer/polymer/lib/utils/gestures.js';
+import { html, htmlLiteral } from '@polymer/polymer/lib/utils/html-tag.js';
 
-import './input-picker-shared-style.js';
-import './dropdown-tip-style.js';
+import { style as inputPickerStyle } from './input-picker-shared-style.js';
+import { style as dropdownTipStyle } from  './dropdown-tip-style.js';
 import { FormElementMixin } from './form-element-mixin.js';
 /**
  * mixin to extend an element with a test for an expected input type and implement a polyfill, when wanted or needed
@@ -51,18 +51,9 @@ export const InputPickerPattern = dedupingMixin( superClass => {
 
     static get template() {
       return html`
-        <style include="${this.styleToInclude}"></style>
-        <style>${this.styleTemplate}</style>
+        ${this.styleTemplate}
         ${this.hasNative ? this.nativeTemplate : this.polyfillTemplate}
       `
-    }
-
-    /**
-     * custom style to include in `<style include="..."`
-     * @type {string}
-     */
-    static get styleToInclude() {
-      return htmlLiteral`input-picker-shared-style dropdown-tip-style ${super.styleToInclude || htmlLiteral``}`;
     }
 
     /**
@@ -70,20 +61,24 @@ export const InputPickerPattern = dedupingMixin( superClass => {
      * @type {string}
      */
     static get styleTemplate() {
-      return htmlLiteral`
-        ${super.styleTemplate || htmlLiteral``}
-        :host {
-          display: inline-flex;
-          position: relative;
-        }
-        #picker #buttons {
-          display: inline-flex;
-          position: relative;
-          align-self: stretch;
-          align-items: flex-end;
-          justify-content: flex-end;
-          padding-top: 0;
-        }
+      return html`
+        ${inputPickerStyle}
+        ${dropdownTipStyle}
+        ${super.styleTemplate || html``}
+        <style>
+          :host {
+            display: inline-flex;
+            position: relative;
+          }
+          #picker #buttons {
+            display: inline-flex;
+            position: relative;
+            align-self: stretch;
+            align-items: flex-end;
+            justify-content: flex-end;
+            padding-top: 0;
+          }
+        </style>
       `;
     }
 
