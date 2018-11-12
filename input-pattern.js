@@ -62,7 +62,7 @@ export const InputPattern = dedupingMixin( superClass => {
 
     static get template() {
       return html`
-        ${this.styleTemplate}</style>
+        ${this.styleTemplate}
         ${this.inputTemplate}
         <div id="size">[[input]]</div>
         <div id="minlength">[[_minlengthString]]</div>
