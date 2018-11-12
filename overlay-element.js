@@ -51,4 +51,6 @@ export class OverlayElement extends mixinBehaviors([IronOverlayBehavior], Polyme
   }
 }
 
-customElements.define(OverlayElement.is, OverlayElement);
+if (!customElements.get(OverlayElement.is)) {
+  customElements.define(OverlayElement.is, OverlayElement);
+}

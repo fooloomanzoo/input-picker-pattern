@@ -228,4 +228,6 @@ export class ComponentPage extends IronComponentPage {
   }
 }
 
-customElements.define('component-page', ComponentPage);
+if (!customElements.get(ComponentPage.is)) {
+  customElements.define(ComponentPage.is, ComponentPage);
+}
