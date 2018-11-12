@@ -1,20 +1,20 @@
-import { PolymerElement, html } from '../../../@polymer/polymer/polymer-element.js';
-import { setPassiveTouchGestures } from '../../../@polymer/polymer/lib/utils/settings.js';
-import '../../../@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
-import '../../../@polymer/app-layout/app-drawer/app-drawer.js';
-import '../../../@polymer/app-layout/app-header-layout/app-header-layout.js';
-import '../../../@polymer/app-layout/app-header/app-header.js';
-import '../../../@polymer/app-layout/app-toolbar/app-toolbar.js';
-import '../../../@polymer/iron-ajax/iron-ajax.js';
-import '../../../@polymer/iron-doc-viewer/default-theme.js';
-import '../../../@polymer/iron-doc-viewer/iron-doc-nav.js';
-import '../../../@polymer/iron-doc-viewer/iron-doc-viewer.js';
-import '../../../@polymer/iron-icons/iron-icons.js';
-import '../../../@polymer/paper-icon-button/paper-icon-button.js';
-import '../../../@polymer/paper-styles/color.js';
-import '../../../@polymer/paper-styles/typography.js';
-import '../../../@polymer/paper-toast/paper-toast.js';
-import '../../../@polymer/iron-component-page/iron-component-page.js';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
+import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
+import '@polymer/app-layout/app-drawer/app-drawer.js';
+import '@polymer/app-layout/app-header-layout/app-header-layout.js';
+import '@polymer/app-layout/app-header/app-header.js';
+import '@polymer/app-layout/app-toolbar/app-toolbar.js';
+import '@polymer/iron-ajax/iron-ajax.js';
+import '@polymer/iron-doc-viewer/default-theme.js';
+import '@polymer/iron-doc-viewer/iron-doc-nav.js';
+import '@polymer/iron-doc-viewer/iron-doc-viewer.js';
+import '@polymer/iron-icons/iron-icons.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-styles/color.js';
+import '@polymer/paper-styles/typography.js';
+import '@polymer/paper-toast/paper-toast.js';
+import '@polymer/iron-component-page/iron-component-page.js';
 
 const IronComponentPage = customElements.get('iron-component-page');
 
