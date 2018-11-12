@@ -1,5 +1,5 @@
-import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
-import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';
+import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { FormElementMixin } from './form-element-mixin.js';
 import { style as inputStyle } from './input-shared-style.js';
 

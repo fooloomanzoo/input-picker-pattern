@@ -1,5 +1,5 @@
 import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
-import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
 /**
  * reset/cancel button template
