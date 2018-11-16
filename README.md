@@ -1,6 +1,8 @@
 [![Published on NPM](https://img.shields.io/npm/v/@fooloomanzoo/input-picker-pattern.svg)](https://www.npmjs.com/package/@fooloomanzoo/input-picker-pattern)
 [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/@fooloomanzoo/input-picker-pattern)
 
+_[API & Demo](https://fooloomanzoo.github.io/input-pattern-picker)_
+
 The repository includes various helper components and standard styles used in elements like [number-input](https://github.com/fooloomanzoo/number-input), [text-input](https://github.com/fooloomanzoo/text-input), [color-input](https://github.com/fooloomanzoo/color-input), [datetime-input](https://github.com/fooloomanzoo/datetime-input), [datetime-picker](https://github.com/fooloomanzoo/datetime-picker) and [color-picker](https://github.com/fooloomanzoo/color-picker).
 
 It includes the following component-pattern:
