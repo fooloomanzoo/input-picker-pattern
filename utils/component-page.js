@@ -46,7 +46,7 @@ export class ComponentPage extends IronComponentPage {
           white-space: nowrap;
         }
 
-        app-drawer {
+        #drawer {
           --app-drawer-content-container: {
             background-color: #fbfbfb;
             padding: 0;
@@ -171,7 +171,7 @@ export class ComponentPage extends IronComponentPage {
 
         <app-drawer-layout narrow="{{_narrow}}">
 
-          <app-drawer id="drawer" slot="drawer" swipe-open>
+          <app-drawer id="drawer" slot="drawer" swipe-open style="position: absolute;top: 0; bottom: 0;">
             <iron-doc-nav descriptor="[[_descriptor]]" base-href="[[baseHref]]" path="[[_path]]" on-select="_onNavSelect"></iron-doc-nav>
           </app-drawer>
 
